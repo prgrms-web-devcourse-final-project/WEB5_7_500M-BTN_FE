@@ -43,10 +43,10 @@ const SimplePartyCard = ({ party }: SimplePartyCardProps) => {
         </Stack>
         <Stack spacing={0.5} mb={2}>
           <Typography variant="subtitle1" fontWeight={500}>
-            {party.restaurant.name}
+            {party.shop.name}
           </Typography>
           <Typography variant="caption" color="text.secondary" noWrap>
-            {party.restaurant.address}
+            {party.shop.address}
           </Typography>
         </Stack>
         <Box flexGrow={1} />

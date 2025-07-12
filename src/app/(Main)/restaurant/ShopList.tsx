@@ -8,15 +8,15 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-import RestaurantListItemRow from "@/features/restaurant/RestaurantListCard";
-import { restaurantListItems } from "@/mock/restaurant";
+import ShopListItemRow from "@/features/shop/ShopListCard";
+import { shopListItems } from "@/mock/shop";
 
-const mockRestaurants = restaurantListItems;
+const mockShops = shopListItems;
 
 const categories = ["전체", "한식", "일식", "중식", "양식"] as const;
 const sorts = ["근처순", "예약많은순", "평점순"] as const;
 
-const RestaurantList: React.FC = () => {
+const ShopList: React.FC = () => {
   // TODO: 쿼리스트링 연동 및 상태 관리 구현
   return (
     <Box
@@ -76,12 +76,12 @@ const RestaurantList: React.FC = () => {
       <Divider />
       {/* 식당 리스트 */}
       <Box flex={1} overflow="auto" pb={2}>
-        {mockRestaurants.map((restaurant) => (
-          <RestaurantListItemRow key={restaurant.id} restaurant={restaurant} />
+        {mockShops.map((shop) => (
+          <ShopListItemRow key={shop.id} shop={shop} />
         ))}
       </Box>
     </Box>
   );
 };
 
-export default RestaurantList;
+export default ShopList;

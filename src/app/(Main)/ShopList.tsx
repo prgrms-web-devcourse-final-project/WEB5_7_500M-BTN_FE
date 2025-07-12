@@ -1,10 +1,10 @@
 "use client";
 
 import { Box, Grid, Typography, Stack } from "@mui/material";
-import SimpleRestaurantCard from "@/features/restaurant/SimpleRestaurantCard";
-import { simpleRestaurants } from "@/mock/restaurant";
+import SimpleShopCard from "@/features/shop/SimpleShopCard";
+import { simpleShops } from "@/mock/shop";
 
-const RestaurantList = () => {
+const ShopList = () => {
   return (
     <Box mt={4}>
       <Stack direction="row" alignItems="flex-end" mb={3} gap={0.5}>
@@ -16,9 +16,9 @@ const RestaurantList = () => {
         </Typography>
       </Stack>
       <Grid container spacing={3}>
-        {simpleRestaurants.slice(0, 6).map((restaurant) => (
-          <Grid key={restaurant.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <SimpleRestaurantCard restaurant={restaurant} />
+        {simpleShops.slice(0, 6).map((shop) => (
+          <Grid key={shop.id} size={{ xs: 12, sm: 6, md: 4 }}>
+            <SimpleShopCard shop={shop} />
           </Grid>
         ))}
       </Grid>
@@ -26,4 +26,4 @@ const RestaurantList = () => {
   );
 };
 
-export default RestaurantList;
+export default ShopList;

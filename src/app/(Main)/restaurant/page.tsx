@@ -1,16 +1,16 @@
 import { Box } from "@mui/material";
-import RestaurantList from "./RestaurantList";
-import RestaurantMap from "./RestaurantMap";
+import ShopList from "./ShopList";
+import ShopMap from "./ShopMap";
 
-const RestaurantPage: React.FC = () => {
+const ShopPage: React.FC = () => {
   return (
     <Box display="flex" width="100vw" height="100vh">
-      <RestaurantList />
+      <ShopList />
       <Box flex={1}>
-        <RestaurantMap />
+        <ShopMap />
       </Box>
     </Box>
   );
 };
 
-export default RestaurantPage;
+export default ShopPage;

@@ -1,13 +1,11 @@
 import { Box, Stack, Typography, Avatar } from "@mui/material";
-import type { RestaurantListItem } from "@/mock/restaurant";
+import type { ShopListItem } from "@/mock/shop";
 
-interface RestaurantListItemRowProps {
-  restaurant: RestaurantListItem;
+interface ShopListItemRowProps {
+  shop: ShopListItem;
 }
 
-const RestaurantListItemRow: React.FC<RestaurantListItemRowProps> = ({
-  restaurant,
-}) => {
+const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
   return (
     <Box
       p={2}
@@ -30,27 +28,27 @@ const RestaurantListItemRow: React.FC<RestaurantListItemRowProps> = ({
         >
           <Stack direction="row" alignItems="center" spacing={1}>
             <Typography variant="subtitle1" fontWeight={700} noWrap>
-              {restaurant.name}
+              {shop.name}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
-              {restaurant.category}
+              {shop.category}
             </Typography>
           </Stack>
           <Typography variant="body2" color="warning.main" fontWeight={600}>
-            ★ {restaurant.rating.toFixed(1)}
+            ★ {shop.rating.toFixed(1)}
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={1} mt={0.5}>
           <Typography variant="body2" color="text.secondary" noWrap>
-            {restaurant.address}
+            {shop.address}
           </Typography>
         </Stack>
       </Box>
       <Box mt={1} display="flex" justifyContent="flex-start">
         <Avatar
           variant="rounded"
-          src={restaurant.thumbnail}
-          alt={restaurant.name}
+          src={shop.thumbnail}
+          alt={shop.name}
           sx={{ width: "100%", height: 160, borderRadius: 1 }}
         />
       </Box>
@@ -58,4 +56,4 @@ const RestaurantListItemRow: React.FC<RestaurantListItemRowProps> = ({
   );
 };
 
-export default RestaurantListItemRow;
+export default ShopListItemRow;

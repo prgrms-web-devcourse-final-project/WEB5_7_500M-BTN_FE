@@ -6,32 +6,30 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { SimpleRestaurant } from "@/mock/restaurant";
+import { SimpleShop } from "@/mock/shop";
 
-type SimpleRestaurantCardProps = {
-  restaurant: SimpleRestaurant;
+type SimpleShopCardProps = {
+  shop: SimpleShop;
 };
 
-const SimpleRestaurantCard = ({ restaurant }: SimpleRestaurantCardProps) => {
+const SimpleShopCard = ({ shop }: SimpleShopCardProps) => {
   const router = useRouter();
   return (
     <Card>
-      <CardActionArea
-        onClick={() => router.push(`/restaurant/${restaurant.id}`)}
-      >
+      <CardActionArea onClick={() => router.push(`/shop/${shop.id}`)}>
         <CardMedia
           component="img"
           height="180"
-          image={restaurant.thumbnail}
-          alt={restaurant.name}
+          image={shop.thumbnail}
+          alt={shop.name}
           sx={{ objectFit: "cover" }}
         />
         <CardContent>
           <Typography variant="h6" fontWeight={600} noWrap>
-            {restaurant.name}
+            {shop.name}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            {restaurant.address}
+            {shop.address}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -39,4 +37,4 @@ const SimpleRestaurantCard = ({ restaurant }: SimpleRestaurantCardProps) => {
   );
 };
 
-export default SimpleRestaurantCard;
+export default SimpleShopCard;

@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-const RestaurantMap: React.FC = () => {
+const ShopMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,4 +54,4 @@ const RestaurantMap: React.FC = () => {
   );
 };
 
-export default RestaurantMap;
+export default ShopMap;

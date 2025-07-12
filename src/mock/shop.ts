@@ -1,11 +1,11 @@
-export type SimpleRestaurant = {
+export type SimpleShop = {
   id: string;
   thumbnail: string;
   name: string;
   address: string;
 };
 
-export const simpleRestaurants: SimpleRestaurant[] = [
+export const simpleShops: SimpleShop[] = [
   {
     id: "1",
     thumbnail:
@@ -50,12 +50,12 @@ export const simpleRestaurants: SimpleRestaurant[] = [
   },
 ];
 
-export type RestaurantListItem = SimpleRestaurant & {
+export type ShopListItem = SimpleShop & {
   rating: number;
   category: "한식" | "일식" | "중식" | "양식" | "기타";
 };
 
-export const restaurantListItems: RestaurantListItem[] = [
+export const shopListItems: ShopListItem[] = [
   {
     id: "1",
     thumbnail:

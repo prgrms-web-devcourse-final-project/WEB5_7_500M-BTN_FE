@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import NextLink from "next/link";
 
 const menuItems = [
-  { label: "식당 찾기", path: "/restaurant" },
+  { label: "식당 찾기", path: "/shop" },
   { label: "맛집 탐험 파티", path: "/party" },
 ];
 

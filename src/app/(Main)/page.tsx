@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import Banner from "./Banner";
-import RestaurantList from "./RestaurantList";
+import ShopList from "./ShopList";
 import PartyList from "./PartyList";
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
         flexDirection="column"
         gap={4}
       >
-        <RestaurantList />
+        <ShopList />
         <PartyList />
       </Box>
     </Box>
