@@ -20,7 +20,7 @@ const PartyList = () => {
       </Stack>
       <Grid container spacing={3}>
         {simpleParties.map((party) => (
-          <Grid key={party.id} size={{ xs: 12, sm: 12, md: 6 }}>
+          <Grid key={party.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <SimplePartyCard party={party} />
           </Grid>
         ))}
