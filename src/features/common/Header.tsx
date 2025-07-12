@@ -15,7 +15,16 @@ const Header = () => {
   const pathname = usePathname();
 
   return (
-    <AppBar position="static" elevation={0} sx={{ bgcolor: "#fff", border: 0 }}>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        bgcolor: "#fff",
+        border: 0,
+        borderBottom: "1px solid #eee",
+        borderRadius: 0,
+      }}
+    >
       <Toolbar sx={{ justifyContent: "space-between", minHeight: 64 }}>
         {/* 좌측 로고 */}
         <Box sx={{ display: "flex", alignItems: "center" }}>

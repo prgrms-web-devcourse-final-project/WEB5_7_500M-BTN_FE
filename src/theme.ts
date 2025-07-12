@@ -17,7 +17,7 @@ const theme = createTheme({
     },
     background: {
       default: "#fff", // 전체 배경 흰색
-      paper: "#fff", // 페이퍼도 흰색
+      paper: "#fff",
     },
     text: {
       primary: "#3a3333", // 진한 브라운
