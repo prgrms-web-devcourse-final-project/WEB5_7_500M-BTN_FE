@@ -25,7 +25,13 @@ const Header = () => {
         borderRadius: 0,
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between", minHeight: 64 }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          minHeight: 64,
+          position: "relative",
+        }}
+      >
         {/* 좌측 로고 */}
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Button
@@ -37,7 +43,16 @@ const Header = () => {
           </Button>
         </Box>
         {/* 가운데 메뉴 */}
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
           {menuItems.map((item) => (
             <MuiLink
               key={item.path}
@@ -62,8 +77,29 @@ const Header = () => {
             </MuiLink>
           ))}
         </Box>
-        {/* 우측 로그인 버튼 */}
-        <Box width={120} display="flex" justifyContent="flex-end">
+        {/* 우측 예약 현황 + 로그인 버튼 */}
+        <Box
+          width={300}
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+          gap={2}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => router.push("/reservation-status")}
+          >
+            예약 현황
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => router.push("/my-shop")}
+            sx={{ ml: 1 }}
+          >
+            내 식당
+          </Button>
           <MuiLink
             component={NextLink}
             href="/sign-in"

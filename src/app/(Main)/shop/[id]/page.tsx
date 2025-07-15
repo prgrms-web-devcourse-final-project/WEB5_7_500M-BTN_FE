@@ -96,7 +96,11 @@ const ShopDetailPage = () => {
         </Box>
         <Divider orientation="vertical" flexItem />
         {/* 우측: 리뷰 리스트 */}
-        <Box flex={1.5} minWidth={0}>
+        <Box
+          flex={1.5}
+          minWidth={0}
+          sx={{ maxHeight: "calc(100vh - 112px)", overflowY: "auto" }}
+        >
           <Box display="flex" alignItems="center" mb={2} gap={1}>
             <Typography variant="h5">리뷰</Typography>
             <Typography variant="subtitle1" color="text.secondary">

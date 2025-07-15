@@ -158,6 +158,8 @@ export const shopItems: ShopItem[] = [
   },
 ];
 
+export const myShopItem: ShopItem = shopItems[0];
+
 // User 타입 import (user mock 참고)
 import type { SimpleUser } from "@/mock/user";
 
