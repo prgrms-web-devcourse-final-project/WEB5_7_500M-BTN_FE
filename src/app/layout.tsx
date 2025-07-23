@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import ThemeRegistry from "./ThemeRegistry";
 import CssBaseline from "@mui/material/CssBaseline";
+import QueryProvider from "./QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,7 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeRegistry>
             <CssBaseline />
-            {children}
+            <QueryProvider>{children}</QueryProvider>
           </ThemeRegistry>
         </AppRouterCacheProvider>
       </body>

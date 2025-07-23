@@ -22,12 +22,8 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { simpleUsers } from "@/mock/user";
-import { simpleParties } from "@/mock/party";
-import { shopReviews, shopListItems } from "@/mock/shop";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
-import type { ShopListItem, ShopReview } from "@/mock/shop";
 import ProfileInfoTab from "./ProfileInfoTab";
 import ProfileReservationsTab from "./ProfileReservationsTab";
 import ProfilePartiesTab from "./ProfilePartiesTab";

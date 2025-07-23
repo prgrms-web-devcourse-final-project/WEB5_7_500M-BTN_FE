@@ -4,6 +4,8 @@ import { AppBar, Box, Button, Toolbar, Link as MuiLink } from "@mui/material";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import NextLink from "next/link";
+import { useMyInfo, useLogout } from "@/api/hooks";
+import { getAccessToken } from "@/api/client";
 
 const menuItems = [
   { label: "식당 찾기", path: "/shop" },
@@ -13,6 +15,9 @@ const menuItems = [
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { data: myInfo } = useMyInfo();
+  const logoutMutation = useLogout();
+  const isLoggedIn = !!getAccessToken();
 
   return (
     <AppBar
@@ -79,44 +84,65 @@ const Header = () => {
         </Box>
         {/* 우측 예약 현황 + 로그인 버튼 */}
         <Box
-          width={300}
           display="flex"
           justifyContent="flex-end"
           alignItems="center"
           gap={2}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => router.push("/reservation-status")}
-          >
-            예약 현황
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => router.push("/my-shop")}
-            sx={{ ml: 1 }}
-          >
-            내 식당
-          </Button>
-          <MuiLink
-            component={NextLink}
-            href="/sign-in"
-            underline="none"
-            sx={{
-              fontWeight: 500,
-              fontSize: 16,
-              color: "primary.main",
-              transition: "color 0.2s",
-              "&:hover": {
-                color: "primary.dark",
-              },
-              cursor: "pointer",
-            }}
-          >
-            로그인
-          </MuiLink>
+          {isLoggedIn ? (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => router.push("/reservation-status")}
+              >
+                예약 현황
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => router.push("/my-shop")}
+                sx={{ ml: 1 }}
+              >
+                내 식당
+              </Button>
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => router.push("/profile")}
+                sx={{ ml: 1 }}
+              >
+                {myInfo?.data?.nickname || "프로필"}
+              </Button>
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => logoutMutation.mutate("")}
+                disabled={logoutMutation.isPending}
+                sx={{ ml: 1 }}
+              >
+                로그아웃
+              </Button>
+            </>
+          ) : (
+            <MuiLink
+              component={NextLink}
+              href="/sign-in"
+              underline="none"
+              sx={{
+                fontWeight: 500,
+                fontSize: 16,
+                color: "primary.main",
+                transition: "color 0.2s",
+                "&:hover": {
+                  color: "primary.dark",
+                },
+                cursor: "pointer",
+              }}
+            >
+              로그인
+            </MuiLink>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

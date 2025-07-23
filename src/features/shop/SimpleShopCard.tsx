@@ -6,30 +6,30 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { SimpleShop } from "@/mock/shop";
+import { ShopsItem } from "@/api/generated";
 
 type SimpleShopCardProps = {
-  shop: SimpleShop;
+  shop: ShopsItem;
 };
 
 const SimpleShopCard = ({ shop }: SimpleShopCardProps) => {
   const router = useRouter();
   return (
     <Card>
-      <CardActionArea onClick={() => router.push(`/shop/${shop.id}`)}>
+      <CardActionArea onClick={() => router.push(`/shop/${shop.shopId}`)}>
         <CardMedia
           component="img"
           height="180"
-          image={shop.thumbnail}
-          alt={shop.name}
+          image={shop.thumbnailUrl || ""}
+          alt={shop.shopName || ""}
           sx={{ objectFit: "cover" }}
         />
         <CardContent>
           <Typography variant="h6" fontWeight={600} noWrap>
-            {shop.name}
+            {shop.shopName}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            {shop.address}
+            {shop.roadAddress}
           </Typography>
         </CardContent>
       </CardActionArea>

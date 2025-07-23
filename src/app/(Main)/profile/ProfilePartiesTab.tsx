@@ -1,23 +1,43 @@
 import React from "react";
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, CircularProgress, Alert, Box } from "@mui/material";
 import PartyItem from "./PartyItem";
-import { simpleParties } from "@/mock/party";
+import { useMyParties } from "@/api/hooks";
 
-const joinedParties = simpleParties.filter((p) => p.currentUserCount > 0);
-// 날짜 내림차순(최신순) 정렬
-const sortedParties = [...joinedParties].sort(
-  (a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
-);
+const ProfilePartiesTab = () => {
+  const { data: myPartiesData, isLoading, error } = useMyParties();
+  const myParties = myPartiesData?.data?.content || [];
 
-const ProfilePartiesTab = () => (
-  <Stack spacing={2}>
-    {sortedParties.length === 0 && (
-      <Typography color="text.secondary">참여한 파티가 없습니다.</Typography>
-    )}
-    {sortedParties.map((party) => (
-      <PartyItem key={party.id} party={party} />
-    ))}
-  </Stack>
-);
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert severity="error">
+        내 파티 정보를 불러오는데 실패했습니다. 다시 시도해주세요.
+      </Alert>
+    );
+  }
+
+  return (
+    <Stack spacing={2}>
+      {myParties.length === 0 && (
+        <Typography color="text.secondary">참여한 파티가 없습니다.</Typography>
+      )}
+      {myParties.map((party) => (
+        <PartyItem key={party.partyId} party={party} />
+      ))}
+    </Stack>
+  );
+};
 
 export default ProfilePartiesTab;

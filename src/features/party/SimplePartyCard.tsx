@@ -1,23 +1,18 @@
-import {
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-  Box,
-  Avatar,
-  AvatarGroup,
-} from "@mui/material";
+import React from "react";
+import { Card, CardContent, Typography, Stack, Chip } from "@mui/material";
+import Link from "next/link";
 import dayjs from "dayjs";
-import "dayjs/locale/ko";
-import { SimpleParty } from "@/mock/party";
+import type { PartyListResponse } from "@/api/generated";
 
-type SimplePartyCardProps = {
-  party: SimpleParty;
-};
-
-dayjs.locale("ko");
+interface SimplePartyCardProps {
+  party: PartyListResponse;
+}
 
 const SimplePartyCard = ({ party }: SimplePartyCardProps) => {
+  const currentCount = party.currentCount || 0;
+  const minCount = party.minCount || 0;
+  const maxCount = party.maxCount || 0;
+
   return (
     <Card sx={{ p: 2, height: "100%" }}>
       <CardContent
@@ -29,14 +24,14 @@ const SimplePartyCard = ({ party }: SimplePartyCardProps) => {
         }}
       >
         <Typography variant="h6" fontWeight={600} noWrap mb={1}>
-          {party.name}
+          {party.title}
         </Typography>
         <Stack spacing={0.5} mb={2}>
           <Typography variant="subtitle1" fontWeight={500}>
-            {party.shop.name}
+            {party.shopName}
           </Typography>
           <Typography variant="body2" color="text.secondary" noWrap>
-            {party.shop.address}
+            {party.shopRoadAddress}
           </Typography>
         </Stack>
         <Stack spacing={0.5} mb={2}>
@@ -44,48 +39,23 @@ const SimplePartyCard = ({ party }: SimplePartyCardProps) => {
             탐험 시간
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {dayjs(party.dateTime).format("YYYY년 MM월 DD일 dddd A h:mm")}
+            {dayjs(party.metAt).format("YYYY년 MM월 DD일 dddd A h:mm")}
           </Typography>
         </Stack>
-
-        <Stack direction="column" justifyContent="flex-start">
-          <Typography variant="caption" color="text.secondary">
-            현재 참여 인원: {party.currentUserCount}명 / {party.maxUserCount}명
+        <Stack spacing={0.5} mb={2}>
+          <Typography variant="subtitle1" fontWeight={500}>
+            모집 인원
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {party.currentUserCount < party.minUserCount ? (
-              <>
-                출발까지{" "}
-                <Typography
-                  component="span"
-                  variant="caption"
-                  sx={{
-                    color: "info.main",
-                    fontWeight: 600,
-                  }}
-                >
-                  {party.minUserCount - party.currentUserCount}명
-                </Typography>
-                남았어요!
-              </>
-            ) : (
-              <>
-                마감까지{" "}
-                <Typography
-                  component="span"
-                  variant="caption"
-                  sx={{
-                    color: "error.main",
-                    fontWeight: 600,
-                  }}
-                >
-                  {party.maxUserCount - party.currentUserCount}명
-                </Typography>
-                남았어요!
-              </>
-            )}
+          <Typography variant="body2" color="text.secondary">
+            {currentCount}명 / {maxCount}명 (최소 {minCount}명)
           </Typography>
         </Stack>
+        <Link
+          href={`/party/${party.partyId}`}
+          style={{ textDecoration: "none", marginTop: "auto" }}
+        >
+          <Chip label="상세보기" color="primary" sx={{ cursor: "pointer" }} />
+        </Link>
       </CardContent>
     </Card>
   );

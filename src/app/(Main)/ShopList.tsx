@@ -1,10 +1,33 @@
 "use client";
 
-import { Box, Grid, Typography, Stack } from "@mui/material";
+import { Box, Grid, Typography, Stack, CircularProgress } from "@mui/material";
 import SimpleShopCard from "@/features/shop/SimpleShopCard";
-import { simpleShops } from "@/mock/shop";
+import { useShops } from "@/api/hooks";
 
 const ShopList = () => {
+  const { data: shopsData, isLoading, error } = useShops({ size: 6 });
+
+  if (isLoading) {
+    return (
+      <Box mt={4} display="flex" justifyContent="center">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error || !shopsData?.data?.content) {
+    return (
+      <Box mt={4}>
+        <Typography variant="h5" fontWeight={700} mb={3}>
+          근처 맛집
+        </Typography>
+        <Typography color="text.secondary">
+          맛집 정보를 불러올 수 없습니다.
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box mt={4}>
       <Stack direction="row" alignItems="flex-end" mb={3} gap={0.5}>
@@ -16,8 +39,8 @@ const ShopList = () => {
         </Typography>
       </Stack>
       <Grid container spacing={3}>
-        {simpleShops.slice(0, 6).map((shop) => (
-          <Grid key={shop.id} size={{ xs: 12, sm: 6, md: 4 }}>
+        {shopsData.data.content.map((shop) => (
+          <Grid key={shop.shopId} size={{ xs: 12, sm: 6, md: 4 }}>
             <SimpleShopCard shop={shop} />
           </Grid>
         ))}

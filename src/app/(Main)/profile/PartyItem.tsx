@@ -12,25 +12,29 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { shopListItems } from "@/mock/shop";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import type { MyPartyResponse } from "@/api/generated";
 
 interface PartyItemProps {
-  party: any;
+  party: MyPartyResponse;
 }
 
-const getStatus = (party: any) => {
+const getStatus = (party: MyPartyResponse) => {
   const now = dayjs();
-  const isPast = dayjs(party.dateTime).isBefore(now, "minute");
+  const isPast = dayjs(party.metAt).isBefore(now, "minute");
   if (isPast)
     return {
       label: "종료",
       color: "default",
       icon: <CheckCircleIcon fontSize="small" sx={{ mr: 0.5 }} />,
     };
-  if (party.currentUserCount >= party.maxUserCount)
+  if (
+    party.currentCount &&
+    party.maxCount &&
+    party.currentCount >= party.maxCount
+  )
     return {
       label: "마감",
       color: "error",
@@ -54,7 +58,6 @@ const categoryIcons: Record<string, string> = {
 const PartyItem = ({ party }: PartyItemProps) => {
   const theme = useTheme();
   const status = getStatus(party);
-  const shopDetail = shopListItems.find((s) => s.id === party.shop.id);
   const isPast = status.label === "종료";
 
   return (
@@ -79,8 +82,8 @@ const PartyItem = ({ party }: PartyItemProps) => {
     >
       <CardMedia
         component="img"
-        image={party.shop.thumbnail}
-        alt={party.shop.name}
+        image="/default-shop-image.jpg"
+        alt={party.shopName || "식당"}
         sx={{
           width: { xs: "100%", sm: 120 },
           height: { xs: 140, sm: "auto" },
@@ -101,7 +104,7 @@ const PartyItem = ({ party }: PartyItemProps) => {
         <Box>
           <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
             <Typography fontWeight={700} fontSize={18} noWrap>
-              {party.name}
+              {party.title}
             </Typography>
             <Chip
               icon={status.icon}
@@ -111,7 +114,7 @@ const PartyItem = ({ party }: PartyItemProps) => {
               sx={{ fontWeight: 700 }}
             />
             <Chip
-              label={dayjs(party.dateTime).format("M월 D일 ddd A h:mm")}
+              label={dayjs(party.metAt).format("M월 D일 ddd A h:mm")}
               size="small"
               color="default"
               sx={{ ml: 0.5 }}
@@ -119,46 +122,40 @@ const PartyItem = ({ party }: PartyItemProps) => {
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
             <Typography variant="body2" color="text.secondary" noWrap>
-              {party.shop.name}
+              {party.shopName}
             </Typography>
-            {shopDetail && (
-              <>
-                <Chip
-                  label={
-                    <>
-                      {categoryIcons[shopDetail.category] || "🍽️"}{" "}
-                      {shopDetail.category}
-                    </>
-                  }
-                  size="small"
-                  sx={{ ml: 0.5 }}
-                />
-                <Rating
-                  value={shopDetail.rating}
-                  precision={0.1}
-                  size="small"
-                  readOnly
-                  sx={{ ml: 0.5 }}
-                />
-              </>
-            )}
           </Stack>
           <Typography variant="body2" color="text.secondary" noWrap mb={1}>
-            {party.shop.address}
+            주소 정보 없음
           </Typography>
           <Stack direction="row" spacing={1} alignItems="center" mt={0.5}>
             <Chip
-              label={`인원: ${party.currentUserCount}/${party.maxUserCount}`}
+              label={`인원: ${party.currentCount || 0}/${party.maxCount || 0}`}
               size="small"
               color="info"
             />
             <Typography variant="caption" color="text.secondary">
-              (최소 {party.minUserCount}명)
+              (최소 {party.minCount || 0}명)
             </Typography>
           </Stack>
+          {party.description && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              mt={1}
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {party.description}
+            </Typography>
+          )}
         </Box>
         <Button
-          href={`/party/${party.id}`}
+          href={`/party/${party.partyId}`}
           variant="contained"
           size="small"
           sx={{

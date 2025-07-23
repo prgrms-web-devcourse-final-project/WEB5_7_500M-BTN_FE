@@ -1,14 +1,14 @@
 import { Box, Stack, Typography, Avatar } from "@mui/material";
-import type { ShopListItem } from "@/mock/shop";
+import type { ShopsItem } from "@/api/generated";
 import Link from "next/link";
 
 interface ShopListItemRowProps {
-  shop: ShopListItem;
+  shop: ShopsItem;
 }
 
 const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
   return (
-    <Link href={`/shop/${shop.id}`}>
+    <Link href={`/shop/${shop.shopId}`}>
       <Box
         p={2}
         borderBottom={1}
@@ -30,27 +30,27 @@ const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
           >
             <Stack direction="row" alignItems="center" spacing={1}>
               <Typography variant="subtitle1" fontWeight={700} noWrap>
-                {shop.name}
+                {shop.shopName}
               </Typography>
               <Typography variant="body2" color="text.secondary" noWrap>
                 {shop.category}
               </Typography>
             </Stack>
             <Typography variant="body2" color="warning.main" fontWeight={600}>
-              ★ {shop.rating.toFixed(1)}
+              ★ {shop.rating?.toFixed(1) || "0.0"}
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1} mt={0.5}>
             <Typography variant="body2" color="text.secondary" noWrap>
-              {shop.address}
+              {shop.roadAddress}
             </Typography>
           </Stack>
         </Box>
         <Box mt={1} display="flex" justifyContent="flex-start">
           <Avatar
             variant="rounded"
-            src={shop.thumbnail}
-            alt={shop.name}
+            src={shop.thumbnailUrl}
+            alt={shop.shopName}
             sx={{ width: "100%", height: 160, borderRadius: 1 }}
           />
         </Box>

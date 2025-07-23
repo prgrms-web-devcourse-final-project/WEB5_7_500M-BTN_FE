@@ -12,13 +12,16 @@ import {
   FormControl,
   InputLabel,
   Button,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
-import { simpleParties } from "@/mock/party";
 import PartyCardGrid from "@/features/party/PartyCardGrid";
 import SearchIcon from "@mui/icons-material/Search";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import PartyCreateDialog from "./PartyCreateDialog";
+import { useParties } from "@/api/hooks";
+import { GetPartiesStatusEnum, GetPartiesGenderEnum } from "@/api/generated";
 
 dayjs.locale("ko");
 
@@ -30,19 +33,39 @@ const PartyExploreListPage = () => {
   const [date, setDate] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
 
-  const filteredParties = useMemo(() => {
-    return simpleParties.filter((party) => {
-      const matchSearch =
-        party.name.includes(search) ||
-        party.shop.name.includes(search) ||
-        party.shop.address.includes(search);
-      const matchPeople =
-        people === "전체" || party.maxUserCount === Number(people);
-      const matchDate =
-        !date || dayjs(party.dateTime).format("YYYY-MM-DD") === date;
-      return matchSearch && matchPeople && matchDate;
-    });
+  // API 파라미터 구성
+  const apiParams = useMemo(() => {
+    const params: any = {
+      size: 20,
+    };
+
+    if (search) {
+      params.query = search;
+    }
+
+    if (people !== "전체") {
+      params.maxCount = Number(people);
+    }
+
+    if (date) {
+      // 날짜 필터링은 클라이언트 사이드에서 처리
+    }
+
+    return params;
   }, [search, people, date]);
+
+  const { data: partiesData, isLoading, error } = useParties(apiParams);
+  const parties = partiesData?.data?.content || [];
+
+  // 날짜 필터링 (클라이언트 사이드)
+  const filteredParties = useMemo(() => {
+    if (!date) return parties;
+
+    return parties.filter((party) => {
+      const partyDate = dayjs(party.metAt).format("YYYY-MM-DD");
+      return partyDate === date;
+    });
+  }, [parties, date]);
 
   return (
     <Box maxWidth={1200} mx="auto" px={3} py={6}>
@@ -63,6 +86,7 @@ const PartyExploreListPage = () => {
           파티 생성
         </Button>
       </Stack>
+
       <Stack direction="row" spacing={2} mb={4}>
         <TextField
           placeholder="파티명, 식당명, 주소 검색"
@@ -100,18 +124,32 @@ const PartyExploreListPage = () => {
           sx={{ minWidth: 160 }}
         />
       </Stack>
-      <Grid container spacing={3}>
-        {filteredParties.map((party) => (
-          <Grid key={party.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <PartyCardGrid party={party} />
+
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" py={8}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ mb: 4 }}>
+          파티 정보를 불러오는데 실패했습니다.
+        </Alert>
+      ) : (
+        <>
+          <Grid container spacing={3}>
+            {filteredParties.map((party) => (
+              <Grid key={party.partyId} size={{ xs: 12, sm: 6, md: 4 }}>
+                <PartyCardGrid party={party} />
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-      {filteredParties.length === 0 && (
-        <Typography color="text.secondary" mt={6} textAlign="center">
-          조건에 맞는 파티가 없습니다.
-        </Typography>
+          {filteredParties.length === 0 && (
+            <Typography color="text.secondary" mt={6} textAlign="center">
+              조건에 맞는 파티가 없습니다.
+            </Typography>
+          )}
+        </>
       )}
+
       <PartyCreateDialog
         open={createOpen}
         onClose={() => setCreateOpen(false)}

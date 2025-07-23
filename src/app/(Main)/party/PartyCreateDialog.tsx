@@ -20,6 +20,8 @@ import {
   Select,
   InputLabel,
   FormControl,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -31,6 +33,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import KakaoMap from "./KakaoMap";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { useCreateParty } from "@/api/hooks";
+import { useToast } from "@/features/common/Toast";
+import type { PartyCreateRequest } from "@/api/generated";
 
 // window.kakao 타입 선언 (ShopMap.tsx 참고)
 declare global {
@@ -64,17 +69,22 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
   onClose,
   onCreate,
 }) => {
+  const createPartyMutation = useCreateParty();
+  const { showToast } = useToast();
+
   // 폼 상태
-  const [name, setName] = useState("");
-  const [dateTime, setDateTime] = useState<Dayjs | null>(dayjs());
-  const [minUserCount, setMinUserCount] = useState(2);
-  const [maxUserCount, setMaxUserCount] = useState(5);
+  const [title, setTitle] = useState("");
+  const [metAt, setMetAt] = useState<Dayjs | null>(dayjs());
+  const [minCount, setMinCount] = useState(2);
+  const [maxCount, setMaxCount] = useState(5);
   const [selectedShop, setSelectedShop] = useState<KakaoPlace | null>(null);
   const [prevSelectedShop, setPrevSelectedShop] = useState<KakaoPlace | null>(
     null
   );
   const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
-  const [gender, setGender] = useState<string>("전체");
+  const [genderCondition, setGenderCondition] = useState<string>("A");
+  const [minAge, setMinAge] = useState<number | undefined>(undefined);
+  const [maxAge, setMaxAge] = useState<number | undefined>(undefined);
   const [description, setDescription] = useState("");
 
   // 모드 상태: false=기본(생성폼), true=식당검색
@@ -88,33 +98,51 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
   const [searchTrigger, setSearchTrigger] = useState(0);
 
   // 파티 생성
-  const handleCreate = () => {
-    if (!name || !dateTime || !selectedShop) return;
-    onCreate?.({
-      name,
-      dateTime: dateTime.toISOString(),
-      deadline: deadline?.toISOString(),
-      minUserCount,
-      maxUserCount,
-      gender,
-      description,
-      shop: selectedShop,
-    });
-    onClose();
+  const handleCreate = async () => {
+    if (!title || !metAt || !selectedShop || !deadline) {
+      showToast("필수 정보를 모두 입력해주세요.", "error");
+      return;
+    }
+
+    try {
+      const partyData: PartyCreateRequest = {
+        title,
+        shopId: parseInt(selectedShop.id), // 카카오 API의 place_id를 shopId로 사용
+        metAt: metAt.toISOString(),
+        deadline: deadline.toISOString(),
+        genderCondition: genderCondition as "W" | "M" | "A",
+        minAge,
+        maxAge,
+        minCount,
+        maxCount,
+        description: description || undefined,
+      };
+
+      await createPartyMutation.mutateAsync(partyData);
+      showToast("파티가 성공적으로 생성되었습니다!", "success");
+      onCreate?.(partyData);
+      onClose();
+    } catch (error) {
+      console.error("파티 생성 실패:", error);
+      showToast("파티 생성에 실패했습니다.", "error");
+    }
   };
-  console.log(selectedShop);
 
   // 다이얼로그 닫힐 때 상태 초기화
   useEffect(() => {
     if (!open) {
-      setName("");
-      setDateTime(dayjs());
-      setMinUserCount(2);
-      setMaxUserCount(5);
+      setTitle("");
+      setMetAt(dayjs());
+      setMinCount(2);
+      setMaxCount(5);
       setSelectedShop(null);
       setKeyword("");
       setSearchResults([]);
       setIsSearchMode(false); // 모드도 초기화
+      setGenderCondition("A");
+      setMinAge(undefined);
+      setMaxAge(undefined);
+      setDescription("");
     }
     // eslint-disable-next-line
   }, [open]);
@@ -129,25 +157,6 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
   const handleSearchResults = useCallback((results: any[]) => {
     setSearchResults(results);
   }, []);
-
-  // 검색 결과 지도/마커 표시
-  const displayPlaces = (places: KakaoPlace[]) => {
-    // 이 함수는 지도 관련 로직을 포함하므로 제거되었습니다.
-    // 식당 검색 모드에서는 지도 자체가 없으므로 이 함수는 더 이상 사용되지 않습니다.
-  };
-
-  // 지도 중심과 level에 따라 반경(m) 계산
-  const getRadiusByLevel = () => {
-    // 이 함수는 지도 관련 로직을 포함하므로 제거되었습니다.
-    // 식당 검색 모드에서는 지도 자체가 없으므로 이 함수는 더 이상 사용되지 않습니다.
-    return 2000; // 기본값
-  };
-
-  // 마커/결과 초기화
-  const clearMarkers = () => {
-    // 이 함수는 지도 관련 로직을 포함하므로 제거되었습니다.
-    // 식당 검색 모드에서는 지도 자체가 없으므로 이 함수는 더 이상 사용되지 않습니다.
-  };
 
   // 검색 모드 진입 시 이전 선택값 저장
   const handleEnterSearchMode = () => {
@@ -220,9 +229,9 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
             </Typography>
             <Stack spacing={2}>
               <TextField
-                label="파티명"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                label="파티 제목"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 fullWidth
                 required
               />
@@ -231,9 +240,9 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                 adapterLocale="ko"
               >
                 <DateTimePicker
-                  label="날짜/시간"
-                  value={dateTime}
-                  onChange={setDateTime}
+                  label="모임 날짜/시간"
+                  value={metAt}
+                  onChange={setMetAt}
                   disablePast
                   sx={{ width: "100%" }}
                 />
@@ -248,17 +257,43 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
               <FormControl fullWidth sx={{ mt: 1 }}>
                 <InputLabel>모집 성별</InputLabel>
                 <Select
-                  value={gender}
+                  value={genderCondition}
                   label="모집 성별"
-                  onChange={(e) => setGender(e.target.value)}
+                  onChange={(e) => setGenderCondition(e.target.value)}
                 >
-                  <MenuItem value="전체">전체</MenuItem>
-                  <MenuItem value="남자">남자</MenuItem>
-                  <MenuItem value="여자">여자</MenuItem>
+                  <MenuItem value="A">무관</MenuItem>
+                  <MenuItem value="M">남성</MenuItem>
+                  <MenuItem value="W">여성</MenuItem>
                 </Select>
               </FormControl>
+              <Stack direction="row" spacing={2}>
+                <TextField
+                  label="최소 나이"
+                  type="number"
+                  value={minAge || ""}
+                  onChange={(e) =>
+                    setMinAge(
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  inputProps={{ min: 1, max: 100 }}
+                  sx={{ flex: 1 }}
+                />
+                <TextField
+                  label="최대 나이"
+                  type="number"
+                  value={maxAge || ""}
+                  onChange={(e) =>
+                    setMaxAge(
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
+                  }
+                  inputProps={{ min: 1, max: 100 }}
+                  sx={{ flex: 1 }}
+                />
+              </Stack>
               <TextField
-                label="모집 내용"
+                label="파티 설명"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 fullWidth
@@ -271,17 +306,17 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                 <TextField
                   label="최소 인원"
                   type="number"
-                  value={minUserCount}
-                  onChange={(e) => setMinUserCount(Number(e.target.value))}
-                  inputProps={{ min: 2, max: maxUserCount }}
+                  value={minCount}
+                  onChange={(e) => setMinCount(Number(e.target.value))}
+                  inputProps={{ min: 2, max: maxCount }}
                   sx={{ flex: 1 }}
                 />
                 <TextField
                   label="최대 인원"
                   type="number"
-                  value={maxUserCount}
-                  onChange={(e) => setMaxUserCount(Number(e.target.value))}
-                  inputProps={{ min: minUserCount, max: 20 }}
+                  value={maxCount}
+                  onChange={(e) => setMaxCount(Number(e.target.value))}
+                  inputProps={{ min: minCount, max: 20 }}
                   sx={{ flex: 1 }}
                 />
               </Stack>
@@ -312,11 +347,21 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                 color="primary"
                 size="large"
                 fullWidth
-                disabled={!name || !dateTime || !selectedShop}
+                disabled={
+                  !title ||
+                  !metAt ||
+                  !selectedShop ||
+                  !deadline ||
+                  createPartyMutation.isPending
+                }
                 onClick={handleCreate}
                 sx={{ mt: 2 }}
               >
-                파티 생성하기
+                {createPartyMutation.isPending ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  "파티 생성하기"
+                )}
               </Button>
             </Stack>
           </Box>

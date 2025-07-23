@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-api": "openapi-generator-cli generate -i https://matjalalzz.shop/v3/api-docs -g typescript-axios -o src/api/generated --additional-properties=supportsES6=true,npmName=@/api/generated,npmVersion=1.0.0,typescriptThreePlus=true"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -16,6 +17,9 @@
     "@mui/material": "^7.2.0",
     "@mui/material-nextjs": "^7.2.0",
     "@mui/x-date-pickers": "^8.8.0",
+    "@tanstack/react-query": "^5.83.0",
+    "@tosspayments/payment-sdk": "^1.9.1",
+    "axios": "^1.11.0",
     "dayjs": "^1.11.13",
     "next": "15.3.4",
     "react": "^19.0.0",
@@ -23,6 +27,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@openapitools/openapi-generator-cli": "^2.21.3",
+    "@tanstack/react-query-devtools": "^5.83.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
