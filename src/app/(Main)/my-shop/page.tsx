@@ -41,6 +41,7 @@ import {
   ShopCreateRequestCategoryEnum,
 } from "@/api/generated";
 import KakaoMap from "../party/KakaoMap";
+import { getCategoryLabel } from "@/constants";
 
 // window.kakao 타입 선언
 declare global {
@@ -984,7 +985,7 @@ const MyShopPage = () => {
               <Stack direction="row" spacing={2} alignItems="center">
                 <CategoryIcon color="action" fontSize="small" />
                 <Typography variant="body1" color="text.secondary">
-                  {myShop.category}
+                  {getCategoryLabel(myShop.category || "")}
                 </Typography>
                 <StarIcon sx={{ color: "#FFD600", ml: 2 }} fontSize="small" />
                 <Typography variant="body1" color="text.secondary">

@@ -57,10 +57,14 @@ export const confirmPayment = async (
   amount: number
 ) => {
   try {
+    // 액세스 토큰 가져오기
+    const accessToken = localStorage.getItem("accessToken");
+
     const response = await fetch("/api/payment/confirm", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       },
       body: JSON.stringify({
         paymentKey,

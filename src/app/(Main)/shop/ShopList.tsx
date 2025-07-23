@@ -81,6 +81,9 @@ const ShopList: React.FC = () => {
     isLoading,
     error,
   } = useShops({
+    latitude: 37.5724, // 종로구 기본 좌표
+    longitude: 126.9794, // 종로구 기본 좌표
+    radius: 3000, // 3km 반경
     category: categoryFilter,
     sort: selectedSort,
     size: 20,

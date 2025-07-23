@@ -1,6 +1,7 @@
 import { Box, Stack, Typography, Avatar } from "@mui/material";
 import type { ShopsItem } from "@/api/generated";
 import Link from "next/link";
+import { getCategoryLabel } from "@/constants";
 
 interface ShopListItemRowProps {
   shop: ShopsItem;
@@ -33,7 +34,7 @@ const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
                 {shop.shopName}
               </Typography>
               <Typography variant="body2" color="text.secondary" noWrap>
-                {shop.category}
+                {getCategoryLabel(shop.category || "")}
               </Typography>
             </Stack>
             <Typography variant="body2" color="warning.main" fontWeight={600}>

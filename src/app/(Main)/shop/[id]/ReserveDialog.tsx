@@ -8,13 +8,14 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/ko";
-import { getTimeOptions, isPast } from "./reserveUtils";
+import { getTimeGridOptions } from "./reserveUtils";
 import { useToast } from "@/features/common/Toast";
 import Toast from "@/features/common/Toast";
 import { useCreateReservation, useMyInfo } from "@/api/hooks";
@@ -38,6 +39,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
   shop,
   onReserveSuccess,
 }) => {
+  shop.reservationFee = 1000;
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [people, setPeople] = useState(1);
@@ -50,13 +52,31 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
   // 영업시간 포맷팅
   const formatTime = (time: any) => {
     if (!time) return "";
-    const hours = time.hour?.toString().padStart(2, "0") || "00";
-    const minutes = time.minute?.toString().padStart(2, "0") || "00";
-    return `${hours}:${minutes}`;
+
+    // 문자열 형태인 경우 (HH:MM:SS)
+    if (typeof time === "string") {
+      const [hours, minutes] = time.split(":");
+      return `${hours}:${minutes}`;
+    }
+
+    // 객체 형태인 경우 (LocalTime)
+    if (typeof time === "object" && time.hour !== undefined) {
+      const hours = time.hour?.toString().padStart(2, "0") || "00";
+      const minutes = time.minute?.toString().padStart(2, "0") || "00";
+      return `${hours}:${minutes}`;
+    }
+
+    return "";
   };
 
   const openTime = formatTime(shop.openTime);
   const closeTime = formatTime(shop.closeTime);
+  console.log(openTime, closeTime);
+
+  // 시간 그리드 옵션 생성
+  const timeSlots = selectedDate
+    ? getTimeGridOptions(selectedDate, openTime, closeTime)
+    : [];
 
   const handlePayment = async () => {
     if (!selectedDate || !selectedTime) {
@@ -112,7 +132,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
         severity={toast.severity}
         onClose={hideToast}
       />
-      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogContent sx={{ p: 4, position: "relative" }}>
           <IconButton
             onClick={onClose}
@@ -135,24 +155,58 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
               sx={{ width: "100%", mb: 3 }}
             />
           </LocalizationProvider>
-          <Typography variant="subtitle1" fontWeight={600} mb={1}>
+
+          <Typography variant="subtitle1" fontWeight={600} mb={2}>
             시간 선택
           </Typography>
-          <Stack direction="row" flexWrap="wrap" gap={1} mb={3}>
-            {getTimeOptions(selectedDate!, openTime, closeTime).map((time) => (
-              <Button
-                key={time}
-                variant={selectedTime === time ? "contained" : "outlined"}
-                color="primary"
-                size="small"
-                disabled={isPast(selectedDate!, time)}
-                onClick={() => setSelectedTime(time)}
-                sx={{ minWidth: 72 }}
+
+          {/* 네이버 예약 스타일의 시간 그리드 */}
+          <Box sx={{ mb: 3 }}>
+            {timeSlots.length > 0 ? (
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(6, 1fr)",
+                  gap: 1,
+                }}
               >
-                {time}
-              </Button>
-            ))}
-          </Stack>
+                {timeSlots.map((slot) => (
+                  <Button
+                    key={slot.time}
+                    variant={
+                      selectedTime === slot.time ? "contained" : "outlined"
+                    }
+                    color="primary"
+                    size="small"
+                    disabled={!slot.available}
+                    onClick={() => setSelectedTime(slot.time)}
+                    sx={{
+                      width: "100%",
+                      height: 40,
+                      fontSize: "0.875rem",
+                      fontWeight: selectedTime === slot.time ? 600 : 400,
+                      borderColor: slot.isPast ? "#e0e0e0" : undefined,
+                      color: slot.isPast ? "#9e9e9e" : undefined,
+                      "&:hover": {
+                        borderColor: slot.isPast ? "#e0e0e0" : undefined,
+                      },
+                      "&.Mui-disabled": {
+                        backgroundColor: slot.isPast ? "#f5f5f5" : undefined,
+                        color: slot.isPast ? "#9e9e9e" : undefined,
+                      },
+                    }}
+                  >
+                    {slot.time}
+                  </Button>
+                ))}
+              </Box>
+            ) : (
+              <Typography color="text.secondary" textAlign="center" py={2}>
+                선택한 날짜에 예약 가능한 시간이 없습니다.
+              </Typography>
+            )}
+          </Box>
+
           <Typography variant="subtitle1" fontWeight={600} mb={1}>
             인원
           </Typography>

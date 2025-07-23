@@ -5,7 +5,16 @@ import SimpleShopCard from "@/features/shop/SimpleShopCard";
 import { useShops } from "@/api/hooks";
 
 const ShopList = () => {
-  const { data: shopsData, isLoading, error } = useShops({ size: 6 });
+  const {
+    data: shopsData,
+    isLoading,
+    error,
+  } = useShops({
+    latitude: 37.5724, // 종로구 기본 좌표
+    longitude: 126.9794, // 종로구 기본 좌표
+    radius: 3000, // 3km 반경
+    size: 6,
+  });
 
   if (isLoading) {
     return (

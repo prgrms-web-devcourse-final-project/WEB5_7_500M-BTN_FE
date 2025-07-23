@@ -119,6 +119,20 @@ export const CATEGORIES = {
   },
 } as const;
 
+// 카테고리 한글 매핑
+export const CATEGORY_LABELS: Record<string, string> = {
+  ALL: "전체",
+  KOREAN: "한식",
+  JAPANESE: "일식",
+  CHINESE: "중식",
+  WESTERN: "양식",
+} as const;
+
+// 카테고리를 한글로 변환하는 함수
+export const getCategoryLabel = (category: string): string => {
+  return CATEGORY_LABELS[category] || category;
+};
+
 // 정렬 옵션 상수
 export const SORT_OPTIONS = {
   NEAR: "NEAR",

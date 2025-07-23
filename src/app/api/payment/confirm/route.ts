@@ -13,12 +13,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 클라이언트의 Authorization 헤더를 백엔드로 전달
+    const authorization = request.headers.get("authorization");
+
     // 백엔드 API를 통해 결제 확인
-    const response = await apiClient.confirm({
-      paymentKey,
-      orderId,
-      amount,
-    });
+    const response = await apiClient.confirm(
+      {
+        paymentKey,
+        orderId,
+        amount,
+      },
+      {
+        headers: {
+          ...(authorization && { Authorization: authorization }),
+        },
+      }
+    );
 
     return NextResponse.json(response.data);
   } catch (error: any) {

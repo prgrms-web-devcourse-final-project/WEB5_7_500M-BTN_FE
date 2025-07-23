@@ -20,6 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ReserveDialog from "./ReserveDialog";
 import getImageLayout from "./getImageLayout";
 import { useShopDetail, useShopReviews } from "@/api/hooks";
+import { getCategoryLabel } from "@/constants";
 
 const ShopDetailPage = () => {
   const params = useParams();
@@ -153,7 +154,7 @@ const ShopDetailPage = () => {
               </Box>
             </Stack>
             <Typography variant="subtitle2" color="text.secondary" mb={1.5}>
-              {shop.category}
+              {getCategoryLabel(shop.category || "")}
             </Typography>
             <Typography variant="body1" mb={3}>
               {shop.description}
