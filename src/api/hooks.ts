@@ -672,16 +672,41 @@ export const useRefuseReservation = () => {
 export const useOAuth2Urls = () => {
   return useQuery({
     queryKey: ["oauth2Urls"],
-    queryFn: () => apiClient.oauth2Urls(),
+    queryFn: async () => {
+      try {
+        const response = await apiClient.oauth2Urls();
+        return response.data;
+      } catch (error) {
+        console.error("OAuth URL 조회 실패:", error);
+        // OAuth URL이 없을 경우 기본 URL 반환
+        return {
+          google: "/oauth2/authorization/google",
+          kakao: "/oauth2/authorization/kakao",
+          naver: "/oauth2/authorization/naver",
+        };
+      }
+    },
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5분
   });
 };
 
 export const useOAuthSignup = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
-    mutationFn: (data: OAuthSignUpRequest) => apiClient.oauthSignup(data),
+    mutationFn: async (data: OAuthSignUpRequest) => {
+      try {
+        const response = await apiClient.oauthSignup(data);
+        return response.data;
+      } catch (error) {
+        handleError(error, "OAuth 회원가입");
+        throw error;
+      }
+    },
     onSuccess: () => {
+      // OAuth 회원가입 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["myInfo"] });
     },
   });

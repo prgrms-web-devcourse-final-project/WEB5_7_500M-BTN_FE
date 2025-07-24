@@ -13,8 +13,35 @@ import Image from "next/image";
 import { useOAuth2Urls } from "@/api/hooks";
 
 export default function OAuthBox() {
-  const { data: oauthResponse, isLoading, error } = useOAuth2Urls();
-  const oauthUrls = oauthResponse?.data;
+  const { data: oauthUrls, isLoading, error } = useOAuth2Urls();
+
+  // API 기본 URL
+  const API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.shop";
+
+  // 기본 OAuth URL (API에서 가져오지 못할 경우 사용)
+  const defaultOAuthUrls = {
+    google: `${API_BASE_URL}/oauth2/authorization/google`,
+    kakao: `${API_BASE_URL}/oauth2/authorization/kakao`,
+    naver: `${API_BASE_URL}/oauth2/authorization/naver`,
+  };
+
+  console.log("oauthUrls", oauthUrls);
+
+  // API에서 가져온 URL이 있으면 서버 URL과 결합, 없으면 기본 URL 사용
+  const urls = oauthUrls
+    ? {
+        google: oauthUrls.google?.startsWith("http")
+          ? oauthUrls.google
+          : `${API_BASE_URL}${oauthUrls.google}`,
+        kakao: oauthUrls.kakao?.startsWith("http")
+          ? oauthUrls.kakao
+          : `${API_BASE_URL}${oauthUrls.kakao}`,
+        naver: oauthUrls.naver?.startsWith("http")
+          ? oauthUrls.naver
+          : `${API_BASE_URL}${oauthUrls.naver}`,
+      }
+    : defaultOAuthUrls;
 
   if (isLoading) {
     return (
@@ -24,18 +51,10 @@ export default function OAuthBox() {
     );
   }
 
-  if (error || !oauthUrls) {
-    return (
-      <Alert severity="error" sx={{ mt: 2 }}>
-        OAuth 서비스를 불러올 수 없습니다.
-      </Alert>
-    );
-  }
-
   return (
     <>
       <Stack spacing={1}>
-        {oauthUrls.google && (
+        {urls.google && (
           <Button
             fullWidth
             variant="contained"
@@ -48,7 +67,12 @@ export default function OAuthBox() {
               />
             }
             onClick={() => {
-              window.location.href = oauthUrls.google;
+              const callbackUrl = `${window.location.origin}/oauth/callback`;
+              const oauthUrl = `${
+                urls.google
+              }?redirect_uri=${encodeURIComponent(callbackUrl)}`;
+              console.log("Google OAuth 시작:", oauthUrl);
+              window.location.href = oauthUrl;
             }}
             sx={{
               height: "40px",
@@ -63,7 +87,7 @@ export default function OAuthBox() {
           </Button>
         )}
 
-        {oauthUrls.kakao && (
+        {urls.kakao && (
           <Button
             fullWidth
             variant="contained"
@@ -76,7 +100,12 @@ export default function OAuthBox() {
               />
             }
             onClick={() => {
-              window.location.href = oauthUrls.kakao;
+              const callbackUrl = `${window.location.origin}/oauth/callback`;
+              const oauthUrl = `${urls.kakao}?redirect_uri=${encodeURIComponent(
+                callbackUrl
+              )}`;
+              console.log("Kakao OAuth 시작:", oauthUrl);
+              window.location.href = oauthUrl;
             }}
             sx={{
               height: "40px",
@@ -90,7 +119,7 @@ export default function OAuthBox() {
           </Button>
         )}
 
-        {oauthUrls.naver && (
+        {urls.naver && (
           <Button
             fullWidth
             variant="contained"
@@ -103,7 +132,12 @@ export default function OAuthBox() {
               />
             }
             onClick={() => {
-              window.location.href = oauthUrls.naver;
+              const callbackUrl = `${window.location.origin}/oauth/callback`;
+              const oauthUrl = `${urls.naver}?redirect_uri=${encodeURIComponent(
+                callbackUrl
+              )}`;
+              console.log("Naver OAuth 시작:", oauthUrl);
+              window.location.href = oauthUrl;
             }}
             sx={{
               height: "40px",
