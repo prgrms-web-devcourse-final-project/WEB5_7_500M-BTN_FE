@@ -21,6 +21,8 @@ import ReserveDialog from "./ReserveDialog";
 import getImageLayout from "./getImageLayout";
 import { useShopDetail, useShopReviews } from "@/api/hooks";
 import { getCategoryLabel } from "@/constants";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/features/common/Toast";
 
 const ShopDetailPage = () => {
   const params = useParams();
@@ -44,6 +46,9 @@ const ShopDetailPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState<string | null>(null);
   const [reserveOpen, setReserveOpen] = useState(false);
+
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
 
   const handleImgClick = (img: string) => {
     setModalImg(img);
@@ -147,7 +152,13 @@ const ShopDetailPage = () => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onClick={() => setReserveOpen(true)}
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      showToast("로그인이 필요합니다.", "warning");
+                      return;
+                    }
+                    setReserveOpen(true);
+                  }}
                 >
                   예약하기
                 </Button>

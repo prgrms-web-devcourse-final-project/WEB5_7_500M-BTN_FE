@@ -17,6 +17,9 @@ export default function QueryProvider({
             staleTime: 60 * 1000, // 1분
             retry: 1,
           },
+          mutations: {
+            retry: 1,
+          },
         },
       })
   );

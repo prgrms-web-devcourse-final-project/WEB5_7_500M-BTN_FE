@@ -11,11 +11,11 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ShopListItemRow from "@/features/shop/ShopListCard";
 import { useShops } from "@/api/hooks";
-import { GetShopsCategoryEnum } from "@/api/generated";
+import { GetShopsCategoryEnum, ShopsItem } from "@/api/generated";
 import { SEARCH_CONSTANTS } from "@/constants";
 import { debounce } from "@/utils";
 
@@ -33,7 +33,15 @@ const sorts = [
   { value: "RATING", label: "평점순" },
 ] as const;
 
-const ShopList: React.FC = () => {
+interface ShopListProps {
+  onShopSelect?: (shop: ShopsItem) => void;
+  onShopsDataUpdate?: (shops: ShopsItem[]) => void;
+}
+
+const ShopList: React.FC<ShopListProps> = ({
+  onShopSelect,
+  onShopsDataUpdate,
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialSearchQuery = searchParams.get("search") || "";
@@ -45,6 +53,7 @@ const ShopList: React.FC = () => {
   const [selectedSort, setSelectedSort] = useState<string>("NEAR");
   const [debouncedSearchQuery, setDebouncedSearchQuery] =
     useState(initialSearchQuery);
+  const [selectedShop, setSelectedShop] = useState<ShopsItem | null>(null);
 
   // URL 파라미터 변경 시 검색어 업데이트
   useEffect(() => {
@@ -85,7 +94,7 @@ const ShopList: React.FC = () => {
     longitude: 126.9794, // 종로구 기본 좌표
     radius: 3000, // 3km 반경
     category: categoryFilter,
-    sort: selectedSort,
+    // sort: selectedSort,
     size: 20,
   });
 
@@ -101,19 +110,39 @@ const ShopList: React.FC = () => {
     setSelectedSort(e.target.value);
   };
 
-  // 검색어로 필터링 (클라이언트 사이드)
-  const filteredShops =
-    shopsData?.data?.content?.filter((shop) => {
-      if (!debouncedSearchQuery) return true;
-      return (
-        shop.shopName
-          ?.toLowerCase()
-          .includes(debouncedSearchQuery.toLowerCase()) ||
-        shop.roadAddress
-          ?.toLowerCase()
-          .includes(debouncedSearchQuery.toLowerCase())
-      );
-    }) || [];
+  const handleShopSelect = useCallback(
+    (shop: ShopsItem) => {
+      setSelectedShop(shop);
+      if (onShopSelect) {
+        onShopSelect(shop);
+      }
+    },
+    [onShopSelect]
+  );
+
+  // 검색어로 필터링 (클라이언트 사이드) - useMemo로 최적화
+  const filteredShops = useMemo(() => {
+    return (
+      shopsData?.data?.content?.filter((shop) => {
+        if (!debouncedSearchQuery) return true;
+        return (
+          shop.shopName
+            ?.toLowerCase()
+            .includes(debouncedSearchQuery.toLowerCase()) ||
+          shop.roadAddress
+            ?.toLowerCase()
+            .includes(debouncedSearchQuery.toLowerCase())
+        );
+      }) || []
+    );
+  }, [shopsData?.data?.content, debouncedSearchQuery]);
+
+  // 필터링된 식당 데이터가 변경될 때마다 부모 컴포넌트에 알림
+  useEffect(() => {
+    if (onShopsDataUpdate && filteredShops.length > 0) {
+      onShopsDataUpdate(filteredShops);
+    }
+  }, [filteredShops, onShopsDataUpdate]);
 
   return (
     <Box
@@ -207,7 +236,12 @@ const ShopList: React.FC = () => {
           </Box>
         ) : (
           filteredShops.map((shop) => (
-            <ShopListItemRow key={shop.shopId} shop={shop} />
+            <ShopListItemRow
+              key={shop.shopId}
+              shop={shop}
+              isSelected={selectedShop?.shopId === shop.shopId}
+              onClick={() => handleShopSelect(shop)}
+            />
           ))
         )}
       </Box>

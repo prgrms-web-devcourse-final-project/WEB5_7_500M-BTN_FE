@@ -5,9 +5,22 @@ import { getCategoryLabel } from "@/constants";
 
 interface ShopListItemRowProps {
   shop: ShopsItem;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
-const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
+const ShopListItemRow: React.FC<ShopListItemRowProps> = ({
+  shop,
+  isSelected = false,
+  onClick,
+}) => {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <Link href={`/shop/${shop.shopId}`}>
       <Box
@@ -15,12 +28,20 @@ const ShopListItemRow: React.FC<ShopListItemRowProps> = ({ shop }) => {
         borderBottom={1}
         borderColor="#f0f0f0"
         sx={{
+          backgroundColor: isSelected
+            ? "rgba(25, 118, 210, 0.08)"
+            : "transparent",
+          borderLeft: isSelected ? 3 : 0,
+          borderLeftColor: "primary.main",
           "&:hover": {
             transition: "all 0.2s",
-            backgroundColor: "rgba(0, 0, 0, 0.04)",
+            backgroundColor: isSelected
+              ? "rgba(25, 118, 210, 0.12)"
+              : "rgba(0, 0, 0, 0.04)",
             cursor: "pointer",
           },
         }}
+        onClick={handleClick}
       >
         <Box flex={1} minWidth={0}>
           <Stack

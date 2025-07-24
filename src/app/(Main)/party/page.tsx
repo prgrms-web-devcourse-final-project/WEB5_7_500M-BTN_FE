@@ -22,6 +22,8 @@ import "dayjs/locale/ko";
 import PartyCreateDialog from "./PartyCreateDialog";
 import { useParties } from "@/api/hooks";
 import { GetPartiesStatusEnum, GetPartiesGenderEnum } from "@/api/generated";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/features/common/Toast";
 
 dayjs.locale("ko");
 
@@ -32,6 +34,9 @@ const PartyExploreListPage = () => {
   const [people, setPeople] = useState<string | number>("전체");
   const [date, setDate] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
+
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
 
   // API 파라미터 구성
   const apiParams = useMemo(() => {
@@ -81,7 +86,13 @@ const PartyExploreListPage = () => {
           color="primary"
           size="small"
           sx={{ ml: "auto", mb: 0.5 }}
-          onClick={() => setCreateOpen(true)}
+          onClick={() => {
+            if (!isAuthenticated) {
+              showToast("로그인이 필요합니다.", "warning");
+              return;
+            }
+            setCreateOpen(true);
+          }}
         >
           파티 생성
         </Button>

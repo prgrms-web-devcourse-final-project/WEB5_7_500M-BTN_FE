@@ -11,6 +11,7 @@ import {
   getToken,
 } from "./client";
 import { logApiError, logAuth } from "@/utils/logger";
+import { useApiError, useApiErrorHandler } from "@/hooks/useApiError";
 import type {
   BaseResponseShopsResponse,
   BaseResponsePartyScrollResponse,
@@ -55,7 +56,7 @@ export const useShops = (params?: {
   cursor?: number;
   size?: number;
 }) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["shops", params],
     queryFn: async () => {
       const response = await apiClient.getShops(
@@ -71,6 +72,38 @@ export const useShops = (params?: {
     },
     enabled: true,
   });
+
+  // 자동 에러 처리
+  useApiError(query.error, "식당 목록 조회");
+
+  return query;
+};
+
+// 식당 검색 훅
+export const useShopsBySearch = (params?: {
+  query?: string;
+  sort?: GetShopsBySearchSortEnum;
+  cursor?: string;
+  size?: number;
+}) => {
+  const query = useQuery({
+    queryKey: ["shopsBySearch", params],
+    queryFn: async () => {
+      const response = await apiClient.getShopsBySearch(
+        params?.query,
+        params?.sort,
+        params?.cursor,
+        params?.size
+      );
+      return response.data;
+    },
+    enabled: !!params?.query && params.query.trim().length > 0,
+  });
+
+  // 자동 에러 처리
+  useApiError(query.error, "식당 검색");
+
+  return query;
 };
 
 // 파티 목록 조회 훅
@@ -107,7 +140,7 @@ export const useParties = (params?: {
 
 // 내 정보 조회 훅
 export const useMyInfo = () => {
-  return useQuery<BaseResponseMyInfoResponse>({
+  const query = useQuery<BaseResponseMyInfoResponse>({
     queryKey: ["myInfo"],
     queryFn: async () => {
       try {
@@ -125,6 +158,11 @@ export const useMyInfo = () => {
     },
     enabled: true,
   });
+
+  // 자동 에러 처리
+  useApiError(query.error, "내 정보 조회");
+
+  return query;
 };
 
 // 내 예약 목록 조회 훅
@@ -221,62 +259,89 @@ export const useShopReviews = (
 // 로그인 훅
 export const useLogin = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
     mutationFn: async (loginData: LoginRequest) => {
-      // 초기 쿠키 상태 확인
-      logAuth("로그인 시작");
-      logAuth("브라우저 환경 정보", {
-        protocol:
-          typeof window !== "undefined" ? window.location.protocol : "SSR",
-        hostname:
-          typeof window !== "undefined" ? window.location.hostname : "SSR",
-        origin: typeof window !== "undefined" ? window.location.origin : "SSR",
-        userAgent:
-          typeof navigator !== "undefined" ? navigator.userAgent : "SSR",
-      });
-      debugCookies();
-
-      localStorage.removeItem("accessToken");
-      removeCookie("refreshToken"); // 기존 쿠키 제거
-
-      logAuth("로그인 요청 시작");
-      const response = await apiClient.login(loginData);
-      logAuth("로그인 응답 받음");
-
-      // axios 응답에서 헤더 추출
-      const accessToken = response.headers?.["authorization"]?.replace(
-        "Bearer ",
-        ""
-      );
-      if (accessToken) {
-        setAccessToken(accessToken);
-        logAuth("액세스 토큰 저장됨", {
-          token: accessToken.substring(0, 20) + "...",
+      try {
+        // 초기 쿠키 상태 확인
+        logAuth("로그인 시작");
+        logAuth("브라우저 환경 정보", {
+          protocol:
+            typeof window !== "undefined" ? window.location.protocol : "SSR",
+          hostname:
+            typeof window !== "undefined" ? window.location.hostname : "SSR",
+          origin:
+            typeof window !== "undefined" ? window.location.origin : "SSR",
+          userAgent:
+            typeof navigator !== "undefined" ? navigator.userAgent : "SSR",
         });
-        // 토큰 갱신 후 클라이언트 재생성
-        refreshApiClient();
-      }
+        debugCookies();
 
-      // Set-Cookie 헤더 확인 (디버깅용)
-      const setCookieHeader = response.headers["set-cookie"];
-      if (setCookieHeader) {
-        logAuth("Set-Cookie 헤더 감지", { setCookieHeader });
+        localStorage.removeItem("accessToken");
+        removeCookie("refreshToken"); // 기존 쿠키 제거
 
-        // Set-Cookie 헤더 내용 분석
-        if (Array.isArray(setCookieHeader)) {
-          setCookieHeader.forEach((cookie, index) => {
-            logAuth(`Set-Cookie ${index + 1} 상세 분석`, {
-              fullCookie: cookie,
-              hasHttpOnly: cookie.includes("HttpOnly"),
-              hasSecure: cookie.includes("Secure"),
-              hasSameSite: cookie.includes("SameSite"),
-              hasPath: cookie.includes("Path="),
+        logAuth("로그인 요청 시작");
+        const response = await apiClient.login(loginData);
+        logAuth("로그인 응답 받음");
+
+        // axios 응답에서 헤더 추출
+        const accessToken = response.headers?.["authorization"]?.replace(
+          "Bearer ",
+          ""
+        );
+        if (accessToken) {
+          setAccessToken(accessToken);
+          logAuth("액세스 토큰 저장됨", {
+            token: accessToken.substring(0, 20) + "...",
+          });
+          // 토큰 갱신 후 클라이언트 재생성
+          refreshApiClient();
+        }
+
+        // Set-Cookie 헤더 확인 (디버깅용)
+        const setCookieHeader = response.headers["set-cookie"];
+        if (setCookieHeader) {
+          logAuth("Set-Cookie 헤더 감지", { setCookieHeader });
+
+          // Set-Cookie 헤더 내용 분석
+          if (Array.isArray(setCookieHeader)) {
+            setCookieHeader.forEach((cookie, index) => {
+              logAuth(`Set-Cookie ${index + 1} 상세 분석`, {
+                fullCookie: cookie,
+                hasHttpOnly: cookie.includes("HttpOnly"),
+                hasSecure: cookie.includes("Secure"),
+                hasSameSite: cookie.includes("SameSite"),
+                hasPath: cookie.includes("Path="),
+              });
+
+              // HttpOnly가 아닌 경우 수동으로 쿠키 설정 시도
+              if (!cookie.includes("HttpOnly")) {
+                const cookieMatch = cookie.match(/^([^=]+)=([^;]+)/);
+                if (cookieMatch) {
+                  const [, cookieName, cookieValue] = cookieMatch;
+                  if (cookieName.toLowerCase().includes("refresh")) {
+                    logAuth(
+                      "HttpOnly가 아닌 리프레시 토큰 발견, 수동 설정 시도"
+                    );
+                    setCookie(cookieName, cookieValue, 7);
+                  }
+                }
+              }
+            });
+          } else {
+            const cookieString = String(setCookieHeader);
+            logAuth("Set-Cookie 단일 헤더 상세 분석", {
+              fullCookie: cookieString,
+              hasHttpOnly: cookieString.includes("HttpOnly"),
+              hasSecure: cookieString.includes("Secure"),
+              hasSameSite: cookieString.includes("SameSite"),
+              hasPath: cookieString.includes("Path="),
             });
 
             // HttpOnly가 아닌 경우 수동으로 쿠키 설정 시도
-            if (!cookie.includes("HttpOnly")) {
-              const cookieMatch = cookie.match(/^([^=]+)=([^;]+)/);
+            if (!cookieString.includes("HttpOnly")) {
+              const cookieMatch = cookieString.match(/^([^=]+)=([^;]+)/);
               if (cookieMatch) {
                 const [, cookieName, cookieValue] = cookieMatch;
                 if (cookieName.toLowerCase().includes("refresh")) {
@@ -285,61 +350,43 @@ export const useLogin = () => {
                 }
               }
             }
+          }
+        } else {
+          logAuth("Set-Cookie 헤더가 없습니다");
+        }
+
+        // 쿠키에서 리프레시 토큰 확인
+        const refreshToken = getToken("refreshToken");
+        if (refreshToken) {
+          logAuth("리프레시 토큰 발견", {
+            token: refreshToken.substring(0, 20) + "...",
           });
         } else {
-          const cookieString = String(setCookieHeader);
-          logAuth("Set-Cookie 단일 헤더 상세 분석", {
-            fullCookie: cookieString,
-            hasHttpOnly: cookieString.includes("HttpOnly"),
-            hasSecure: cookieString.includes("Secure"),
-            hasSameSite: cookieString.includes("SameSite"),
-            hasPath: cookieString.includes("Path="),
-          });
+          logAuth("리프레시 토큰을 찾을 수 없음");
+          // 현재 모든 쿠키 확인
+          logAuth("현재 모든 쿠키", { cookies: document.cookie });
 
-          // HttpOnly가 아닌 경우 수동으로 쿠키 설정 시도
-          if (!cookieString.includes("HttpOnly")) {
-            const cookieMatch = cookieString.match(/^([^=]+)=([^;]+)/);
-            if (cookieMatch) {
-              const [, cookieName, cookieValue] = cookieMatch;
-              if (cookieName.toLowerCase().includes("refresh")) {
-                logAuth("HttpOnly가 아닌 리프레시 토큰 발견, 수동 설정 시도");
-                setCookie(cookieName, cookieValue, 7);
-              }
+          // 다른 가능한 쿠키 이름들 확인
+          const possibleNames = ["refreshToken", "refresh_token", "token"];
+          possibleNames.forEach((name) => {
+            const token = getToken(name);
+            if (token) {
+              logAuth(`토큰 ${name} 발견`, {
+                token: token.substring(0, 20) + "...",
+              });
             }
-          }
+          });
         }
-      } else {
-        logAuth("Set-Cookie 헤더가 없습니다");
+
+        // 최종 쿠키 상태 확인
+        logAuth("로그인 완료 후 쿠키 상태");
+        debugCookies();
+
+        return response.data;
+      } catch (error) {
+        handleError(error, "로그인");
+        throw error;
       }
-
-      // 쿠키에서 리프레시 토큰 확인
-      const refreshToken = getToken("refreshToken");
-      if (refreshToken) {
-        logAuth("리프레시 토큰 발견", {
-          token: refreshToken.substring(0, 20) + "...",
-        });
-      } else {
-        logAuth("리프레시 토큰을 찾을 수 없음");
-        // 현재 모든 쿠키 확인
-        logAuth("현재 모든 쿠키", { cookies: document.cookie });
-
-        // 다른 가능한 쿠키 이름들 확인
-        const possibleNames = ["refreshToken", "refresh_token", "token"];
-        possibleNames.forEach((name) => {
-          const token = getToken(name);
-          if (token) {
-            logAuth(`토큰 ${name} 발견`, {
-              token: token.substring(0, 20) + "...",
-            });
-          }
-        });
-      }
-
-      // 최종 쿠키 상태 확인
-      logAuth("로그인 완료 후 쿠키 상태");
-      debugCookies();
-
-      return response.data;
     },
     onSuccess: () => {
       // 로그인 성공 시 관련 쿼리 무효화
@@ -361,18 +408,25 @@ export const useSignUp = () => {
 // 예약 생성 훅
 export const useCreateReservation = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
-    mutationFn: (params: {
+    mutationFn: async (params: {
       shopId: number;
       reservationData: CreateReservationRequest;
       partyId?: number;
-    }) =>
-      apiClient.createReservation(
-        params.shopId,
-        params.reservationData,
-        params.partyId
-      ),
+    }) => {
+      try {
+        return await apiClient.createReservation(
+          params.shopId,
+          params.reservationData,
+          params.partyId
+        );
+      } catch (error) {
+        handleError(error, "예약 생성");
+        throw error;
+      }
+    },
     onSuccess: () => {
       // 예약 생성 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["myReservations"] });
@@ -395,10 +449,17 @@ export const usePartyDetail = (partyId: number) => {
 // 파티 생성 훅
 export const useCreateParty = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
-    mutationFn: (partyData: PartyCreateRequest) =>
-      apiClient.createParty(partyData),
+    mutationFn: async (partyData: PartyCreateRequest) => {
+      try {
+        return await apiClient.createParty(partyData);
+      } catch (error) {
+        handleError(error, "파티 생성");
+        throw error;
+      }
+    },
     onSuccess: () => {
       // 파티 생성 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["parties"] });
@@ -410,9 +471,17 @@ export const useCreateParty = () => {
 // 파티 참여 훅
 export const useJoinParty = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
-    mutationFn: (partyId: number) => apiClient.joinParty(partyId),
+    mutationFn: async (partyId: number) => {
+      try {
+        return await apiClient.joinParty(partyId);
+      } catch (error) {
+        handleError(error, "파티 참여");
+        throw error;
+      }
+    },
     onSuccess: () => {
       // 파티 참여 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["parties"] });
@@ -424,9 +493,17 @@ export const useJoinParty = () => {
 // 파티 나가기 훅
 export const useQuitParty = () => {
   const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
 
   return useMutation({
-    mutationFn: (partyId: number) => apiClient.quitParty(partyId),
+    mutationFn: async (partyId: number) => {
+      try {
+        return await apiClient.quitParty(partyId);
+      } catch (error) {
+        handleError(error, "파티 나가기");
+        throw error;
+      }
+    },
     onSuccess: () => {
       // 파티 나가기 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["parties"] });

@@ -58,10 +58,18 @@ export interface FormData {
 
 // 에러 타입
 export interface ApiError {
+  status: number;
+  code: string;
   message: string;
-  status?: number;
-  code?: string;
-  details?: Record<string, unknown>;
+  path: string;
+}
+
+// API 응답 에러 타입
+export interface ApiErrorResponse {
+  status: number;
+  code: string;
+  message: string;
+  path: string;
 }
 
 // 로딩 상태 타입

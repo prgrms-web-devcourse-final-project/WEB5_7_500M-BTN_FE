@@ -31,6 +31,7 @@ import {
 } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
 import Toast from "@/features/common/Toast";
+import { useAuth } from "@/hooks/useAuth";
 import type { PartyDetailResponse } from "@/api/generated";
 
 dayjs.locale("ko");
@@ -47,6 +48,7 @@ const PartyDetailPage = () => {
   const joinPartyMutation = useJoinParty();
   const quitPartyMutation = useQuitParty();
   const { showToast } = useToast();
+  const { isAuthenticated } = useAuth();
 
   const party = partyData?.data;
   const myInfo = myInfoData?.data;
@@ -84,12 +86,16 @@ const PartyDetailPage = () => {
   );
 
   const handleJoinParty = async () => {
+    if (!isAuthenticated) {
+      showToast("로그인이 필요합니다.", "warning");
+      return;
+    }
+
     try {
       await joinPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에 참여했습니다!", "success");
     } catch (error) {
-      console.error("파티 참여 실패:", error);
-      showToast("파티 참여에 실패했습니다.", "error");
+      // 에러는 이미 useJoinParty 훅에서 자동으로 처리됨
     }
   };
 
@@ -98,8 +104,7 @@ const PartyDetailPage = () => {
       await quitPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에서 나갔습니다.", "success");
     } catch (error) {
-      console.error("파티 나가기 실패:", error);
-      showToast("파티 나가기에 실패했습니다.", "error");
+      // 에러는 이미 useQuitParty 훅에서 자동으로 처리됨
     }
   };
 

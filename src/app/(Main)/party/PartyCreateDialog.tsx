@@ -22,6 +22,7 @@ import {
   FormControl,
   CircularProgress,
   Alert,
+  Avatar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -31,11 +32,15 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import KakaoMap from "./KakaoMap";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { useCreateParty } from "@/api/hooks";
+import ShopMap from "../shop/ShopMap";
+import { useCreateParty, useShopsBySearch } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
-import type { PartyCreateRequest } from "@/api/generated";
+import type {
+  PartyCreateRequest,
+  ShopElementResponse,
+  ShopsItem,
+} from "@/api/generated";
+import { getCategoryLabel } from "@/constants";
 
 // window.kakao 타입 선언 (ShopMap.tsx 참고)
 declare global {
@@ -45,18 +50,6 @@ declare global {
 }
 
 const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
-
-interface KakaoPlace {
-  id: string;
-  place_name: string;
-  address_name: string;
-  road_address_name: string;
-  phone: string;
-  x: string;
-  y: string;
-  category_name?: string;
-  place_url?: string;
-}
 
 interface PartyCreateDialogProps {
   open: boolean;
@@ -77,10 +70,11 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
   const [metAt, setMetAt] = useState<Dayjs | null>(dayjs());
   const [minCount, setMinCount] = useState(2);
   const [maxCount, setMaxCount] = useState(5);
-  const [selectedShop, setSelectedShop] = useState<KakaoPlace | null>(null);
-  const [prevSelectedShop, setPrevSelectedShop] = useState<KakaoPlace | null>(
+  const [selectedShop, setSelectedShop] = useState<ShopElementResponse | null>(
     null
   );
+  const [prevSelectedShop, setPrevSelectedShop] =
+    useState<ShopElementResponse | null>(null);
   const [deadline, setDeadline] = useState<Dayjs | null>(dayjs());
   const [genderCondition, setGenderCondition] = useState<string>("A");
   const [minAge, setMinAge] = useState<number | undefined>(undefined);
@@ -90,12 +84,50 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
   // 모드 상태: false=기본(생성폼), true=식당검색
   const [isSearchMode, setIsSearchMode] = useState(false);
 
-  // 카카오맵 관련 상태
+  // 검색 관련 상태
   const [keyword, setKeyword] = useState("");
-  const [searchResults, setSearchResults] = useState<KakaoPlace[]>([]);
-  const [loading, setLoading] = useState(false);
-  // 검색 트리거용 상태
-  const [searchTrigger, setSearchTrigger] = useState(0);
+  const [searchResults, setSearchResults] = useState<ShopElementResponse[]>([]);
+
+  // API 검색 훅
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    error: searchError,
+  } = useShopsBySearch({
+    query: keyword,
+    size: 20,
+  });
+
+  // 검색 결과가 변경될 때마다 searchResults 업데이트
+  useEffect(() => {
+    if (searchData?.data?.shops) {
+      setSearchResults(searchData.data.shops);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchData]);
+
+  // 검색 결과를 메모이제이션하여 불필요한 재렌더링 방지
+  const memoizedSearchResults = useMemo(() => {
+    return searchResults;
+  }, [searchResults]);
+
+  // ShopMap에서 사용할 ShopsItem 형태로 변환
+  const shopsForMap = useMemo(() => {
+    return memoizedSearchResults.map(
+      (shop): ShopsItem => ({
+        shopId: shop.shopId,
+        shopName: shop.name,
+        category: shop.category,
+        roadAddress: shop.address,
+        detailAddress: "",
+        latitude: 37.566826, // 기본값 (실제로는 주소 검색으로 얻어야 함)
+        longitude: 126.9786567, // 기본값
+        rating: shop.rating,
+        thumbnailUrl: shop.thumbnailUrl,
+      })
+    );
+  }, [memoizedSearchResults]);
 
   // 파티 생성
   const handleCreate = async () => {
@@ -107,7 +139,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
     try {
       const partyData: PartyCreateRequest = {
         title,
-        shopId: parseInt(selectedShop.id), // 카카오 API의 place_id를 shopId로 사용
+        shopId: selectedShop.shopId!, // API의 shopId 사용
         metAt: metAt.toISOString(),
         deadline: deadline.toISOString(),
         genderCondition: genderCondition as "W" | "M" | "A",
@@ -123,8 +155,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
       onCreate?.(partyData);
       onClose();
     } catch (error) {
-      console.error("파티 생성 실패:", error);
-      showToast("파티 생성에 실패했습니다.", "error");
+      // 에러는 이미 useCreateParty 훅에서 자동으로 처리됨
     }
   };
 
@@ -147,15 +178,14 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
     // eslint-disable-next-line
   }, [open]);
 
-  // 검색 버튼 클릭 시 keyword를 트리거로 넘김
+  // 검색 버튼 클릭 시 검색 실행
   const handleSearch = () => {
     setSelectedShop(null); // 검색 시 선택 초기화
-    setSearchTrigger((prev) => prev + 1);
   };
 
-  // KakaoMap에서 검색 결과를 받아옴
+  // API 검색 결과를 받아옴 (더 이상 사용하지 않음)
   const handleSearchResults = useCallback((results: any[]) => {
-    setSearchResults(results);
+    // API 검색으로 대체되었으므로 사용하지 않음
   }, []);
 
   // 검색 모드 진입 시 이전 선택값 저장
@@ -174,31 +204,19 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
     setIsSearchMode(false);
   };
 
-  // KakaoMap에 넘길 값들 useMemo로 최적화
-  const mapCenter = useMemo(
-    () =>
-      selectedShop
-        ? { lat: Number(selectedShop.y), lng: Number(selectedShop.x) }
-        : undefined,
-    [selectedShop]
-  );
-  const mapMarker = useMemo(
-    () =>
-      selectedShop
-        ? { lat: Number(selectedShop.y), lng: Number(selectedShop.x) }
-        : undefined,
-    [selectedShop]
-  );
-  const mapMarkers = useMemo(
-    () =>
-      selectedShop
-        ? [{ lat: Number(selectedShop.y), lng: Number(selectedShop.x) }]
-        : searchResults.map((place) => ({
-            lat: Number(place.y),
-            lng: Number(place.x),
-          })),
-    [selectedShop, searchResults]
-  );
+  // ShopMap에서 식당 선택 시 호출되는 함수
+  const handleShopSelectFromMap = useCallback((shop: ShopsItem) => {
+    // ShopsItem을 ShopElementResponse로 변환
+    const selectedShopElement: ShopElementResponse = {
+      shopId: shop.shopId,
+      name: shop.shopName,
+      category: shop.category,
+      address: shop.roadAddress,
+      rating: shop.rating,
+      thumbnailUrl: shop.thumbnailUrl,
+    };
+    setSelectedShop(selectedShopElement);
+  }, []);
 
   return (
     <Dialog
@@ -325,11 +343,10 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                 <Paper variant="outlined" sx={{ p: 2, bgcolor: "#f5faff" }}>
                   <Stack alignItems="flex-start">
                     <Typography fontWeight={700} fontSize={16} mb={0.5}>
-                      {selectedShop.place_name}
+                      {selectedShop.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" mb={0.5}>
-                      {selectedShop.road_address_name ||
-                        selectedShop.address_name}
+                      {selectedShop.address}
                     </Typography>
                   </Stack>
                 </Paper>
@@ -391,7 +408,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                 <Button
                   variant="outlined"
                   onClick={handleSearch}
-                  disabled={loading}
+                  disabled={isSearchLoading}
                 >
                   검색
                 </Button>
@@ -414,7 +431,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                   <Stack spacing={0}>
                     {searchResults.map((place) => (
                       <Button
-                        key={place.id}
+                        key={place.shopId}
                         sx={{
                           justifyContent: "flex-start",
                           textAlign: "left",
@@ -422,7 +439,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                           borderBottom: "1px solid #eee",
                           borderRadius: 0,
                           bgcolor:
-                            selectedShop?.id === place.id
+                            selectedShop?.shopId === place.shopId
                               ? "#e3f2fd"
                               : undefined,
                           py: 1.5,
@@ -435,51 +452,87 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                           setSelectedShop(place);
                         }}
                       >
-                        <Stack spacing={0.5} alignItems="flex-start">
-                          <Typography fontWeight={700}>
-                            {place.place_name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {place.road_address_name || place.address_name}
-                          </Typography>
-                          {place.phone && (
-                            <Typography variant="body2" color="text.secondary">
-                              전화번호: {place.phone}
-                            </Typography>
-                          )}
-                          {place.category_name && (
-                            <Typography variant="body2" color="text.secondary">
-                              카테고리: {place.category_name}
-                            </Typography>
-                          )}
-                          {place.place_url && (
-                            <Button
-                              href={place.place_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              size="small"
-                              sx={{
-                                minWidth: 0,
-                                p: 0,
-                                color: "primary.main",
-                                textTransform: "none",
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                              onClick={(e) => e.stopPropagation()}
+                        <Stack
+                          spacing={0.5}
+                          alignItems="flex-start"
+                          width="100%"
+                        >
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            spacing={1}
+                            width="100%"
+                          >
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={1}
                             >
-                              <OpenInNewIcon
-                                fontSize="small"
-                                sx={{ mr: 0.5 }}
-                              />
-                              <Typography variant="caption">상세</Typography>
-                            </Button>
-                          )}
+                              <Typography fontWeight={700} noWrap>
+                                {place.name}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                noWrap
+                              >
+                                {getCategoryLabel(place.category || "")}
+                              </Typography>
+                            </Stack>
+                            <Typography
+                              variant="body2"
+                              color="warning.main"
+                              fontWeight={600}
+                            >
+                              ★ {place.rating?.toFixed(1) || "0.0"}
+                            </Typography>
+                          </Stack>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            noWrap
+                          >
+                            {place.address}
+                          </Typography>
+                          <Box mt={1} display="flex" sx={{ width: "100%" }}>
+                            <Avatar
+                              variant="rounded"
+                              src={place.thumbnailUrl}
+                              alt={place.name}
+                              sx={{
+                                width: "100%",
+                                height: 120,
+                                borderRadius: 1,
+                                objectFit: "cover",
+                              }}
+                            />
+                          </Box>
                         </Stack>
                       </Button>
                     ))}
                   </Stack>
                 </Paper>
+              )}
+
+              {/* 검색 결과가 없을 때 */}
+              {keyword && searchResults.length === 0 && !isSearchLoading && (
+                <Box p={2}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
+                  >
+                    검색 결과가 없습니다.
+                  </Typography>
+                </Box>
+              )}
+
+              {/* 로딩 중 */}
+              {isSearchLoading && (
+                <Box p={2} display="flex" justifyContent="center">
+                  <CircularProgress size={24} />
+                </Box>
               )}
 
               <Box flex={1} />
@@ -505,13 +558,10 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
             </Grid>
             {/* 오른쪽: 지도만 표시 */}
             <Grid size={{ xs: 12, md: 7 }} sx={{ p: 0 }}>
-              <KakaoMap
-                center={mapCenter}
-                marker={mapMarker}
-                markers={mapMarkers}
-                zoomLevel={selectedShop ? 1 : 3}
-                keyword={searchTrigger > 0 ? keyword : undefined}
-                onSearchResults={handleSearchResults}
+              <ShopMap
+                shops={shopsForMap}
+                selectedShopId={selectedShop?.shopId}
+                onShopSelect={handleShopSelectFromMap}
               />
             </Grid>
           </Grid>
