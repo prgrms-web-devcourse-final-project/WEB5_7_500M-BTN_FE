@@ -32,6 +32,11 @@ import {
 import { useToast } from "@/features/common/Toast";
 import Toast from "@/features/common/Toast";
 import { useAuth } from "@/hooks/useAuth";
+import ChatButton from "@/components/chat/ChatButton";
+import ChatRoom from "@/components/chat/ChatRoom";
+import PartyMemberList from "@/components/party/PartyMemberList";
+import { getUnreadCount } from "@/data/mockChatData";
+import { getPartyMembers, kickPartyMember } from "@/data/mockPartyMembers";
 import type { PartyDetailResponse } from "@/api/generated";
 
 dayjs.locale("ko");
@@ -58,6 +63,10 @@ const PartyDetailPage = () => {
   const [newComment, setNewComment] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [showChat, setShowChat] = useState(false);
+  const [partyMembers, setPartyMembers] = useState(() =>
+    getPartyMembers(partyId || "")
+  );
 
   if (isLoading) {
     return (
@@ -81,9 +90,10 @@ const PartyDetailPage = () => {
   }
 
   const isHost = myInfo?.userId === party.hostId;
-  const isJoined = myParties.some(
-    (myParty) => myParty.partyId === party.partyId
-  );
+  // 임시로 참여 상태 확인 (실제 API 데이터가 없을 때는 임시로 참여한 것으로 처리)
+  const isJoined =
+    myParties.some((myParty) => myParty.partyId === party.partyId) ||
+    (party?.partyId && party.partyId <= 3); // 임시 파티 ID 1, 2, 3은 참여한 것으로 처리
 
   const handleJoinParty = async () => {
     if (!isAuthenticated) {
@@ -106,6 +116,12 @@ const PartyDetailPage = () => {
     } catch (error) {
       // 에러는 이미 useQuitParty 훅에서 자동으로 처리됨
     }
+  };
+
+  const handleKickMember = (memberId: string) => {
+    const updatedMembers = kickPartyMember(partyId || "", memberId);
+    setPartyMembers(updatedMembers);
+    showToast("파티원을 강퇴했습니다.", "success");
   };
 
   const getStatusColor = (status: string) => {
@@ -215,6 +231,16 @@ const PartyDetailPage = () => {
               <Typography variant="body1" mb={2}>
                 {party.description || "함께 맛집을 탐험할 멤버를 모집합니다!"}
               </Typography>
+
+              {/* 파티원 목록 */}
+              <Box sx={{ mb: 3 }}>
+                <PartyMemberList
+                  members={partyMembers}
+                  isHost={isHost}
+                  onKickMember={handleKickMember}
+                />
+              </Box>
+
               <Divider sx={{ my: 2 }} />
               <Stack spacing={1} mb={2}>
                 <Typography variant="body2" color="text.secondary">
@@ -241,18 +267,44 @@ const PartyDetailPage = () => {
                 </Typography>
               </Stack>
 
-              {!isHost && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  fullWidth
-                  disabled={party.status !== "RECRUITING"}
-                  onClick={isJoined ? handleQuitParty : handleJoinParty}
-                >
-                  {isJoined ? "파티 나가기" : "파티 참여하기"}
-                </Button>
-              )}
+              <Stack direction="row" spacing={2} mt={2}>
+                {!isHost && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    fullWidth
+                    disabled={party.status !== "RECRUITING"}
+                    onClick={isJoined ? handleQuitParty : handleJoinParty}
+                  >
+                    {isJoined ? "파티 나가기" : "파티 참여하기"}
+                  </Button>
+                )}
+                {isHost && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="large"
+                    fullWidth
+                    disabled={party.status !== "RECRUITING"}
+                    onClick={() => {
+                      // 파티 삭제 로직 (추후 구현)
+                      showToast("파티 삭제 기능은 추후 구현됩니다.", "info");
+                    }}
+                  >
+                    파티 삭제
+                  </Button>
+                )}
+                {isJoined && (
+                  <ChatButton
+                    onClick={() => setShowChat(true)}
+                    size="large"
+                    unreadCount={getUnreadCount(
+                      party.partyId?.toString() || ""
+                    )}
+                  />
+                )}
+              </Stack>
             </Box>
           </Stack>
         </Paper>
@@ -286,6 +338,24 @@ const PartyDetailPage = () => {
           </Typography>
         </Paper>
       </Box>
+
+      {/* 채팅방 모달 */}
+      {showChat && (
+        <ChatRoom
+          party={{
+            id: party.partyId?.toString() || "",
+            title: party.title || "",
+            shopName: party.shopName || "",
+            currentCount: party.currentCount || 0,
+            maxCount: party.maxCount || 0,
+            metAt: new Date(party.metAt || ""),
+            status:
+              (party.status === "TERMINATED" ? "COMPLETED" : party.status) ||
+              "RECRUITING",
+          }}
+          onClose={() => setShowChat(false)}
+        />
+      )}
     </>
   );
 };

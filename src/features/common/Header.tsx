@@ -1,23 +1,37 @@
 "use client";
 
-import { AppBar, Box, Button, Toolbar, Link as MuiLink } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Toolbar,
+  Link as MuiLink,
+  Badge,
+} from "@mui/material";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import NextLink from "next/link";
-import { useMyInfo, useLogout } from "@/api/hooks";
+import ChatIcon from "@mui/icons-material/Chat";
+import { useMyInfo, useLogout, useMyParties } from "@/api/hooks";
 import { getAccessToken } from "@/api/client";
+import { getTotalUnreadCount } from "@/data/mockChatData";
 
 const menuItems = [
   { label: "식당 찾기", path: "/shop" },
   { label: "맛집 탐험 파티", path: "/party" },
+  { label: "고객센터", path: "/customer-service" },
 ];
 
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { data: myInfo } = useMyInfo();
+  const { data: myPartiesData } = useMyParties();
   const logoutMutation = useLogout();
   const isLoggedIn = !!getAccessToken();
+
+  // 채팅 알림 개수 계산
+  const unreadChatCount = getTotalUnreadCount();
 
   return (
     <AppBar
@@ -106,6 +120,16 @@ const Header = () => {
               >
                 내 식당
               </Button>
+              <Badge badgeContent={unreadChatCount} color="error" max={99}>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => router.push("/chat")}
+                  sx={{ ml: 1, minWidth: "auto" }}
+                >
+                  <ChatIcon />
+                </Button>
+              </Badge>
               <Button
                 variant="text"
                 color="primary"

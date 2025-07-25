@@ -19,19 +19,25 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Paper,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import AddIcon from "@mui/icons-material/Add";
 import { useMyInfo, useUpdateMyInfo } from "@/api/hooks";
+import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/features/common/Toast";
 import Toast from "@/features/common/Toast";
+import PointChargeDialog from "./PointChargeDialog";
 
 const ProfileInfoTab = () => {
   const { data: myInfoData, isLoading, error } = useMyInfo();
   const updateMyInfoMutation = useUpdateMyInfo();
+  const queryClient = useQueryClient();
   const { toast, showToast, hideToast } = useToast();
   const myInfo = myInfoData?.data;
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [pointChargeDialogOpen, setPointChargeDialogOpen] = useState(false);
   const [editForm, setEditForm] = useState({
     nickname: "",
     age: "",
@@ -158,9 +164,34 @@ const ProfileInfoTab = () => {
             <Typography color="text.secondary">
               연락처: {myInfo.phoneNumber || "미설정"}
             </Typography>
-            <Typography color="text.secondary">
-              포인트: {myInfo.point || 0}P
-            </Typography>
+            <Paper elevation={1} sx={{ p: 2, bgcolor: "grey.50" }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    보유 포인트
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    fontWeight={600}
+                    color="primary.main"
+                  >
+                    {myInfo.point || 0}P
+                  </Typography>
+                </Box>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setPointChargeDialogOpen(true)}
+                  size="small"
+                >
+                  충전
+                </Button>
+              </Stack>
+            </Paper>
           </Stack>
         </Box>
       </Stack>
@@ -232,6 +263,17 @@ const ProfileInfoTab = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* 포인트 충전 다이얼로그 */}
+      <PointChargeDialog
+        open={pointChargeDialogOpen}
+        onClose={() => setPointChargeDialogOpen(false)}
+        onSuccess={() => {
+          setPointChargeDialogOpen(false);
+          // 포인트 정보 새로고침
+          queryClient.invalidateQueries({ queryKey: ["myInfo"] });
+        }}
+      />
     </>
   );
 };

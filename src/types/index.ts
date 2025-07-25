@@ -287,3 +287,30 @@ export interface UserSettings {
     locationVisible: boolean;
   };
 }
+
+// 고객센터 문의글 관련 타입
+export interface CustomerInquiry {
+  id: number;
+  title: string;
+  content: string;
+  images?: string[];
+  status: "pending" | "answered" | "closed";
+  createdAt: string;
+  updatedAt: string;
+  answer?: {
+    content: string;
+    createdAt: string;
+  };
+}
+
+export interface CreateInquiryRequest {
+  title: string;
+  content: string;
+  images?: File[];
+}
+
+export interface InquiryListResponse {
+  inquiries: CustomerInquiry[];
+  totalCount: number;
+  hasNext: boolean;
+}

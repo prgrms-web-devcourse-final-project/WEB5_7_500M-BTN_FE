@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,11 +10,20 @@ import {
   Button,
   Rating,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import dayjs from "dayjs";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LockIcon from "@mui/icons-material/Lock";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import ChatButton from "@/components/chat/ChatButton";
+import ChatRoom from "@/components/chat/ChatRoom";
+import { getUnreadCount } from "@/data/mockChatData";
+import { useQuitParty } from "@/api/hooks";
+import { useToast } from "@/features/common/Toast";
 import type { MyPartyResponse } from "@/api/generated";
 
 interface PartyItemProps {
@@ -59,27 +68,32 @@ const PartyItem = ({ party }: PartyItemProps) => {
   const theme = useTheme();
   const status = getStatus(party);
   const isPast = status.label === "종료";
+  const [showChat, setShowChat] = useState(false);
+  const [showQuitDialog, setShowQuitDialog] = useState(false);
+  const quitPartyMutation = useQuitParty();
+  const { showToast } = useToast();
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        alignItems: "stretch",
-        boxShadow: 2,
-        borderRadius: 3,
-        opacity: isPast ? 0.5 : 1,
-        filter: isPast ? "grayscale(0.2)" : "none",
-        transition: "box-shadow 0.2s, transform 0.2s",
-        "&:hover": {
-          boxShadow: 6,
-          transform: isPast ? undefined : "scale(1.02)",
-        },
-        minHeight: 120,
-        mb: 2,
-      }}
-    >
+    <>
+      <Card
+        variant="outlined"
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "stretch",
+          boxShadow: 2,
+          borderRadius: 3,
+          opacity: isPast ? 0.5 : 1,
+          filter: isPast ? "grayscale(0.2)" : "none",
+          transition: "box-shadow 0.2s, transform 0.2s",
+          "&:hover": {
+            boxShadow: 6,
+            transform: isPast ? undefined : "scale(1.02)",
+          },
+          minHeight: 120,
+          mb: 2,
+        }}
+      >
       <CardMedia
         component="img"
         image="/default-shop-image.jpg"
@@ -154,25 +168,100 @@ const PartyItem = ({ party }: PartyItemProps) => {
             </Typography>
           )}
         </Box>
-        <Button
-          href={`/party/${party.partyId}`}
-          variant="contained"
-          size="small"
-          sx={{
-            alignSelf: "flex-end",
-            mt: 2,
-            borderRadius: 2,
-            fontWeight: 600,
-            boxShadow: "none",
-            textTransform: "none",
-          }}
-          disabled={isPast}
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{ alignSelf: "flex-end", mt: 2 }}
         >
-          상세보기
-        </Button>
+          <ChatButton
+            onClick={() => setShowChat(true)}
+            size="small"
+            unreadCount={getUnreadCount(party.partyId?.toString() || "")}
+            disabled={isPast}
+          />
+          <Button
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={() => setShowQuitDialog(true)}
+            disabled={isPast}
+            sx={{
+              borderRadius: 2,
+              fontWeight: 600,
+              textTransform: "none",
+            }}
+          >
+            나가기
+          </Button>
+          <Button
+            href={`/party/${party.partyId}`}
+            variant="contained"
+            size="small"
+            sx={{
+              borderRadius: 2,
+              fontWeight: 600,
+              boxShadow: "none",
+              textTransform: "none",
+            }}
+            disabled={isPast}
+          >
+            상세보기
+          </Button>
+        </Stack>
       </CardContent>
     </Card>
-  );
-};
+
+    {/* 채팅방 모달 */}
+    {showChat && (
+      <ChatRoom
+        party={{
+          id: party.partyId?.toString() || "",
+          title: party.title || "",
+          shopName: party.shopName || "",
+          currentCount: party.currentCount || 0,
+          maxCount: party.maxCount || 0,
+          metAt: new Date(party.metAt || ""),
+          status: "RECRUITING",
+        }}
+        onClose={() => setShowChat(false)}
+      />
+    )}
+
+    {/* 파티 나가기 확인 다이얼로그 */}
+    <Dialog open={showQuitDialog} onClose={() => setShowQuitDialog(false)} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ fontWeight: 600 }}>
+        파티 나가기
+      </DialogTitle>
+      <DialogContent>
+        <Typography variant="body1" gutterBottom>
+          <strong>{party.title}</strong> 파티에서 나가시겠습니까?
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          파티를 나가면 다시 참여할 수 없으며, 채팅 기록도 삭제됩니다.
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setShowQuitDialog(false)} color="inherit">
+          취소
+        </Button>
+        <Button 
+          onClick={async () => {
+            try {
+              await quitPartyMutation.mutateAsync(party.partyId || 0);
+              showToast("파티에서 나갔습니다.", "success");
+              setShowQuitDialog(false);
+            } catch (error) {
+              // 에러는 이미 useQuitParty 훅에서 자동으로 처리됨
+            }
+          }} 
+          color="error" 
+          variant="contained"
+        >
+          나가기
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
+);
 
 export default PartyItem;

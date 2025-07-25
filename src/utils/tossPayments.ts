@@ -27,6 +27,7 @@ export const requestPayment = async (paymentData: {
   orderName: string;
   customerName: string;
   customerEmail: string;
+  isPointCharge?: boolean;
 }) => {
   const tossPayments = await initializeTossPayments();
 
@@ -38,8 +39,12 @@ export const requestPayment = async (paymentData: {
         orderName: paymentData.orderName,
         customerName: paymentData.customerName,
         customerEmail: paymentData.customerEmail,
-        successUrl: `${window.location.origin}/payment/success`,
-        failUrl: `${window.location.origin}/payment/fail`,
+        successUrl: paymentData.isPointCharge
+          ? `${window.location.origin}/payment/point-success`
+          : `${window.location.origin}/payment/success`,
+        failUrl: paymentData.isPointCharge
+          ? `${window.location.origin}/payment/point-fail`
+          : `${window.location.origin}/payment/fail`,
       })
       .then((response: any) => {
         resolve(response);

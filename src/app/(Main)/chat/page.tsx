@@ -1,10 +1,12 @@
+"use client";
+
 import React from "react";
-import { Stack, Typography, CircularProgress, Alert, Box } from "@mui/material";
-import PartyItem from "./PartyItem";
+import { Box, Typography, CircularProgress, Alert } from "@mui/material";
+import ChatList from "@/components/chat/ChatList";
 import { useMyParties } from "@/api/hooks";
 import { mockMyParties } from "@/data/mockPartyData";
 
-const ProfilePartiesTab = () => {
+const ChatPage = () => {
   const { data: myPartiesData, isLoading, error } = useMyParties();
   // 임시로 목데이터 사용 (실제 API 데이터가 없을 때)
   const myParties =
@@ -18,7 +20,7 @@ const ProfilePartiesTab = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="200px"
+        height="100vh"
       >
         <CircularProgress />
       </Box>
@@ -27,22 +29,22 @@ const ProfilePartiesTab = () => {
 
   if (error) {
     return (
-      <Alert severity="error">
-        내 파티 정보를 불러오는데 실패했습니다. 다시 시도해주세요.
-      </Alert>
+      <Box maxWidth={800} mx="auto" px={3} py={6}>
+        <Alert severity="error">
+          채팅방 목록을 불러오는데 실패했습니다. 다시 시도해주세요.
+        </Alert>
+      </Box>
     );
   }
 
   return (
-    <Stack spacing={2}>
-      {myParties.length === 0 && (
-        <Typography color="text.secondary">참여한 파티가 없습니다.</Typography>
-      )}
-      {myParties.map((party) => (
-        <PartyItem key={party.partyId} party={party} />
-      ))}
-    </Stack>
+    <Box maxWidth={800} mx="auto" px={3} py={6}>
+      <Typography variant="h4" fontWeight={700} mb={4}>
+        채팅방
+      </Typography>
+      <ChatList parties={myParties} />
+    </Box>
   );
 };
 
-export default ProfilePartiesTab;
+export default ChatPage;

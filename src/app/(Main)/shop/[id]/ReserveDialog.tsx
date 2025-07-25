@@ -9,6 +9,11 @@ import {
   Paper,
   CircularProgress,
   Box,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Divider,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -43,6 +48,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [people, setPeople] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState<"point" | "card">("point");
   const { toast, showToast, hideToast } = useToast();
 
   const createReservationMutation = useCreateReservation();
@@ -78,6 +84,10 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
     ? getTimeGridOptions(selectedDate, openTime, closeTime)
     : [];
 
+  const reservationFee = shop.reservationFee || 0;
+  const userPoints = myInfo?.point || 0;
+  const canUsePoints = userPoints >= reservationFee;
+
   const handlePayment = async () => {
     if (!selectedDate || !selectedTime) {
       showToast("날짜와 시간을 선택해주세요.", "error");
@@ -89,6 +99,11 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
       return;
     }
 
+    if (paymentMethod === "point" && !canUsePoints) {
+      showToast("포인트가 부족합니다. 충전 후 이용해주세요.", "error");
+      return;
+    }
+
     try {
       // 1. 예약 생성
       const reservationResponse = await createReservationMutation.mutateAsync({
@@ -97,24 +112,31 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
           date: selectedDate.format("YYYY-MM-DD"),
           time: selectedTime,
           headCount: people,
-          reservationFee: shop.reservationFee || 0,
+          reservationFee: reservationFee,
         },
       });
 
-      // 2. 토스 페이먼츠 결제 요청
-      const orderId = generateOrderId();
-      const amount = shop.reservationFee || 0;
-      const orderName = `${shop.shopName} 예약 (${selectedDate.format(
-        "MM/DD"
-      )} ${selectedTime})`;
+      // 2. 결제 방법에 따라 처리
+      if (paymentMethod === "point") {
+        // 포인트 결제 (백엔드에서 처리될 것으로 예상)
+        showToast("포인트로 예약이 완료되었습니다!", "success");
+        onReserveSuccess?.();
+        onClose();
+      } else {
+        // 카드 결제 (기존 토스페이먼츠 방식)
+        const orderId = generateOrderId();
+        const orderName = `${shop.shopName} 예약 (${selectedDate.format(
+          "MM/DD"
+        )} ${selectedTime})`;
 
-      await requestPayment({
-        amount,
-        orderId,
-        orderName,
-        customerName: myInfo.name || myInfo.nickname || "고객",
-        customerEmail: myInfo.email || "",
-      });
+        await requestPayment({
+          amount: reservationFee,
+          orderId,
+          orderName,
+          customerName: myInfo.name || myInfo.nickname || "고객",
+          customerEmail: myInfo.email || "",
+        });
+      }
 
       // 결제 요청이 성공하면 토스 페이먼츠 페이지로 리다이렉트됨
       // 성공/실패는 각각의 페이지에서 처리됨
@@ -237,11 +259,64 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
             }}
             elevation={0}
           >
-            <Typography color="warning.main" fontWeight={600}>
-              예약금 결제 {formatAmount(shop.reservationFee || 0)}원이
-              필요합니다.
+            <Typography color="warning.main" fontWeight={600} mb={1}>
+              예약금 결제 {formatAmount(reservationFee)}원이 필요합니다.
             </Typography>
+            <Typography variant="body2" color="text.secondary">
+              보유 포인트: {formatAmount(userPoints)}P
+            </Typography>
+            {!canUsePoints && (
+              <Alert severity="warning" sx={{ mt: 1 }}>
+                포인트가 부족합니다. 충전 후 이용하거나 카드로 결제해주세요.
+              </Alert>
+            )}
           </Paper>
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* 결제 방법 선택 */}
+          <Typography variant="subtitle1" fontWeight={600} mb={1}>
+            결제 방법
+          </Typography>
+          <RadioGroup
+            value={paymentMethod}
+            onChange={(e) =>
+              setPaymentMethod(e.target.value as "point" | "card")
+            }
+            sx={{ mb: 2 }}
+          >
+            <FormControlLabel
+              value="point"
+              control={<Radio />}
+              label={
+                <Box>
+                  <Typography variant="body1" fontWeight={500}>
+                    포인트 결제
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {canUsePoints
+                      ? `${formatAmount(reservationFee)} 포인트 차감`
+                      : "포인트 부족 - 충전 필요"}
+                  </Typography>
+                </Box>
+              }
+              disabled={!canUsePoints}
+            />
+            <FormControlLabel
+              value="card"
+              control={<Radio />}
+              label={
+                <Box>
+                  <Typography variant="body1" fontWeight={500}>
+                    카드 결제
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    토스페이먼츠로 안전하게 결제
+                  </Typography>
+                </Box>
+              }
+            />
+          </RadioGroup>
           <Button
             variant="contained"
             color="primary"
@@ -250,7 +325,8 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
             disabled={
               !selectedDate ||
               !selectedTime ||
-              createReservationMutation.isPending
+              createReservationMutation.isPending ||
+              (paymentMethod === "point" && !canUsePoints)
             }
             onClick={handlePayment}
             startIcon={
@@ -259,7 +335,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
               ) : null
             }
           >
-            {createReservationMutation.isPending ? "처리 중..." : "결제하기"}
+            {createReservationMutation.isPending ? "처리 중..." : "예약하기"}
           </Button>
         </DialogContent>
       </Dialog>
