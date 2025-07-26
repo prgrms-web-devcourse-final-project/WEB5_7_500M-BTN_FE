@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **shopId** | **number** |  | [optional] [default to undefined]
 **shopName** | **string** |  | [optional] [default to undefined]
+**latitude** | **number** |  | [optional] [default to undefined]
+**longitude** | **number** |  | [optional] [default to undefined]
 **category** | **string** |  | [optional] [default to undefined]
 **description** | **string** |  | [optional] [default to undefined]
 **roadAddress** | **string** |  | [optional] [default to undefined]
@@ -19,6 +21,7 @@ Name | Type | Description | Notes
 **reviewCount** | **number** |  | [optional] [default to undefined]
 **images** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
 **businessCode** | **string** |  | [optional] [default to undefined]
+**approve** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -28,6 +31,8 @@ import { ShopOwnerDetailResponse } from '@/api/generated';
 const instance: ShopOwnerDetailResponse = {
     shopId,
     shopName,
+    latitude,
+    longitude,
     category,
     description,
     roadAddress,
@@ -40,6 +45,7 @@ const instance: ShopOwnerDetailResponse = {
     reviewCount,
     images,
     businessCode,
+    approve,
 };
 ```
 

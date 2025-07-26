@@ -1,21 +1,19 @@
-# PaymentSuccessResponse
+# ApproveRequest
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**orderId** | **string** |  | [optional] [default to undefined]
-**totalAmount** | **number** |  | [optional] [default to undefined]
+**approve** | **string** |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import { PaymentSuccessResponse } from '@/api/generated';
+import { ApproveRequest } from '@/api/generated';
 
-const instance: PaymentSuccessResponse = {
-    orderId,
-    totalAmount,
+const instance: ApproveRequest = {
+    approve,
 };
 ```
 

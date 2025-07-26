@@ -39,6 +39,28 @@ export interface AccessTokenResponseDto {
 /**
  * 
  * @export
+ * @interface ApproveRequest
+ */
+export interface ApproveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ApproveRequest
+     */
+    'approve': ApproveRequestApproveEnum;
+}
+
+export const ApproveRequestApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type ApproveRequestApproveEnum = typeof ApproveRequestApproveEnum[keyof typeof ApproveRequestApproveEnum];
+
+/**
+ * 
+ * @export
  * @interface BaseResponseAccessTokenResponseDto
  */
 export interface BaseResponseAccessTokenResponseDto {
@@ -62,6 +84,141 @@ export const BaseResponseAccessTokenResponseDtoStatusEnum = {
 } as const;
 
 export type BaseResponseAccessTokenResponseDtoStatusEnum = typeof BaseResponseAccessTokenResponseDtoStatusEnum[keyof typeof BaseResponseAccessTokenResponseDtoStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface BaseResponseChatMessagePageResponse
+ */
+export interface BaseResponseChatMessagePageResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseChatMessagePageResponse
+     */
+    'status'?: BaseResponseChatMessagePageResponseStatusEnum;
+    /**
+     * 
+     * @type {ChatMessagePageResponse}
+     * @memberof BaseResponseChatMessagePageResponse
+     */
+    'data'?: ChatMessagePageResponse;
+}
+
+export const BaseResponseChatMessagePageResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseChatMessagePageResponseStatusEnum = typeof BaseResponseChatMessagePageResponseStatusEnum[keyof typeof BaseResponseChatMessagePageResponseStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface BaseResponseGetAllPendingShopListResponse
+ */
+export interface BaseResponseGetAllPendingShopListResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseGetAllPendingShopListResponse
+     */
+    'status'?: BaseResponseGetAllPendingShopListResponseStatusEnum;
+    /**
+     * 
+     * @type {GetAllPendingShopListResponse}
+     * @memberof BaseResponseGetAllPendingShopListResponse
+     */
+    'data'?: GetAllPendingShopListResponse;
+}
+
+export const BaseResponseGetAllPendingShopListResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseGetAllPendingShopListResponseStatusEnum = typeof BaseResponseGetAllPendingShopListResponseStatusEnum[keyof typeof BaseResponseGetAllPendingShopListResponseStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface BaseResponseInquiryAllGetResponse
+ */
+export interface BaseResponseInquiryAllGetResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseInquiryAllGetResponse
+     */
+    'status'?: BaseResponseInquiryAllGetResponseStatusEnum;
+    /**
+     * 
+     * @type {InquiryAllGetResponse}
+     * @memberof BaseResponseInquiryAllGetResponse
+     */
+    'data'?: InquiryAllGetResponse;
+}
+
+export const BaseResponseInquiryAllGetResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseInquiryAllGetResponseStatusEnum = typeof BaseResponseInquiryAllGetResponseStatusEnum[keyof typeof BaseResponseInquiryAllGetResponseStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface BaseResponseInquiryOneGetResponse
+ */
+export interface BaseResponseInquiryOneGetResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseInquiryOneGetResponse
+     */
+    'status'?: BaseResponseInquiryOneGetResponseStatusEnum;
+    /**
+     * 
+     * @type {InquiryOneGetResponse}
+     * @memberof BaseResponseInquiryOneGetResponse
+     */
+    'data'?: InquiryOneGetResponse;
+}
+
+export const BaseResponseInquiryOneGetResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseInquiryOneGetResponseStatusEnum = typeof BaseResponseInquiryOneGetResponseStatusEnum[keyof typeof BaseResponseInquiryOneGetResponseStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface BaseResponseListChatMessageResponse
+ */
+export interface BaseResponseListChatMessageResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseListChatMessageResponse
+     */
+    'status'?: BaseResponseListChatMessageResponseStatusEnum;
+    /**
+     * 
+     * @type {Array<ChatMessageResponse>}
+     * @memberof BaseResponseListChatMessageResponse
+     */
+    'data'?: Array<ChatMessageResponse>;
+}
+
+export const BaseResponseListChatMessageResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseListChatMessageResponseStatusEnum = typeof BaseResponseListChatMessageResponseStatusEnum[keyof typeof BaseResponseListChatMessageResponseStatusEnum];
 
 /**
  * 
@@ -282,6 +439,33 @@ export type BaseResponsePartyScrollResponseStatusEnum = typeof BaseResponseParty
 /**
  * 
  * @export
+ * @interface BaseResponsePaymentScrollResponse
+ */
+export interface BaseResponsePaymentScrollResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponsePaymentScrollResponse
+     */
+    'status'?: BaseResponsePaymentScrollResponseStatusEnum;
+    /**
+     * 
+     * @type {PaymentScrollResponse}
+     * @memberof BaseResponsePaymentScrollResponse
+     */
+    'data'?: PaymentScrollResponse;
+}
+
+export const BaseResponsePaymentScrollResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponsePaymentScrollResponseStatusEnum = typeof BaseResponsePaymentScrollResponseStatusEnum[keyof typeof BaseResponsePaymentScrollResponseStatusEnum];
+
+/**
+ * 
+ * @export
  * @interface BaseResponsePaymentSuccessResponse
  */
 export interface BaseResponsePaymentSuccessResponse {
@@ -417,6 +601,33 @@ export type BaseResponseReviewPageResponseStatusEnum = typeof BaseResponseReview
 /**
  * 
  * @export
+ * @interface BaseResponseShopAdminDetailResponse
+ */
+export interface BaseResponseShopAdminDetailResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseShopAdminDetailResponse
+     */
+    'status'?: BaseResponseShopAdminDetailResponseStatusEnum;
+    /**
+     * 
+     * @type {ShopAdminDetailResponse}
+     * @memberof BaseResponseShopAdminDetailResponse
+     */
+    'data'?: ShopAdminDetailResponse;
+}
+
+export const BaseResponseShopAdminDetailResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseShopAdminDetailResponseStatusEnum = typeof BaseResponseShopAdminDetailResponseStatusEnum[keyof typeof BaseResponseShopAdminDetailResponseStatusEnum];
+
+/**
+ * 
+ * @export
  * @interface BaseResponseShopDetailResponse
  */
 export interface BaseResponseShopDetailResponse {
@@ -548,6 +759,95 @@ export const BaseResponseVoidStatusEnum = {
 } as const;
 
 export type BaseResponseVoidStatusEnum = typeof BaseResponseVoidStatusEnum[keyof typeof BaseResponseVoidStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface ChatMessagePageResponse
+ */
+export interface ChatMessagePageResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatMessagePageResponse
+     */
+    'nextCursor'?: number;
+    /**
+     * 
+     * @type {Array<ChatMessageResponse>}
+     * @memberof ChatMessagePageResponse
+     */
+    'content'?: Array<ChatMessageResponse>;
+}
+/**
+ * 
+ * @export
+ * @interface ChatMessageResponse
+ */
+export interface ChatMessageResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatMessageResponse
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageResponse
+     */
+    'sendAt'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageResponse
+     */
+    'type'?: ChatMessageResponseTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageResponse
+     */
+    'message'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatMessageResponse
+     */
+    'userId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageResponse
+     */
+    'userNickname'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessageResponse
+     */
+    'userProfile'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ChatMessageResponse
+     */
+    'partyId'?: number;
+}
+
+export const ChatMessageResponseTypeEnum = {
+    Chat: 'CHAT',
+    Join: 'JOIN',
+    Leave: 'LEAVE',
+    Kick: 'KICK',
+    Error: 'ERROR',
+    PaymentRequest: 'PAYMENT_REQUEST',
+    PaymentComplete: 'PAYMENT_COMPLETE',
+    PartyDeleted: 'PARTY_DELETED',
+    ReservationComplete: 'RESERVATION_COMPLETE'
+} as const;
+
+export type ChatMessageResponseTypeEnum = typeof ChatMessageResponseTypeEnum[keyof typeof ChatMessageResponseTypeEnum];
 
 /**
  * 
@@ -696,6 +996,119 @@ export interface DeleteProfileRequest {
      * @memberof DeleteProfileRequest
      */
     'profileKey': string;
+}
+/**
+ * 
+ * @export
+ * @interface GetAllPendingShopListResponse
+ */
+export interface GetAllPendingShopListResponse {
+    /**
+     * 
+     * @type {Array<PendingShop>}
+     * @memberof GetAllPendingShopListResponse
+     */
+    'pendingShopList'?: Array<PendingShop>;
+}
+/**
+ * 
+ * @export
+ * @interface InquiryAllGetResponse
+ */
+export interface InquiryAllGetResponse {
+    /**
+     * 
+     * @type {Array<InquiryItem>}
+     * @memberof InquiryAllGetResponse
+     */
+    'content'?: Array<InquiryItem>;
+    /**
+     * 
+     * @type {number}
+     * @memberof InquiryAllGetResponse
+     */
+    'nextCursor'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface InquiryCreateRequest
+ */
+export interface InquiryCreateRequest {
+    /**
+     * 문의 제목
+     * @type {string}
+     * @memberof InquiryCreateRequest
+     */
+    'title': string;
+    /**
+     * 문의 내용
+     * @type {string}
+     * @memberof InquiryCreateRequest
+     */
+    'content': string;
+    /**
+     * 넣으려는 사진 갯수
+     * @type {number}
+     * @memberof InquiryCreateRequest
+     */
+    'imageCount': number;
+}
+/**
+ * 
+ * @export
+ * @interface InquiryItem
+ */
+export interface InquiryItem {
+    /**
+     * 
+     * @type {number}
+     * @memberof InquiryItem
+     */
+    'InquiryId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof InquiryItem
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof InquiryItem
+     */
+    'answerCount'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof InquiryItem
+     */
+    'createTime'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface InquiryOneGetResponse
+ */
+export interface InquiryOneGetResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof InquiryOneGetResponse
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InquiryOneGetResponse
+     */
+    'content'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof InquiryOneGetResponse
+     */
+    'images'?: Array<string>;
 }
 /**
  * 영업 종료 시간
@@ -1170,6 +1583,25 @@ export type OAuthSignUpRequestGenderEnum = typeof OAuthSignUpRequestGenderEnum[k
 /**
  * 
  * @export
+ * @interface OrderSaveRequest
+ */
+export interface OrderSaveRequest {
+    /**
+     * 클라이언트에서 생성한 주문 id
+     * @type {string}
+     * @memberof OrderSaveRequest
+     */
+    'orderId': string;
+    /**
+     * 결제 금액은 포인트 충전 머니입니다.. 1000원부터 1000원 단위로 50000원까지 충전 가능합니다.
+     * @type {number}
+     * @memberof OrderSaveRequest
+     */
+    '결제 금액'?: number;
+}
+/**
+ * 
+ * @export
  * @interface OwnerShopItem
  */
 export interface OwnerShopItem {
@@ -1214,6 +1646,12 @@ export interface OwnerShopItem {
      * @type {string}
      * @memberof OwnerShopItem
      */
+    'approve'?: OwnerShopItemApproveEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof OwnerShopItem
+     */
     'thumbnailUrl'?: string;
 }
 
@@ -1232,6 +1670,13 @@ export const OwnerShopItemCategoryEnum = {
 } as const;
 
 export type OwnerShopItemCategoryEnum = typeof OwnerShopItemCategoryEnum[keyof typeof OwnerShopItemCategoryEnum];
+export const OwnerShopItemApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type OwnerShopItemApproveEnum = typeof OwnerShopItemApproveEnum[keyof typeof OwnerShopItemApproveEnum];
 
 /**
  * 
@@ -1563,6 +2008,76 @@ export interface PartyScrollResponse {
 /**
  * 
  * @export
+ * @interface PaymentHistoryResponse
+ */
+export interface PaymentHistoryResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof PaymentHistoryResponse
+     */
+    'paymentId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentHistoryResponse
+     */
+    'method'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PaymentHistoryResponse
+     */
+    'totalAmount'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentHistoryResponse
+     */
+    'status'?: PaymentHistoryResponseStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof PaymentHistoryResponse
+     */
+    'createdAt'?: string;
+}
+
+export const PaymentHistoryResponseStatusEnum = {
+    Ready: 'READY',
+    InProgress: 'IN_PROGRESS',
+    WaitingForDeposit: 'WAITING_FOR_DEPOSIT',
+    Done: 'DONE',
+    Canceled: 'CANCELED',
+    PartialCanceled: 'PARTIAL_CANCELED',
+    Aborted: 'ABORTED',
+    Expired: 'EXPIRED'
+} as const;
+
+export type PaymentHistoryResponseStatusEnum = typeof PaymentHistoryResponseStatusEnum[keyof typeof PaymentHistoryResponseStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface PaymentScrollResponse
+ */
+export interface PaymentScrollResponse {
+    /**
+     * 
+     * @type {Array<PaymentHistoryResponse>}
+     * @memberof PaymentScrollResponse
+     */
+    'content'?: Array<PaymentHistoryResponse>;
+    /**
+     * 
+     * @type {number}
+     * @memberof PaymentScrollResponse
+     */
+    'nextCursor'?: number;
+}
+/**
+ * 
+ * @export
  * @interface PaymentSuccessResponse
  */
 export interface PaymentSuccessResponse {
@@ -1577,8 +2092,72 @@ export interface PaymentSuccessResponse {
      * @type {number}
      * @memberof PaymentSuccessResponse
      */
-    'amount'?: number;
+    'totalAmount'?: number;
 }
+/**
+ * 
+ * @export
+ * @interface PendingShop
+ */
+export interface PendingShop {
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'shopName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PendingShop
+     */
+    'shopId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'userName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PendingShop
+     */
+    'userId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'address'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'detailAddress'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'tel'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PendingShop
+     */
+    'approve'?: PendingShopApproveEnum;
+}
+
+export const PendingShopApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type PendingShopApproveEnum = typeof PendingShopApproveEnum[keyof typeof PendingShopApproveEnum];
+
 /**
  * 
  * @export
@@ -1792,6 +2371,151 @@ export interface ReviewResponse {
 /**
  * 
  * @export
+ * @interface ShopAdminDetailResponse
+ */
+export interface ShopAdminDetailResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'userId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'nickName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'shopId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'shopName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'latitude'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'longitude'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'category'?: ShopAdminDetailResponseCategoryEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'roadAddress'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'detailAddress'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'tel'?: string;
+    /**
+     * 
+     * @type {LocalTime}
+     * @memberof ShopAdminDetailResponse
+     */
+    'openTime'?: LocalTime;
+    /**
+     * 
+     * @type {LocalTime}
+     * @memberof ShopAdminDetailResponse
+     */
+    'closeTime'?: LocalTime;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'rating'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopAdminDetailResponse
+     */
+    'reservationFee'?: number;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ShopAdminDetailResponse
+     */
+    'images'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'businessCode'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopAdminDetailResponse
+     */
+    'approve'?: ShopAdminDetailResponseApproveEnum;
+}
+
+export const ShopAdminDetailResponseCategoryEnum = {
+    Chicken: 'CHICKEN',
+    Chinese: 'CHINESE',
+    Japanese: 'JAPANESE',
+    Pizza: 'PIZZA',
+    Fastfood: 'FASTFOOD',
+    StewSoup: 'STEW_SOUP',
+    JokBo: 'JOK_BO',
+    Korean: 'KOREAN',
+    Snack: 'SNACK',
+    Western: 'WESTERN',
+    Dessert: 'DESSERT'
+} as const;
+
+export type ShopAdminDetailResponseCategoryEnum = typeof ShopAdminDetailResponseCategoryEnum[keyof typeof ShopAdminDetailResponseCategoryEnum];
+export const ShopAdminDetailResponseApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type ShopAdminDetailResponseApproveEnum = typeof ShopAdminDetailResponseApproveEnum[keyof typeof ShopAdminDetailResponseApproveEnum];
+
+/**
+ * 
+ * @export
  * @interface ShopCreateRequest
  */
 export interface ShopCreateRequest {
@@ -1917,6 +2641,18 @@ export interface ShopDetailResponse {
     'shopName'?: string;
     /**
      * 
+     * @type {number}
+     * @memberof ShopDetailResponse
+     */
+    'latitude'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopDetailResponse
+     */
+    'longitude'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof ShopDetailResponse
      */
@@ -1981,6 +2717,12 @@ export interface ShopDetailResponse {
      * @memberof ShopDetailResponse
      */
     'images'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopDetailResponse
+     */
+    'approve'?: ShopDetailResponseApproveEnum;
 }
 
 export const ShopDetailResponseCategoryEnum = {
@@ -1998,6 +2740,13 @@ export const ShopDetailResponseCategoryEnum = {
 } as const;
 
 export type ShopDetailResponseCategoryEnum = typeof ShopDetailResponseCategoryEnum[keyof typeof ShopDetailResponseCategoryEnum];
+export const ShopDetailResponseApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type ShopDetailResponseApproveEnum = typeof ShopDetailResponseApproveEnum[keyof typeof ShopDetailResponseApproveEnum];
 
 /**
  * 
@@ -2031,6 +2780,12 @@ export interface ShopElementResponse {
     'address'?: string;
     /**
      * 
+     * @type {string}
+     * @memberof ShopElementResponse
+     */
+    'detailAddress'?: string;
+    /**
+     * 
      * @type {number}
      * @memberof ShopElementResponse
      */
@@ -2041,6 +2796,18 @@ export interface ShopElementResponse {
      * @memberof ShopElementResponse
      */
     'thumbnailUrl'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopElementResponse
+     */
+    'latitude'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopElementResponse
+     */
+    'longitude'?: number;
 }
 
 export const ShopElementResponseCategoryEnum = {
@@ -2077,6 +2844,18 @@ export interface ShopOwnerDetailResponse {
      * @memberof ShopOwnerDetailResponse
      */
     'shopName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopOwnerDetailResponse
+     */
+    'latitude'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof ShopOwnerDetailResponse
+     */
+    'longitude'?: number;
     /**
      * 
      * @type {string}
@@ -2149,6 +2928,12 @@ export interface ShopOwnerDetailResponse {
      * @memberof ShopOwnerDetailResponse
      */
     'businessCode'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShopOwnerDetailResponse
+     */
+    'approve'?: ShopOwnerDetailResponseApproveEnum;
 }
 
 export const ShopOwnerDetailResponseCategoryEnum = {
@@ -2166,6 +2951,13 @@ export const ShopOwnerDetailResponseCategoryEnum = {
 } as const;
 
 export type ShopOwnerDetailResponseCategoryEnum = typeof ShopOwnerDetailResponseCategoryEnum[keyof typeof ShopOwnerDetailResponseCategoryEnum];
+export const ShopOwnerDetailResponseApproveEnum = {
+    Pending: 'PENDING',
+    Approved: 'APPROVED',
+    Rejected: 'REJECTED'
+} as const;
+
+export type ShopOwnerDetailResponseApproveEnum = typeof ShopOwnerDetailResponseApproveEnum[keyof typeof ShopOwnerDetailResponseApproveEnum];
 
 /**
  * 
@@ -2455,23 +3247,23 @@ export type SignUpRequestGenderEnum = typeof SignUpRequestGenderEnum[keyof typeo
  */
 export interface TossPaymentConfirmRequest {
     /**
-     * 
+     * 결제 성공 시 토스에서 쿼리 파라미터로 반환해주는 paymentKey
      * @type {string}
      * @memberof TossPaymentConfirmRequest
      */
     'paymentKey': string;
     /**
-     * 
+     * 클라이언트에서 생성한 주문 id
      * @type {string}
      * @memberof TossPaymentConfirmRequest
      */
     'orderId': string;
     /**
-     * 
+     * 결제 금액(1000~50000원)
      * @type {number}
      * @memberof TossPaymentConfirmRequest
      */
-    'amount': number;
+    'amount'?: number;
 }
 /**
  * 
@@ -2571,8 +3363,8 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm 혹여나 프론트와 토스페이 api 통신이 되지 않으면  https://github.com/prgrms-be-devcourse/NBE5-7-2-Team09  링크에 프론트 코드 링크 참조해주세요
-         * @summary Confirm
+         * 결제 성공 시 (WidgetSuccess로 이동할 때) 이 api를 호출해서 최종 결제 승인 및 저장을 실행합니다. 이 api 에서 에러가 발생할 시 fail path로 리다이렉트합니다. (Completed) 
+         * @summary 결제 승인 api 
          * @param {TossPaymentConfirmRequest} tossPaymentConfirmRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2580,7 +3372,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
         confirm: async (tossPaymentConfirmRequest: TossPaymentConfirmRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'tossPaymentConfirmRequest' is not null or undefined
             assertParamExists('confirm', 'tossPaymentConfirmRequest', tossPaymentConfirmRequest)
-            const localVarPath = `/api/payments/confirm`;
+            const localVarPath = `/payment/confirm`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2663,6 +3455,50 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             assertParamExists('createComment', 'commentCreateRequest', commentCreateRequest)
             const localVarPath = `/parties/{partyId}/comments`
                 .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(commentCreateRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 특정 모임에 댓글을 작성합니다.(Completed)
+         * @summary 고객센터 댓글 작성
+         * @param {number} inquiryId 
+         * @param {CommentCreateRequest} commentCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createInquiryComment: async (inquiryId: number, commentCreateRequest: CommentCreateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'inquiryId' is not null or undefined
+            assertParamExists('createInquiryComment', 'inquiryId', inquiryId)
+            // verify required parameter 'commentCreateRequest' is not null or undefined
+            assertParamExists('createInquiryComment', 'commentCreateRequest', commentCreateRequest)
+            const localVarPath = `/inquiry/{inquiryId}/comments`
+                .replace(`{${"inquiryId"}}`, encodeURIComponent(String(inquiryId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2822,7 +3658,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 새로운 식당을 생성합니다.(Completed)
+         * 사용자는 새로운 식당을 생성합니다.(Completed)  사진 전송 시 헤더에 Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  
          * @summary 식당 생성
          * @param {ShopCreateRequest} shopCreateRequest 
          * @param {*} [options] Override http request option.
@@ -3053,6 +3889,50 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
+         * 문의글 전체를 조회합니다. (Completed)
+         * @summary 고객센터의 문의글 전체 조회
+         * @param {number} [cursor] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllInquiry: async (cursor?: number, size?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/inquiry`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (cursor !== undefined) {
+                localVarQueryParameter['cursor'] = cursor;
+            }
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 특정 모임의 댓글 목록을 조회합니다.(Completed)
          * @summary 댓글 조회
          * @param {number} partyId 
@@ -3091,7 +3971,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 사용자가 특정 식당의 상세 정보를 조회합니다. 식당 등록 상태가 APPROVED인 식당들만 조회 가능 (Completed)
          * @summary 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -3129,7 +4009,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 자신이 가진 식당의 상세 정보를 조회합니다. (Completed)
          * @summary 사장의 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -3140,6 +4020,44 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             assertParamExists('getDetailShopOwner', 'shopId', shopId)
             const localVarPath = `/owner/shops/{shopId}`
                 .replace(`{${"shopId"}}`, encodeURIComponent(String(shopId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 특정 모임의 댓글 목록을 조회합니다.(Completed)
+         * @summary 고객센터 댓글 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getInquiryComments: async (inquiryId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'inquiryId' is not null or undefined
+            assertParamExists('getInquiryComments', 'inquiryId', inquiryId)
+            const localVarPath = `/inquiry/{inquiryId}/comments`
+                .replace(`{${"inquiryId"}}`, encodeURIComponent(String(inquiryId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3333,7 +4251,45 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 사장 한명이 가진 식당들 리스트들을 조회합니다.(Completed)
+         * 본인이 작성한 경우이거나 관리자의 경우에만 조회가 가능합니다. (Completed)
+         * @summary 자신이 작성한 고객센터의 문의글 하나 상세 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOneInquiry: async (inquiryId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'inquiryId' is not null or undefined
+            assertParamExists('getOneInquiry', 'inquiryId', inquiryId)
+            const localVarPath = `/inquiry/{inquiryId}`
+                .replace(`{${"inquiryId"}}`, encodeURIComponent(String(inquiryId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 사장 한명이 가진 식당들 리스트들을 조회합니다. 승인 여부 상태와 상관없이 조회 (Completed)
          * @summary 사장이 가진 식당들 조회
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3457,6 +4413,128 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             assertParamExists('getPartyDetail', 'partyId', partyId)
             const localVarPath = `/parties/{partyId}`
                 .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
+         * @summary 결제 내역 조회 api
+         * @param {number} [size] 
+         * @param {number} [cursor] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPaymentHistories: async (size?: number, cursor?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/payment`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (size !== undefined) {
+                localVarQueryParameter['size'] = size;
+            }
+
+            if (cursor !== undefined) {
+                localVarQueryParameter['cursor'] = cursor;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * APPROVED(승인) 또는 REJECTED(거절) (Completed)
+         * @summary 관리자가 식당 등록에 대한 요청을 승인 또는 거절 
+         * @param {number} shopId 
+         * @param {ApproveRequest} approveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPendingShop: async (shopId: number, approveRequest: ApproveRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'shopId' is not null or undefined
+            assertParamExists('getPendingShop', 'shopId', shopId)
+            // verify required parameter 'approveRequest' is not null or undefined
+            assertParamExists('getPendingShop', 'approveRequest', approveRequest)
+            const localVarPath = `/admin/shops/{shopId}`
+                .replace(`{${"shopId"}}`, encodeURIComponent(String(shopId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(approveRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 관리자는 등록을 원하는 식당 리스트를 볼 수 있습니다. (Completed)
+         * @summary 관리자가 pending 상태인 식당들 리스트를 가져옴
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPendingShop1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/admin/shops`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -3620,7 +4698,45 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 위치 기반으로 식당 목록을 조회합니다. (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
+         * 관리자는 식당에 대한 정보를 볼 수 있습니다. (식당의 등록 상태가 뭐든 볼 수 있음) (Completed)
+         * @summary 관리자가 식당에 대한 정보를 봄
+         * @param {number} shopId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getShopAdminDetail: async (shopId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'shopId' is not null or undefined
+            assertParamExists('getShopAdminDetail', 'shopId', shopId)
+            const localVarPath = `/admin/shops/{shopId}`
+                .replace(`{${"shopId"}}`, encodeURIComponent(String(shopId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 일반 사용자가 위치 기반으로 식당 목록을 조회합니다. (식당 상태가 APPROVED인 식당들만 조회 가능) (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
          * @summary 식당 목록 조회
          * @param {number} [latitude] 
          * @param {number} [longitude] 
@@ -3689,7 +4805,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (Completed)
+         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (식당 상태가 APPROVED인 식당들만 조회 가능)(Completed)
          * @summary 식당 검색
          * @param {string} [query] 
          * @param {GetShopsBySearchSortEnum} [sort] 
@@ -3851,6 +4967,46 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         *  제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
+         * @summary 고객센터의 문의글 작성
+         * @param {InquiryCreateRequest} inquiryCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        newInquiry: async (inquiryCreateRequest: InquiryCreateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'inquiryCreateRequest' is not null or undefined
+            assertParamExists('newInquiry', 'inquiryCreateRequest', inquiryCreateRequest)
+            const localVarPath = `/inquiry`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(inquiryCreateRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -4078,6 +5234,46 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
+         * 1. 결제 요청 전에 주문 정보를 서버에 저장    결제하기 버튼을 누를 때 (실제 결제 요청 api 보내기 전) 호출하면 됩니다. orderId는 클라이언트에서 임의의 랜덤한 숫자로 제작합니다. 2. orderId, amount 저장 3. 이후 결제 요청 / 결제 성공 시 서버에 저장된 값과 비교  → 변조 방지, 악의적인 금액 조작 차단  (Completed) 
+         * @summary 주문 정보 임시 저장 api
+         * @param {OrderSaveRequest} orderSaveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        saveOrder: async (orderSaveRequest: OrderSaveRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'orderSaveRequest' is not null or undefined
+            assertParamExists('saveOrder', 'orderSaveRequest', orderSaveRequest)
+            const localVarPath = `/payment/order`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(orderSaveRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 폼 로그인 회원가입(Completed)
          * @summary 회원가입
          * @param {SignUpRequest} signUpRequest 
@@ -4158,7 +5354,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 식당 정보를 수정합니다. (Completed)
+         * 자신이 가진 식당 정보를 수정합니다. (Completed)
          * @summary 사장 식당 정보 수정
          * @param {number} shopId 
          * @param {ShopUpdateRequest} shopUpdateRequest 
@@ -4269,8 +5465,8 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm 혹여나 프론트와 토스페이 api 통신이 되지 않으면  https://github.com/prgrms-be-devcourse/NBE5-7-2-Team09  링크에 프론트 코드 링크 참조해주세요
-         * @summary Confirm
+         * 결제 성공 시 (WidgetSuccess로 이동할 때) 이 api를 호출해서 최종 결제 승인 및 저장을 실행합니다. 이 api 에서 에러가 발생할 시 fail path로 리다이렉트합니다. (Completed) 
+         * @summary 결제 승인 api 
          * @param {TossPaymentConfirmRequest} tossPaymentConfirmRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4306,6 +5502,20 @@ export const APIApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createComment(partyId, commentCreateRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.createComment']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 특정 모임에 댓글을 작성합니다.(Completed)
+         * @summary 고객센터 댓글 작성
+         * @param {number} inquiryId 
+         * @param {CommentCreateRequest} commentCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createInquiryComment(inquiryId: number, commentCreateRequest: CommentCreateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createInquiryComment(inquiryId, commentCreateRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.createInquiryComment']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -4350,7 +5560,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 새로운 식당을 생성합니다.(Completed)
+         * 사용자는 새로운 식당을 생성합니다.(Completed)  사진 전송 시 헤더에 Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  
          * @summary 식당 생성
          * @param {ShopCreateRequest} shopCreateRequest 
          * @param {*} [options] Override http request option.
@@ -4428,6 +5638,20 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 문의글 전체를 조회합니다. (Completed)
+         * @summary 고객센터의 문의글 전체 조회
+         * @param {number} [cursor] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getAllInquiry(cursor?: number, size?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseInquiryAllGetResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllInquiry(cursor, size, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getAllInquiry']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 특정 모임의 댓글 목록을 조회합니다.(Completed)
          * @summary 댓글 조회
          * @param {number} partyId 
@@ -4441,7 +5665,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 사용자가 특정 식당의 상세 정보를 조회합니다. 식당 등록 상태가 APPROVED인 식당들만 조회 가능 (Completed)
          * @summary 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -4454,7 +5678,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 자신이 가진 식당의 상세 정보를 조회합니다. (Completed)
          * @summary 사장의 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -4464,6 +5688,19 @@ export const APIApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getDetailShopOwner(shopId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.getDetailShopOwner']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 특정 모임의 댓글 목록을 조회합니다.(Completed)
+         * @summary 고객센터 댓글 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getInquiryComments(inquiryId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseListCommentResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getInquiryComments(inquiryId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getInquiryComments']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -4521,7 +5758,20 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 사장 한명이 가진 식당들 리스트들을 조회합니다.(Completed)
+         * 본인이 작성한 경우이거나 관리자의 경우에만 조회가 가능합니다. (Completed)
+         * @summary 자신이 작성한 고객센터의 문의글 하나 상세 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOneInquiry(inquiryId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseInquiryOneGetResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOneInquiry(inquiryId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getOneInquiry']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 사장 한명이 가진 식당들 리스트들을 조회합니다. 승인 여부 상태와 상관없이 조회 (Completed)
          * @summary 사장이 가진 식당들 조회
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4564,6 +5814,46 @@ export const APIApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getPartyDetail(partyId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.getPartyDetail']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
+         * @summary 결제 내역 조회 api
+         * @param {number} [size] 
+         * @param {number} [cursor] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPaymentHistories(size?: number, cursor?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponsePaymentScrollResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPaymentHistories(size, cursor, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getPaymentHistories']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * APPROVED(승인) 또는 REJECTED(거절) (Completed)
+         * @summary 관리자가 식당 등록에 대한 요청을 승인 또는 거절 
+         * @param {number} shopId 
+         * @param {ApproveRequest} approveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPendingShop(shopId: number, approveRequest: ApproveRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPendingShop(shopId, approveRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getPendingShop']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 관리자는 등록을 원하는 식당 리스트를 볼 수 있습니다. (Completed)
+         * @summary 관리자가 pending 상태인 식당들 리스트를 가져옴
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPendingShop1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseGetAllPendingShopListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPendingShop1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getPendingShop1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -4610,7 +5900,20 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 위치 기반으로 식당 목록을 조회합니다. (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
+         * 관리자는 식당에 대한 정보를 볼 수 있습니다. (식당의 등록 상태가 뭐든 볼 수 있음) (Completed)
+         * @summary 관리자가 식당에 대한 정보를 봄
+         * @param {number} shopId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getShopAdminDetail(shopId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseShopAdminDetailResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getShopAdminDetail(shopId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getShopAdminDetail']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 일반 사용자가 위치 기반으로 식당 목록을 조회합니다. (식당 상태가 APPROVED인 식당들만 조회 가능) (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
          * @summary 식당 목록 조회
          * @param {number} [latitude] 
          * @param {number} [longitude] 
@@ -4629,7 +5932,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (Completed)
+         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (식당 상태가 APPROVED인 식당들만 조회 가능)(Completed)
          * @summary 식당 검색
          * @param {string} [query] 
          * @param {GetShopsBySearchSortEnum} [sort] 
@@ -4677,10 +5980,23 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async logout(refreshToken: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async logout(refreshToken: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.logout(refreshToken, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.logout']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         *  제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
+         * @summary 고객센터의 문의글 작성
+         * @param {InquiryCreateRequest} inquiryCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async newInquiry(inquiryCreateRequest: InquiryCreateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponsePreSignedUrlListResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.newInquiry(inquiryCreateRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.newInquiry']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -4759,6 +6075,19 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 1. 결제 요청 전에 주문 정보를 서버에 저장    결제하기 버튼을 누를 때 (실제 결제 요청 api 보내기 전) 호출하면 됩니다. orderId는 클라이언트에서 임의의 랜덤한 숫자로 제작합니다. 2. orderId, amount 저장 3. 이후 결제 요청 / 결제 성공 시 서버에 저장된 값과 비교  → 변조 방지, 악의적인 금액 조작 차단  (Completed) 
+         * @summary 주문 정보 임시 저장 api
+         * @param {OrderSaveRequest} orderSaveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async saveOrder(orderSaveRequest: OrderSaveRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.saveOrder(orderSaveRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.saveOrder']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 폼 로그인 회원가입(Completed)
          * @summary 회원가입
          * @param {SignUpRequest} signUpRequest 
@@ -4785,7 +6114,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 식당 정보를 수정합니다. (Completed)
+         * 자신이 가진 식당 정보를 수정합니다. (Completed)
          * @summary 사장 식당 정보 수정
          * @param {number} shopId 
          * @param {ShopUpdateRequest} shopUpdateRequest 
@@ -4838,8 +6167,8 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.completeParty(partyId, options).then((request) => request(axios, basePath));
         },
         /**
-         * TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm 혹여나 프론트와 토스페이 api 통신이 되지 않으면  https://github.com/prgrms-be-devcourse/NBE5-7-2-Team09  링크에 프론트 코드 링크 참조해주세요
-         * @summary Confirm
+         * 결제 성공 시 (WidgetSuccess로 이동할 때) 이 api를 호출해서 최종 결제 승인 및 저장을 실행합니다. 이 api 에서 에러가 발생할 시 fail path로 리다이렉트합니다. (Completed) 
+         * @summary 결제 승인 api 
          * @param {TossPaymentConfirmRequest} tossPaymentConfirmRequest 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4867,6 +6196,17 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          */
         createComment(partyId: number, commentCreateRequest: CommentCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
             return localVarFp.createComment(partyId, commentCreateRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 특정 모임에 댓글을 작성합니다.(Completed)
+         * @summary 고객센터 댓글 작성
+         * @param {number} inquiryId 
+         * @param {CommentCreateRequest} commentCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createInquiryComment(inquiryId: number, commentCreateRequest: CommentCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
+            return localVarFp.createInquiryComment(inquiryId, commentCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 맛집 탐험 파티 모집 게시글을 작성합니다.(Completed)
@@ -4901,7 +6241,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.createReview(reviewCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         * 새로운 식당을 생성합니다.(Completed)
+         * 사용자는 새로운 식당을 생성합니다.(Completed)  사진 전송 시 헤더에 Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  
          * @summary 식당 생성
          * @param {ShopCreateRequest} shopCreateRequest 
          * @param {*} [options] Override http request option.
@@ -4961,6 +6301,17 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.deleteUser(refreshToken, options).then((request) => request(axios, basePath));
         },
         /**
+         * 문의글 전체를 조회합니다. (Completed)
+         * @summary 고객센터의 문의글 전체 조회
+         * @param {number} [cursor] 
+         * @param {number} [size] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getAllInquiry(cursor?: number, size?: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseInquiryAllGetResponse> {
+            return localVarFp.getAllInquiry(cursor, size, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 특정 모임의 댓글 목록을 조회합니다.(Completed)
          * @summary 댓글 조회
          * @param {number} partyId 
@@ -4971,7 +6322,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getComments(partyId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 사용자가 특정 식당의 상세 정보를 조회합니다. 식당 등록 상태가 APPROVED인 식당들만 조회 가능 (Completed)
          * @summary 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -4981,7 +6332,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getDetailShop(shopId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 특정 식당의 상세 정보를 조회합니다. (Completed)
+         * 자신이 가진 식당의 상세 정보를 조회합니다. (Completed)
          * @summary 사장의 식당 상세 조회
          * @param {number} shopId 
          * @param {*} [options] Override http request option.
@@ -4989,6 +6340,16 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          */
         getDetailShopOwner(shopId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseShopOwnerDetailResponse> {
             return localVarFp.getDetailShopOwner(shopId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 특정 모임의 댓글 목록을 조회합니다.(Completed)
+         * @summary 고객센터 댓글 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getInquiryComments(inquiryId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseListCommentResponse> {
+            return localVarFp.getInquiryComments(inquiryId, options).then((request) => request(axios, basePath));
         },
         /**
          * 로그인한 사용자의 마이페이지 정보를 조회합니다.(Completed)
@@ -5033,7 +6394,17 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getMyReviews(size, cursor, options).then((request) => request(axios, basePath));
         },
         /**
-         * 사장 한명이 가진 식당들 리스트들을 조회합니다.(Completed)
+         * 본인이 작성한 경우이거나 관리자의 경우에만 조회가 가능합니다. (Completed)
+         * @summary 자신이 작성한 고객센터의 문의글 하나 상세 조회
+         * @param {number} inquiryId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOneInquiry(inquiryId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseInquiryOneGetResponse> {
+            return localVarFp.getOneInquiry(inquiryId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 사장 한명이 가진 식당들 리스트들을 조회합니다. 승인 여부 상태와 상관없이 조회 (Completed)
          * @summary 사장이 가진 식당들 조회
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5070,6 +6441,37 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getPartyDetail(partyId, options).then((request) => request(axios, basePath));
         },
         /**
+         * 결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
+         * @summary 결제 내역 조회 api
+         * @param {number} [size] 
+         * @param {number} [cursor] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPaymentHistories(size?: number, cursor?: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponsePaymentScrollResponse> {
+            return localVarFp.getPaymentHistories(size, cursor, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * APPROVED(승인) 또는 REJECTED(거절) (Completed)
+         * @summary 관리자가 식당 등록에 대한 요청을 승인 또는 거절 
+         * @param {number} shopId 
+         * @param {ApproveRequest} approveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPendingShop(shopId: number, approveRequest: ApproveRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.getPendingShop(shopId, approveRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 관리자는 등록을 원하는 식당 리스트를 볼 수 있습니다. (Completed)
+         * @summary 관리자가 pending 상태인 식당들 리스트를 가져옴
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPendingShop1(options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseGetAllPendingShopListResponse> {
+            return localVarFp.getPendingShop1(options).then((request) => request(axios, basePath));
+        },
+        /**
          * 내 정보 수정 항목 중 프로필 이미지를 업로드하기 위한 pre-signed url을 생성합니다.(Completed)
          * @summary 프로필 이미지 업로드를 위한 pre-signed url 생성
          * @param {*} [options] Override http request option.
@@ -5104,7 +6506,17 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getReviews(shopId, cursor, size, options).then((request) => request(axios, basePath));
         },
         /**
-         * 위치 기반으로 식당 목록을 조회합니다. (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
+         * 관리자는 식당에 대한 정보를 볼 수 있습니다. (식당의 등록 상태가 뭐든 볼 수 있음) (Completed)
+         * @summary 관리자가 식당에 대한 정보를 봄
+         * @param {number} shopId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getShopAdminDetail(shopId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseShopAdminDetailResponse> {
+            return localVarFp.getShopAdminDetail(shopId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 일반 사용자가 위치 기반으로 식당 목록을 조회합니다. (식당 상태가 APPROVED인 식당들만 조회 가능) (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
          * @summary 식당 목록 조회
          * @param {number} [latitude] 
          * @param {number} [longitude] 
@@ -5120,7 +6532,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getShops(latitude, longitude, radius, category, sort, cursor, size, options).then((request) => request(axios, basePath));
         },
         /**
-         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (Completed)
+         * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (식당 상태가 APPROVED인 식당들만 조회 가능)(Completed)
          * @summary 식당 검색
          * @param {string} [query] 
          * @param {GetShopsBySearchSortEnum} [sort] 
@@ -5159,8 +6571,18 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        logout(refreshToken: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        logout(refreshToken: string, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
             return localVarFp.logout(refreshToken, options).then((request) => request(axios, basePath));
+        },
+        /**
+         *  제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
+         * @summary 고객센터의 문의글 작성
+         * @param {InquiryCreateRequest} inquiryCreateRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        newInquiry(inquiryCreateRequest: InquiryCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponsePreSignedUrlListResponse> {
+            return localVarFp.newInquiry(inquiryCreateRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 프론트는 이 URL로 리디렉션하여 OAuth2 로그인을 시작합니다. 예: /oauth2/authorization/google
@@ -5220,6 +6642,16 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.refuseReservation(reservationId, options).then((request) => request(axios, basePath));
         },
         /**
+         * 1. 결제 요청 전에 주문 정보를 서버에 저장    결제하기 버튼을 누를 때 (실제 결제 요청 api 보내기 전) 호출하면 됩니다. orderId는 클라이언트에서 임의의 랜덤한 숫자로 제작합니다. 2. orderId, amount 저장 3. 이후 결제 요청 / 결제 성공 시 서버에 저장된 값과 비교  → 변조 방지, 악의적인 금액 조작 차단  (Completed) 
+         * @summary 주문 정보 임시 저장 api
+         * @param {OrderSaveRequest} orderSaveRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        saveOrder(orderSaveRequest: OrderSaveRequest, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
+            return localVarFp.saveOrder(orderSaveRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 폼 로그인 회원가입(Completed)
          * @summary 회원가입
          * @param {SignUpRequest} signUpRequest 
@@ -5240,7 +6672,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.updateMyInfo(myInfoUpdateRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         * 식당 정보를 수정합니다. (Completed)
+         * 자신이 가진 식당 정보를 수정합니다. (Completed)
          * @summary 사장 식당 정보 수정
          * @param {number} shopId 
          * @param {ShopUpdateRequest} shopUpdateRequest 
@@ -5291,8 +6723,8 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm 혹여나 프론트와 토스페이 api 통신이 되지 않으면  https://github.com/prgrms-be-devcourse/NBE5-7-2-Team09  링크에 프론트 코드 링크 참조해주세요
-     * @summary Confirm
+     * 결제 성공 시 (WidgetSuccess로 이동할 때) 이 api를 호출해서 최종 결제 승인 및 저장을 실행합니다. 이 api 에서 에러가 발생할 시 fail path로 리다이렉트합니다. (Completed) 
+     * @summary 결제 승인 api 
      * @param {TossPaymentConfirmRequest} tossPaymentConfirmRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -5325,6 +6757,19 @@ export class APIApi extends BaseAPI {
      */
     public createComment(partyId: number, commentCreateRequest: CommentCreateRequest, options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).createComment(partyId, commentCreateRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 특정 모임에 댓글을 작성합니다.(Completed)
+     * @summary 고객센터 댓글 작성
+     * @param {number} inquiryId 
+     * @param {CommentCreateRequest} commentCreateRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public createInquiryComment(inquiryId: number, commentCreateRequest: CommentCreateRequest, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).createInquiryComment(inquiryId, commentCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5366,7 +6811,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 새로운 식당을 생성합니다.(Completed)
+     * 사용자는 새로운 식당을 생성합니다.(Completed)  사진 전송 시 헤더에 Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  
      * @summary 식당 생성
      * @param {ShopCreateRequest} shopCreateRequest 
      * @param {*} [options] Override http request option.
@@ -5438,6 +6883,19 @@ export class APIApi extends BaseAPI {
     }
 
     /**
+     * 문의글 전체를 조회합니다. (Completed)
+     * @summary 고객센터의 문의글 전체 조회
+     * @param {number} [cursor] 
+     * @param {number} [size] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getAllInquiry(cursor?: number, size?: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getAllInquiry(cursor, size, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 특정 모임의 댓글 목록을 조회합니다.(Completed)
      * @summary 댓글 조회
      * @param {number} partyId 
@@ -5450,7 +6908,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 특정 식당의 상세 정보를 조회합니다. (Completed)
+     * 사용자가 특정 식당의 상세 정보를 조회합니다. 식당 등록 상태가 APPROVED인 식당들만 조회 가능 (Completed)
      * @summary 식당 상세 조회
      * @param {number} shopId 
      * @param {*} [options] Override http request option.
@@ -5462,7 +6920,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 특정 식당의 상세 정보를 조회합니다. (Completed)
+     * 자신이 가진 식당의 상세 정보를 조회합니다. (Completed)
      * @summary 사장의 식당 상세 조회
      * @param {number} shopId 
      * @param {*} [options] Override http request option.
@@ -5471,6 +6929,18 @@ export class APIApi extends BaseAPI {
      */
     public getDetailShopOwner(shopId: number, options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).getDetailShopOwner(shopId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 특정 모임의 댓글 목록을 조회합니다.(Completed)
+     * @summary 고객센터 댓글 조회
+     * @param {number} inquiryId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getInquiryComments(inquiryId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getInquiryComments(inquiryId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5524,7 +6994,19 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 사장 한명이 가진 식당들 리스트들을 조회합니다.(Completed)
+     * 본인이 작성한 경우이거나 관리자의 경우에만 조회가 가능합니다. (Completed)
+     * @summary 자신이 작성한 고객센터의 문의글 하나 상세 조회
+     * @param {number} inquiryId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getOneInquiry(inquiryId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getOneInquiry(inquiryId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 사장 한명이 가진 식당들 리스트들을 조회합니다. 승인 여부 상태와 상관없이 조회 (Completed)
      * @summary 사장이 가진 식당들 조회
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -5564,6 +7046,43 @@ export class APIApi extends BaseAPI {
      */
     public getPartyDetail(partyId: number, options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).getPartyDetail(partyId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
+     * @summary 결제 내역 조회 api
+     * @param {number} [size] 
+     * @param {number} [cursor] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getPaymentHistories(size?: number, cursor?: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getPaymentHistories(size, cursor, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * APPROVED(승인) 또는 REJECTED(거절) (Completed)
+     * @summary 관리자가 식당 등록에 대한 요청을 승인 또는 거절 
+     * @param {number} shopId 
+     * @param {ApproveRequest} approveRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getPendingShop(shopId: number, approveRequest: ApproveRequest, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getPendingShop(shopId, approveRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 관리자는 등록을 원하는 식당 리스트를 볼 수 있습니다. (Completed)
+     * @summary 관리자가 pending 상태인 식당들 리스트를 가져옴
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getPendingShop1(options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getPendingShop1(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5607,7 +7126,19 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 위치 기반으로 식당 목록을 조회합니다. (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
+     * 관리자는 식당에 대한 정보를 볼 수 있습니다. (식당의 등록 상태가 뭐든 볼 수 있음) (Completed)
+     * @summary 관리자가 식당에 대한 정보를 봄
+     * @param {number} shopId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getShopAdminDetail(shopId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getShopAdminDetail(shopId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 일반 사용자가 위치 기반으로 식당 목록을 조회합니다. (식당 상태가 APPROVED인 식당들만 조회 가능) (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
      * @summary 식당 목록 조회
      * @param {number} [latitude] 
      * @param {number} [longitude] 
@@ -5625,7 +7156,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (Completed)
+     * 키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (식당 상태가 APPROVED인 식당들만 조회 가능)(Completed)
      * @summary 식당 검색
      * @param {string} [query] 
      * @param {GetShopsBySearchSortEnum} [sort] 
@@ -5673,6 +7204,18 @@ export class APIApi extends BaseAPI {
      */
     public logout(refreshToken: string, options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).logout(refreshToken, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *  제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
+     * @summary 고객센터의 문의글 작성
+     * @param {InquiryCreateRequest} inquiryCreateRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public newInquiry(inquiryCreateRequest: InquiryCreateRequest, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).newInquiry(inquiryCreateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -5745,6 +7288,18 @@ export class APIApi extends BaseAPI {
     }
 
     /**
+     * 1. 결제 요청 전에 주문 정보를 서버에 저장    결제하기 버튼을 누를 때 (실제 결제 요청 api 보내기 전) 호출하면 됩니다. orderId는 클라이언트에서 임의의 랜덤한 숫자로 제작합니다. 2. orderId, amount 저장 3. 이후 결제 요청 / 결제 성공 시 서버에 저장된 값과 비교  → 변조 방지, 악의적인 금액 조작 차단  (Completed) 
+     * @summary 주문 정보 임시 저장 api
+     * @param {OrderSaveRequest} orderSaveRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public saveOrder(orderSaveRequest: OrderSaveRequest, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).saveOrder(orderSaveRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 폼 로그인 회원가입(Completed)
      * @summary 회원가입
      * @param {SignUpRequest} signUpRequest 
@@ -5769,7 +7324,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 식당 정보를 수정합니다. (Completed)
+     * 자신이 가진 식당 정보를 수정합니다. (Completed)
      * @summary 사장 식당 정보 수정
      * @param {number} shopId 
      * @param {ShopUpdateRequest} shopUpdateRequest 
@@ -5864,5 +7419,192 @@ export const GetShopsBySearchSortEnum = {
     Name: 'NAME'
 } as const;
 export type GetShopsBySearchSortEnum = typeof GetShopsBySearchSortEnum[keyof typeof GetShopsBySearchSortEnum];
+
+
+/**
+ * ChatControllerApi - axios parameter creator
+ * @export
+ */
+export const ChatControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {number} cursor 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        loadChatHistory: async (partyId: number, cursor: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partyId' is not null or undefined
+            assertParamExists('loadChatHistory', 'partyId', partyId)
+            // verify required parameter 'cursor' is not null or undefined
+            assertParamExists('loadChatHistory', 'cursor', cursor)
+            const localVarPath = `/parties/{partyId}/chat/load`
+                .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (cursor !== undefined) {
+                localVarQueryParameter['cursor'] = cursor;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreChat: async (partyId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partyId' is not null or undefined
+            assertParamExists('restoreChat', 'partyId', partyId)
+            const localVarPath = `/parties/{partyId}/chat/restore`
+                .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ChatControllerApi - functional programming interface
+ * @export
+ */
+export const ChatControllerApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = ChatControllerApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {number} cursor 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async loadChatHistory(partyId: number, cursor: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseChatMessagePageResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.loadChatHistory(partyId, cursor, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChatControllerApi.loadChatHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async restoreChat(partyId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseListChatMessageResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.restoreChat(partyId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ChatControllerApi.restoreChat']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ChatControllerApi - factory interface
+ * @export
+ */
+export const ChatControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ChatControllerApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {number} cursor 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        loadChatHistory(partyId: number, cursor: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseChatMessagePageResponse> {
+            return localVarFp.loadChatHistory(partyId, cursor, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        restoreChat(partyId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseListChatMessageResponse> {
+            return localVarFp.restoreChat(partyId, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * ChatControllerApi - object-oriented interface
+ * @export
+ * @class ChatControllerApi
+ * @extends {BaseAPI}
+ */
+export class ChatControllerApi extends BaseAPI {
+    /**
+     * 
+     * @param {number} partyId 
+     * @param {number} cursor 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChatControllerApi
+     */
+    public loadChatHistory(partyId: number, cursor: number, options?: RawAxiosRequestConfig) {
+        return ChatControllerApiFp(this.configuration).loadChatHistory(partyId, cursor, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} partyId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ChatControllerApi
+     */
+    public restoreChat(partyId: number, options?: RawAxiosRequestConfig) {
+        return ChatControllerApiFp(this.configuration).restoreChat(partyId, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 

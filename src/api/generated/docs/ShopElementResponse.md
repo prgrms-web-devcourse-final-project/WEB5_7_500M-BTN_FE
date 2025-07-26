@@ -9,8 +9,11 @@ Name | Type | Description | Notes
 **name** | **string** |  | [optional] [default to undefined]
 **category** | **string** |  | [optional] [default to undefined]
 **address** | **string** |  | [optional] [default to undefined]
+**detailAddress** | **string** |  | [optional] [default to undefined]
 **rating** | **number** |  | [optional] [default to undefined]
 **thumbnailUrl** | **string** |  | [optional] [default to undefined]
+**latitude** | **number** |  | [optional] [default to undefined]
+**longitude** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -22,8 +25,11 @@ const instance: ShopElementResponse = {
     name,
     category,
     address,
+    detailAddress,
     rating,
     thumbnailUrl,
+    latitude,
+    longitude,
 };
 ```
 

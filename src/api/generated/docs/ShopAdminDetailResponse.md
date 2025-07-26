@@ -1,10 +1,13 @@
-# ShopDetailResponse
+# ShopAdminDetailResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**userId** | **number** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
+**nickName** | **string** |  | [optional] [default to undefined]
 **shopId** | **number** |  | [optional] [default to undefined]
 **shopName** | **string** |  | [optional] [default to undefined]
 **latitude** | **number** |  | [optional] [default to undefined]
@@ -18,16 +21,19 @@ Name | Type | Description | Notes
 **closeTime** | [**LocalTime**](LocalTime.md) |  | [optional] [default to undefined]
 **rating** | **number** |  | [optional] [default to undefined]
 **reservationFee** | **number** |  | [optional] [default to undefined]
-**reviewCount** | **number** |  | [optional] [default to undefined]
 **images** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
+**businessCode** | **string** |  | [optional] [default to undefined]
 **approve** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { ShopDetailResponse } from '@/api/generated';
+import { ShopAdminDetailResponse } from '@/api/generated';
 
-const instance: ShopDetailResponse = {
+const instance: ShopAdminDetailResponse = {
+    userId,
+    name,
+    nickName,
     shopId,
     shopName,
     latitude,
@@ -41,8 +47,8 @@ const instance: ShopDetailResponse = {
     closeTime,
     rating,
     reservationFee,
-    reviewCount,
     images,
+    businessCode,
     approve,
 };
 ```

@@ -6,9 +6,10 @@ All URIs are relative to *https://matjalalzz.shop*
 |------------- | ------------- | -------------|
 |[**adminTest**](#admintest) | **GET** /admin/test | |
 |[**completeParty**](#completeparty) | **PATCH** /parties/{partyId}/complete | 파티 모집 완료 상태 변경|
-|[**confirm**](#confirm) | **POST** /api/payments/confirm | Confirm|
+|[**confirm**](#confirm) | **POST** /payment/confirm | 결제 승인 api |
 |[**confirmReservation**](#confirmreservation) | **PATCH** /reservations/{reservationId}/confirm | 예약 수락|
 |[**createComment**](#createcomment) | **POST** /parties/{partyId}/comments | 댓글 작성|
+|[**createInquiryComment**](#createinquirycomment) | **POST** /inquiry/{inquiryId}/comments | 고객센터 댓글 작성|
 |[**createParty**](#createparty) | **POST** /parties | 파티 생성|
 |[**createReservation**](#createreservation) | **POST** /shops/{shopId}/reservations | 예약 생성|
 |[**createReview**](#createreview) | **POST** /reviews | 리뷰 작성|
@@ -18,30 +19,39 @@ All URIs are relative to *https://matjalalzz.shop*
 |[**deleteProfile**](#deleteprofile) | **DELETE** /users/my-page/profile-img | 프로필 이미지 삭제|
 |[**deleteReview**](#deletereview) | **DELETE** /reviews/{reviewId} | 리뷰 삭제|
 |[**deleteUser**](#deleteuser) | **DELETE** /users/delete | 회원탈퇴|
+|[**getAllInquiry**](#getallinquiry) | **GET** /inquiry | 고객센터의 문의글 전체 조회|
 |[**getComments**](#getcomments) | **GET** /parties/{partyId}/comments | 댓글 조회|
 |[**getDetailShop**](#getdetailshop) | **GET** /shops/{shopId} | 식당 상세 조회|
 |[**getDetailShopOwner**](#getdetailshopowner) | **GET** /owner/shops/{shopId} | 사장의 식당 상세 조회|
+|[**getInquiryComments**](#getinquirycomments) | **GET** /inquiry/{inquiryId}/comments | 고객센터 댓글 조회|
 |[**getMyInfo**](#getmyinfo) | **GET** /users/my-page | 내 정보 조회|
 |[**getMyParties**](#getmyparties) | **GET** /users/my-page/parties | 내 파티 정보 조회|
 |[**getMyReservations**](#getmyreservations) | **GET** /users/my-page/reservations | 내 예약 정보 조회|
 |[**getMyReviews**](#getmyreviews) | **GET** /users/my-page/reviews | 내 리뷰 정보 조회|
+|[**getOneInquiry**](#getoneinquiry) | **GET** /inquiry/{inquiryId} | 자신이 작성한 고객센터의 문의글 하나 상세 조회|
 |[**getOwnerShops**](#getownershops) | **GET** /owner/shops | 사장이 가진 식당들 조회|
 |[**getParties**](#getparties) | **GET** /parties | 파티 목록 조회|
 |[**getPartyDetail**](#getpartydetail) | **GET** /parties/{partyId} | 파티 상세 조회|
+|[**getPaymentHistories**](#getpaymenthistories) | **GET** /payment | 결제 내역 조회 api|
+|[**getPendingShop**](#getpendingshop) | **POST** /admin/shops/{shopId} | 관리자가 식당 등록에 대한 요청을 승인 또는 거절 |
+|[**getPendingShop1**](#getpendingshop1) | **GET** /admin/shops | 관리자가 pending 상태인 식당들 리스트를 가져옴|
 |[**getProfilePresignedUrl**](#getprofilepresignedurl) | **POST** /users/my-page/presigned-urls | 프로필 이미지 업로드를 위한 pre-signed url 생성|
 |[**getReservations**](#getreservations) | **GET** /reservations | 식당 예약 목록 조회|
 |[**getReviews**](#getreviews) | **GET** /shops/{shopId}/reviews | 리뷰 조회|
+|[**getShopAdminDetail**](#getshopadmindetail) | **GET** /admin/shops/{shopId} | 관리자가 식당에 대한 정보를 봄|
 |[**getShops**](#getshops) | **GET** /shops | 식당 목록 조회|
 |[**getShopsBySearch**](#getshopsbysearch) | **GET** /shops/search | 식당 검색|
 |[**joinParty**](#joinparty) | **POST** /parties/{partyId}/join | 파티 참여|
 |[**login**](#login) | **POST** /users/login | Form 로그인|
 |[**logout**](#logout) | **POST** /users/logout | 로그아웃|
+|[**newInquiry**](#newinquiry) | **POST** /inquiry | 고객센터의 문의글 작성|
 |[**oauth2Urls**](#oauth2urls) | **GET** /users/authorization-info | OAuth2 로그인 진입점 URL 안내|
 |[**oauthSignup**](#oauthsignup) | **POST** /users/signup/oauth | 회원가입|
 |[**ownerTest**](#ownertest) | **GET** /owner/test | |
 |[**quitParty**](#quitparty) | **POST** /parties/{partyId}/quit | 파티 탈퇴|
 |[**refreshToken**](#refreshtoken) | **POST** /users/reissue-token | 액세스 토큰 재발급|
 |[**refuseReservation**](#refusereservation) | **PATCH** /reservations/{reservationId}/cancel | 예약 거절|
+|[**saveOrder**](#saveorder) | **POST** /payment/order | 주문 정보 임시 저장 api|
 |[**signup**](#signup) | **POST** /users/signup | 회원가입|
 |[**updateMyInfo**](#updatemyinfo) | **PUT** /users/my-page | 내 정보 수정|
 |[**updateShop**](#updateshop) | **PUT** /owner/shops/{shopId} | 사장 식당 정보 수정|
@@ -144,7 +154,7 @@ const { status, data } = await apiInstance.completeParty(
 # **confirm**
 > BaseResponsePaymentSuccessResponse confirm(tossPaymentConfirmRequest)
 
-TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm 혹여나 프론트와 토스페이 api 통신이 되지 않으면  https://github.com/prgrms-be-devcourse/NBE5-7-2-Team09  링크에 프론트 코드 링크 참조해주세요
+결제 성공 시 (WidgetSuccess로 이동할 때) 이 api를 호출해서 최종 결제 승인 및 저장을 실행합니다. 이 api 에서 에러가 발생할 시 fail path로 리다이렉트합니다. (Completed) 
 
 ### Example
 
@@ -189,7 +199,7 @@ const { status, data } = await apiInstance.confirm(
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | OK |  -  |
+|**201** | Created |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -276,6 +286,61 @@ const { status, data } = await apiInstance.createComment(
 |------------- | ------------- | ------------- | -------------|
 | **commentCreateRequest** | **CommentCreateRequest**|  | |
 | **partyId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseVoid**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Created |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **createInquiryComment**
+> BaseResponseVoid createInquiryComment(commentCreateRequest)
+
+특정 모임에 댓글을 작성합니다.(Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration,
+    CommentCreateRequest
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let inquiryId: number; // (default to undefined)
+let commentCreateRequest: CommentCreateRequest; //
+
+const { status, data } = await apiInstance.createInquiryComment(
+    inquiryId,
+    commentCreateRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **commentCreateRequest** | **CommentCreateRequest**|  | |
+| **inquiryId** | [**number**] |  | defaults to undefined|
 
 
 ### Return type
@@ -464,7 +529,7 @@ const { status, data } = await apiInstance.createReview(
 # **createShop**
 > BaseResponsePreSignedUrlListResponse createShop(shopCreateRequest)
 
-새로운 식당을 생성합니다.(Completed)
+사용자는 새로운 식당을 생성합니다.(Completed)  사진 전송 시 헤더에 Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  
 
 ### Example
 
@@ -770,6 +835,60 @@ void (empty response body)
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getAllInquiry**
+> BaseResponseInquiryAllGetResponse getAllInquiry()
+
+문의글 전체를 조회합니다. (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let cursor: number; // (optional) (default to undefined)
+let size: number; // (optional) (default to 10)
+
+const { status, data } = await apiInstance.getAllInquiry(
+    cursor,
+    size
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **cursor** | [**number**] |  | (optional) defaults to undefined|
+| **size** | [**number**] |  | (optional) defaults to 10|
+
+
+### Return type
+
+**BaseResponseInquiryAllGetResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **getComments**
 > BaseResponseListCommentResponse getComments()
 
@@ -824,7 +943,7 @@ const { status, data } = await apiInstance.getComments(
 # **getDetailShop**
 > BaseResponseShopDetailResponse getDetailShop()
 
-특정 식당의 상세 정보를 조회합니다. (Completed)
+사용자가 특정 식당의 상세 정보를 조회합니다. 식당 등록 상태가 APPROVED인 식당들만 조회 가능 (Completed)
 
 ### Example
 
@@ -875,7 +994,7 @@ const { status, data } = await apiInstance.getDetailShop(
 # **getDetailShopOwner**
 > BaseResponseShopOwnerDetailResponse getDetailShopOwner()
 
-특정 식당의 상세 정보를 조회합니다. (Completed)
+자신이 가진 식당의 상세 정보를 조회합니다. (Completed)
 
 ### Example
 
@@ -905,6 +1024,57 @@ const { status, data } = await apiInstance.getDetailShopOwner(
 ### Return type
 
 **BaseResponseShopOwnerDetailResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getInquiryComments**
+> BaseResponseListCommentResponse getInquiryComments()
+
+특정 모임의 댓글 목록을 조회합니다.(Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let inquiryId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.getInquiryComments(
+    inquiryId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **inquiryId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseListCommentResponse**
 
 ### Authorization
 
@@ -1129,10 +1299,61 @@ const { status, data } = await apiInstance.getMyReviews(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getOneInquiry**
+> BaseResponseInquiryOneGetResponse getOneInquiry()
+
+본인이 작성한 경우이거나 관리자의 경우에만 조회가 가능합니다. (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let inquiryId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.getOneInquiry(
+    inquiryId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **inquiryId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseInquiryOneGetResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **getOwnerShops**
 > BaseResponseOwnerShopsList getOwnerShops()
 
-사장 한명이 가진 식당들 리스트들을 조회합니다.(Completed)
+사장 한명이 가진 식당들 리스트들을 조회합니다. 승인 여부 상태와 상관없이 조회 (Completed)
 
 ### Example
 
@@ -1281,6 +1502,159 @@ const { status, data } = await apiInstance.getPartyDetail(
 ### Return type
 
 **BaseResponsePartyDetailResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getPaymentHistories**
+> BaseResponsePaymentScrollResponse getPaymentHistories()
+
+결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let size: number; // (optional) (default to 10)
+let cursor: number; // (optional) (default to undefined)
+
+const { status, data } = await apiInstance.getPaymentHistories(
+    size,
+    cursor
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **size** | [**number**] |  | (optional) defaults to 10|
+| **cursor** | [**number**] |  | (optional) defaults to undefined|
+
+
+### Return type
+
+**BaseResponsePaymentScrollResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getPendingShop**
+> getPendingShop(approveRequest)
+
+APPROVED(승인) 또는 REJECTED(거절) (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration,
+    ApproveRequest
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let shopId: number; // (default to undefined)
+let approveRequest: ApproveRequest; //
+
+const { status, data } = await apiInstance.getPendingShop(
+    shopId,
+    approveRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **approveRequest** | **ApproveRequest**|  | |
+| **shopId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getPendingShop1**
+> BaseResponseGetAllPendingShopListResponse getPendingShop1()
+
+관리자는 등록을 원하는 식당 리스트를 볼 수 있습니다. (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+const { status, data } = await apiInstance.getPendingShop1();
+```
+
+### Parameters
+This endpoint does not have any parameters.
+
+
+### Return type
+
+**BaseResponseGetAllPendingShopListResponse**
 
 ### Authorization
 
@@ -1462,10 +1836,61 @@ const { status, data } = await apiInstance.getReviews(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **getShopAdminDetail**
+> BaseResponseShopAdminDetailResponse getShopAdminDetail()
+
+관리자는 식당에 대한 정보를 볼 수 있습니다. (식당의 등록 상태가 뭐든 볼 수 있음) (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let shopId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.getShopAdminDetail(
+    shopId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **shopId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseShopAdminDetailResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **getShops**
 > BaseResponseShopsResponse getShops()
 
-위치 기반으로 식당 목록을 조회합니다. (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
+일반 사용자가 위치 기반으로 식당 목록을 조회합니다. (식당 상태가 APPROVED인 식당들만 조회 가능) (Completed)  반경은 m 단위로 주시면 되며 ->  3km (3000) 만약 사용자가 자신의 위치를 허용한다면 latitude과 longitude에 사용자 위도 경도, 원하는 범위를 넣어서 요청을 보내고 그렇지 않는다면 기본값으론 종로구 좌표에 3km 범위 식당을 가져옵니다  예시 /shops?radius=1000000&sort=rating  | 필드 명     | 자료형  | 필수 여부 | 설명                   | 기본값           | |------------|---------|-----------|-------------------------|------------------| | latitude   | double  | Required  | 사용자 위치의 위도         | 37.5724          | | longitude  | double  | Required  | 사용자 위치의 경도         | 126.9794         | | radius     | double  | Optional  | 검색 반경 (단위: m)       | 3000.0           | | category   | string  | Optional  | 음식 카테고리             | 전체             | | sort       | string  | Optional  | 정렬 기준 (근처순, 평점순) | 근처 순(distance) |  
 
 ### Example
 
@@ -1534,7 +1959,7 @@ const { status, data } = await apiInstance.getShops(
 # **getShopsBySearch**
 > BaseResponseShopPageResponse getShopsBySearch()
 
-키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (Completed)
+키워드로 식당을 검색합니다.정렬기준: NAME, CREATED_AT, RATING  (식당 상태가 APPROVED인 식당들만 조회 가능)(Completed)
 
 ### Example
 
@@ -1695,7 +2120,7 @@ const { status, data } = await apiInstance.login(
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **logout**
-> logout()
+> BaseResponseVoid logout()
 
 쿠키의 리프레시 토큰을 무효화하고 로그아웃 처리합니다.
 
@@ -1726,7 +2151,7 @@ const { status, data } = await apiInstance.logout(
 
 ### Return type
 
-void (empty response body)
+**BaseResponseVoid**
 
 ### Authorization
 
@@ -1735,13 +2160,65 @@ void (empty response body)
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Accept**: */*
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**204** | No Content |  -  |
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **newInquiry**
+> BaseResponsePreSignedUrlListResponse newInquiry(inquiryCreateRequest)
+
+ 제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration,
+    InquiryCreateRequest
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let inquiryCreateRequest: InquiryCreateRequest; //
+
+const { status, data } = await apiInstance.newInquiry(
+    inquiryCreateRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **inquiryCreateRequest** | **InquiryCreateRequest**|  | |
+
+
+### Return type
+
+**BaseResponsePreSignedUrlListResponse**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Created |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -2037,6 +2514,58 @@ const { status, data } = await apiInstance.refuseReservation(
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **saveOrder**
+> BaseResponseVoid saveOrder(orderSaveRequest)
+
+1. 결제 요청 전에 주문 정보를 서버에 저장    결제하기 버튼을 누를 때 (실제 결제 요청 api 보내기 전) 호출하면 됩니다. orderId는 클라이언트에서 임의의 랜덤한 숫자로 제작합니다. 2. orderId, amount 저장 3. 이후 결제 요청 / 결제 성공 시 서버에 저장된 값과 비교  → 변조 방지, 악의적인 금액 조작 차단  (Completed) 
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration,
+    OrderSaveRequest
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let orderSaveRequest: OrderSaveRequest; //
+
+const { status, data } = await apiInstance.saveOrder(
+    orderSaveRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **orderSaveRequest** | **OrderSaveRequest**|  | |
+
+
+### Return type
+
+**BaseResponseVoid**
+
+### Authorization
+
+[JwtAuth](../README.md#JwtAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Created |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **signup**
 > BaseResponseVoid signup(signUpRequest)
 
@@ -2144,7 +2673,7 @@ const { status, data } = await apiInstance.updateMyInfo(
 # **updateShop**
 > BaseResponsePreSignedUrlListResponse updateShop(shopUpdateRequest)
 
-식당 정보를 수정합니다. (Completed)
+자신이 가진 식당 정보를 수정합니다. (Completed)
 
 ### Example
 

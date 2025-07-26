@@ -1,33 +1,33 @@
-# OwnerShopItem
+# PendingShop
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**shopId** | **number** |  | [optional] [default to undefined]
 **shopName** | **string** |  | [optional] [default to undefined]
-**category** | **string** |  | [optional] [default to undefined]
-**roadAddress** | **string** |  | [optional] [default to undefined]
+**shopId** | **number** |  | [optional] [default to undefined]
+**userName** | **string** |  | [optional] [default to undefined]
+**userId** | **number** |  | [optional] [default to undefined]
+**address** | **string** |  | [optional] [default to undefined]
 **detailAddress** | **string** |  | [optional] [default to undefined]
-**rating** | **number** |  | [optional] [default to undefined]
+**tel** | **string** |  | [optional] [default to undefined]
 **approve** | **string** |  | [optional] [default to undefined]
-**thumbnailUrl** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { OwnerShopItem } from '@/api/generated';
+import { PendingShop } from '@/api/generated';
 
-const instance: OwnerShopItem = {
-    shopId,
+const instance: PendingShop = {
     shopName,
-    category,
-    roadAddress,
+    shopId,
+    userName,
+    userId,
+    address,
     detailAddress,
-    rating,
+    tel,
     approve,
-    thumbnailUrl,
 };
 ```
 

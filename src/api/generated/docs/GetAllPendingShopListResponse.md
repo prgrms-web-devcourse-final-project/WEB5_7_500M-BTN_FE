@@ -1,21 +1,19 @@
-# PaymentSuccessResponse
+# GetAllPendingShopListResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**orderId** | **string** |  | [optional] [default to undefined]
-**totalAmount** | **number** |  | [optional] [default to undefined]
+**pendingShopList** | [**Array&lt;PendingShop&gt;**](PendingShop.md) |  | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { PaymentSuccessResponse } from '@/api/generated';
+import { GetAllPendingShopListResponse } from '@/api/generated';
 
-const instance: PaymentSuccessResponse = {
-    orderId,
-    totalAmount,
+const instance: GetAllPendingShopListResponse = {
+    pendingShopList,
 };
 ```
 
