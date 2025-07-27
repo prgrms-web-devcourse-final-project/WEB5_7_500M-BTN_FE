@@ -96,7 +96,7 @@ const Header = () => {
             </MuiLink>
           ))}
         </Box>
-        {/* 우측 예약 현황 + 로그인 버튼 */}
+        {/* 우측 로그인/프로필 영역 */}
         <Box
           display="flex"
           justifyContent="flex-end"
@@ -105,27 +105,12 @@ const Header = () => {
         >
           {isLoggedIn ? (
             <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => router.push("/reservation-status")}
-              >
-                예약 현황
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => router.push("/my-shop")}
-                sx={{ ml: 1 }}
-              >
-                내 식당
-              </Button>
               <Badge badgeContent={unreadChatCount} color="error" max={99}>
                 <Button
                   variant="text"
                   color="primary"
                   onClick={() => router.push("/chat")}
-                  sx={{ ml: 1, minWidth: "auto" }}
+                  sx={{ minWidth: "auto" }}
                 >
                   <ChatIcon />
                 </Button>
@@ -134,7 +119,6 @@ const Header = () => {
                 variant="text"
                 color="primary"
                 onClick={() => router.push("/profile")}
-                sx={{ ml: 1 }}
               >
                 {myInfo?.data?.nickname || "프로필"}
               </Button>
@@ -143,7 +127,6 @@ const Header = () => {
                 color="primary"
                 onClick={() => logoutMutation.mutate("")}
                 disabled={logoutMutation.isPending}
-                sx={{ ml: 1 }}
               >
                 로그아웃
               </Button>
