@@ -5,6 +5,7 @@ export { default as FormField } from "./FormField";
 export { default as LoadingSpinner } from "./LoadingSpinner";
 export { default as MemoizedCard } from "./MemoizedCard";
 export { default as ImageUpload } from "./ImageUpload";
+export { default as ShopCreateDialog } from "./ShopCreateDialog";
 export {
   TextFormField,
   EmailFormField,

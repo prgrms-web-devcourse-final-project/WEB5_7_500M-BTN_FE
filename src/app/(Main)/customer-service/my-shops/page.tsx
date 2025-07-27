@@ -12,15 +12,6 @@ import {
   Stack,
   CircularProgress,
   Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   IconButton,
   Tooltip,
   Container,
@@ -36,6 +27,7 @@ import { useRouter } from "next/navigation";
 import { useOwnerShops } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
 import Toast from "@/features/common/Toast";
+import { ShopCreateDialog } from "@/components/common";
 import {
   OwnerShopItem,
   OwnerShopItemCategoryEnum,
@@ -88,6 +80,10 @@ const MyShopsPage = () => {
 
   const handleViewShop = (shopId: number) => {
     router.push(`/shop/${shopId}`);
+  };
+
+  const handleShopCreateSuccess = () => {
+    refetch();
   };
 
   if (isLoading) {
@@ -154,128 +150,114 @@ const MyShopsPage = () => {
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
+            },
+            gap: 3,
+          }}
+        >
           {shops.map((shop: OwnerShopItem) => (
-            <Grid item xs={12} md={6} lg={4} key={shop.shopId}>
-              <Card
+            <Card
+              key={shop.shopId}
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  transform: "translateY(-2px)",
+                  boxShadow: 3,
+                },
+              }}
+            >
+              <Box
                 sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  transition: "all 0.2s ease-in-out",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: 3,
-                  },
+                  height: 200,
+                  backgroundImage: shop.thumbnailUrl
+                    ? `url(${shop.thumbnailUrl})`
+                    : "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)",
+                  backgroundSize: "20px 20px",
+                  backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
+                  position: "relative",
                 }}
               >
-                <Box
+                <Chip
+                  label={getStatusText(shop.approve || "PENDING")}
+                  color={getStatusColor(shop.approve || "PENDING")}
+                  size="small"
                   sx={{
-                    height: 200,
-                    backgroundImage: shop.thumbnailUrl
-                      ? `url(${shop.thumbnailUrl})`
-                      : "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)",
-                    backgroundSize: "20px 20px",
-                    backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-                    position: "relative",
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
                   }}
-                >
-                  <Chip
-                    label={getStatusText(shop.approve || "PENDING")}
-                    color={getStatusColor(shop.approve || "PENDING")}
-                    size="small"
-                    sx={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                    }}
-                  />
-                </Box>
-                <CardContent
-                  sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
-                >
-                  <Typography variant="h6" component="h2" gutterBottom>
-                    {shop.shopName}
-                  </Typography>
+                />
+              </Box>
+              <CardContent
+                sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+              >
+                <Typography variant="h6" component="h2" gutterBottom>
+                  {shop.shopName}
+                </Typography>
 
-                  <Stack spacing={1} sx={{ mb: 2, flexGrow: 1 }}>
+                <Stack spacing={1} sx={{ mb: 2, flexGrow: 1 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CategoryIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                      {getCategoryLabel(shop.category || "KOREAN")}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <LocationIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {shop.roadAddress}
+                    </Typography>
+                  </Box>
+
+                  {shop.rating && (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <CategoryIcon fontSize="small" color="action" />
+                      <StarIcon fontSize="small" color="warning" />
                       <Typography variant="body2" color="text.secondary">
-                        {getCategoryLabel(shop.category || "KOREAN")}
+                        {shop.rating.toFixed(1)}
                       </Typography>
                     </Box>
+                  )}
+                </Stack>
 
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <LocationIcon fontSize="small" color="action" />
-                      <Typography variant="body2" color="text.secondary" noWrap>
-                        {shop.roadAddress}
-                      </Typography>
-                    </Box>
-
-                    {shop.rating && (
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <StarIcon fontSize="small" color="warning" />
-                        <Typography variant="body2" color="text.secondary">
-                          {shop.rating.toFixed(1)}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Stack>
-
-                  <Stack direction="row" spacing={1} sx={{ mt: "auto" }}>
-                    <Button
-                      variant="outlined"
+                <Stack direction="row" spacing={1} sx={{ mt: "auto" }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleViewShop(shop.shopId!)}
+                    sx={{ flex: 1 }}
+                  >
+                    상세보기
+                  </Button>
+                  <Tooltip title="식당 정보 수정">
+                    <IconButton
                       size="small"
-                      onClick={() => handleViewShop(shop.shopId!)}
-                      sx={{ flex: 1 }}
+                      onClick={() => handleEditShop(shop.shopId!)}
                     >
-                      상세보기
-                    </Button>
-                    <Tooltip title="식당 정보 수정">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEditShop(shop.shopId!)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </Box>
       )}
 
-      {/* 식당 등록 다이얼로그 */}
-      <Dialog
+      <ShopCreateDialog
         open={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>새 식당 등록</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            식당 등록을 위해 기존 등록 페이지로 이동합니다.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsCreateDialogOpen(false)}>취소</Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setIsCreateDialogOpen(false);
-              router.push("/my-shop");
-            }}
-          >
-            등록 페이지로 이동
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onSuccess={handleShopCreateSuccess}
+      />
 
       <Toast {...toast} onClose={hideToast} />
     </Container>
