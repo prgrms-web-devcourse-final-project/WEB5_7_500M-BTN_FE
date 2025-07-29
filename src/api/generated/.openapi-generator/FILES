@@ -15,6 +15,7 @@ docs/BaseResponseInquiryAllGetResponse.md
 docs/BaseResponseInquiryOneGetResponse.md
 docs/BaseResponseListChatMessageResponse.md
 docs/BaseResponseListCommentResponse.md
+docs/BaseResponseListPartyMemberResponse.md
 docs/BaseResponseMyInfoResponse.md
 docs/BaseResponseMyPartyPageResponse.md
 docs/BaseResponseMyReservationPageResponse.md
@@ -64,6 +65,7 @@ docs/OwnerShopsList.md
 docs/PartyCreateRequest.md
 docs/PartyDetailResponse.md
 docs/PartyListResponse.md
+docs/PartyMemberResponse.md
 docs/PartyScrollResponse.md
 docs/PaymentHistoryResponse.md
 docs/PaymentScrollResponse.md

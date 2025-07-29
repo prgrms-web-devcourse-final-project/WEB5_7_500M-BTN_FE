@@ -250,6 +250,33 @@ export type BaseResponseListCommentResponseStatusEnum = typeof BaseResponseListC
 /**
  * 
  * @export
+ * @interface BaseResponseListPartyMemberResponse
+ */
+export interface BaseResponseListPartyMemberResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof BaseResponseListPartyMemberResponse
+     */
+    'status'?: BaseResponseListPartyMemberResponseStatusEnum;
+    /**
+     * 
+     * @type {Array<PartyMemberResponse>}
+     * @memberof BaseResponseListPartyMemberResponse
+     */
+    'data'?: Array<PartyMemberResponse>;
+}
+
+export const BaseResponseListPartyMemberResponseStatusEnum = {
+    Ok: 'OK',
+    Created: 'CREATED'
+} as const;
+
+export type BaseResponseListPartyMemberResponseStatusEnum = typeof BaseResponseListPartyMemberResponseStatusEnum[keyof typeof BaseResponseListPartyMemberResponseStatusEnum];
+
+/**
+ * 
+ * @export
  * @interface BaseResponseMyInfoResponse
  */
 export interface BaseResponseMyInfoResponse {
@@ -1377,6 +1404,12 @@ export interface MyPartyResponse {
      * @memberof MyPartyResponse
      */
     'description'?: string;
+    /**
+     * 호스트 여부 (본인이 이 파티의 파티장인지 확인)
+     * @type {boolean}
+     * @memberof MyPartyResponse
+     */
+    'isHost'?: boolean;
 }
 
 export const MyPartyResponseStatusEnum = {
@@ -1856,12 +1889,6 @@ export interface PartyDetailResponse {
      * @type {number}
      * @memberof PartyDetailResponse
      */
-    'hostId'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof PartyDetailResponse
-     */
     'shopId'?: number;
     /**
      * 
@@ -1887,6 +1914,12 @@ export interface PartyDetailResponse {
      * @memberof PartyDetailResponse
      */
     'shopImage'?: string;
+    /**
+     * 
+     * @type {Array<PartyMemberResponse>}
+     * @memberof PartyDetailResponse
+     */
+    'members'?: Array<PartyMemberResponse>;
 }
 
 export const PartyDetailResponseStatusEnum = {
@@ -1986,6 +2019,37 @@ export const PartyListResponseStatusEnum = {
 
 export type PartyListResponseStatusEnum = typeof PartyListResponseStatusEnum[keyof typeof PartyListResponseStatusEnum];
 
+/**
+ * 
+ * @export
+ * @interface PartyMemberResponse
+ */
+export interface PartyMemberResponse {
+    /**
+     * 파티원 ID
+     * @type {number}
+     * @memberof PartyMemberResponse
+     */
+    'userId'?: number;
+    /**
+     * 파티원 닉네임
+     * @type {string}
+     * @memberof PartyMemberResponse
+     */
+    'userNickname'?: string;
+    /**
+     * 파티원 프로필 이미지 URL
+     * @type {string}
+     * @memberof PartyMemberResponse
+     */
+    'userProfile'?: string;
+    /**
+     * 파티장 여부
+     * @type {boolean}
+     * @memberof PartyMemberResponse
+     */
+    'isHost'?: boolean;
+}
 /**
  * 
  * @export
@@ -3309,9 +3373,51 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * @summary 예약 취소
+         * @param {number} reservationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelReservation: async (reservationId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'reservationId' is not null or undefined
+            assertParamExists('cancelReservation', 'reservationId', reservationId)
+            const localVarPath = `/reservations/{reservationId}/cancel`
+                .replace(`{${"reservationId"}}`, encodeURIComponent(String(reservationId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication accessToken required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3347,9 +3453,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3384,9 +3492,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3425,9 +3535,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3466,9 +3578,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3510,9 +3624,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3550,9 +3666,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3573,11 +3691,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @summary 예약 생성
          * @param {number} shopId 
          * @param {CreateReservationRequest} createReservationRequest 
-         * @param {number} [partyId] 파티 ID (선택값). 파티 예약일 경우 전달.
+         * @param {} [UNKNOWN_PARAMETER_NAME] 파티 ID (선택값). 파티 예약일 경우 전달.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createReservation: async (shopId: number, createReservationRequest: CreateReservationRequest, partyId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createReservation: async (shopId: number, createReservationRequest: CreateReservationRequest, UNKNOWN_PARAMETER_NAME?: , options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'shopId' is not null or undefined
             assertParamExists('createReservation', 'shopId', shopId)
             // verify required parameter 'createReservationRequest' is not null or undefined
@@ -3595,12 +3713,14 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
-            if (partyId !== undefined) {
-                localVarQueryParameter['partyId'] = partyId;
+            // authentication refreshToken required
+
+            if (UNKNOWN_PARAMETER_NAME !== undefined) {
+                localVarQueryParameter['partyId'] = UNKNOWN_PARAMETER_NAME;
             }
 
 
@@ -3639,9 +3759,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3679,9 +3801,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3720,9 +3844,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3758,9 +3884,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3795,9 +3923,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3836,9 +3966,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3854,13 +3986,10 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
         /**
          * 회원 탈퇴 기능(Inprogress)
          * @summary 회원탈퇴
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteUser: async (refreshToken: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'refreshToken' is not null or undefined
-            assertParamExists('deleteUser', 'refreshToken', refreshToken)
+        deleteUser: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/users/delete`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3873,9 +4002,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3909,9 +4040,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (cursor !== undefined) {
                 localVarQueryParameter['cursor'] = cursor;
@@ -3955,9 +4088,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -3993,9 +4128,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4031,9 +4168,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4069,9 +4208,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4103,9 +4244,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4139,9 +4282,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
@@ -4183,9 +4328,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
@@ -4227,9 +4374,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
@@ -4273,9 +4422,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4307,9 +4458,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4350,9 +4503,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (status !== undefined) {
                 localVarQueryParameter['status'] = status;
@@ -4402,7 +4557,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * 맛집 탐험 파티 게시글 상세 정보를 조회합니다.(Completed)
+         * 맛집 탐험 파티 상세 정보를 조회합니다.(Completed)
          * @summary 파티 상세 조회
          * @param {number} partyId 
          * @param {*} [options] Override http request option.
@@ -4424,9 +4579,51 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 맛집 탐험 파티원 목록을 조회합니다.(Completed)
+         * @summary 파티원 목록 조회
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPartyMembers: async (partyId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partyId' is not null or undefined
+            assertParamExists('getPartyMembers', 'partyId', partyId)
+            const localVarPath = `/parties/{partyId}/members`
+                .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication accessToken required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4460,9 +4657,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (size !== undefined) {
                 localVarQueryParameter['size'] = size;
@@ -4509,9 +4708,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4546,9 +4747,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4580,9 +4783,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4618,9 +4823,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (filter !== undefined) {
                 localVarQueryParameter['filter'] = filter;
@@ -4674,9 +4881,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (cursor !== undefined) {
                 localVarQueryParameter['cursor'] = cursor;
@@ -4720,9 +4929,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4761,9 +4972,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (latitude !== undefined) {
                 localVarQueryParameter['latitude'] = latitude;
@@ -4827,9 +5040,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (query !== undefined) {
                 localVarQueryParameter['query'] = query;
@@ -4881,9 +5096,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4918,9 +5135,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4939,13 +5158,10 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
         /**
          * 쿠키의 리프레시 토큰을 무효화하고 로그아웃 처리합니다.
          * @summary 로그아웃
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        logout: async (refreshToken: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'refreshToken' is not null or undefined
-            assertParamExists('logout', 'refreshToken', refreshToken)
+        logout: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/users/logout`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -4958,9 +5174,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -4995,9 +5213,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5032,9 +5252,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5069,9 +5291,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5105,9 +5329,51 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 맛집 탐험 파티의 예약을 위한 예약금을 지불합니다.(Completed)
+         * @summary 파티 예약금 지불
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        payPartyFee: async (partyId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partyId' is not null or undefined
+            assertParamExists('payPartyFee', 'partyId', partyId)
+            const localVarPath = `/parties/{partyId}/pay`
+                .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication accessToken required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5143,9 +5409,55 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 맛집 탐험 파티에서 파티원을 강제 퇴장시킵니다.(Completed)
+         * @summary 파티 강퇴
+         * @param {number} partyId 
+         * @param {number} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        quitParty1: async (partyId: number, userId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partyId' is not null or undefined
+            assertParamExists('quitParty1', 'partyId', partyId)
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('quitParty1', 'userId', userId)
+            const localVarPath = `/parties/{partyId}/kick/{userId}`
+                .replace(`{${"partyId"}}`, encodeURIComponent(String(partyId)))
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication accessToken required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5161,13 +5473,10 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
         /**
          * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
          * @summary 액세스 토큰 재발급
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        refreshToken: async (refreshToken: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'refreshToken' is not null or undefined
-            assertParamExists('refreshToken', 'refreshToken', refreshToken)
+        refreshToken: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/users/reissue-token`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5180,9 +5489,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5196,7 +5507,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             };
         },
         /**
-         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * reservationId에 해당하는 예약을 REFUSED 상태로 변경한다. (Completed)
          * @summary 예약 거절
          * @param {number} reservationId 
          * @param {*} [options] Override http request option.
@@ -5205,7 +5516,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
         refuseReservation: async (reservationId: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'reservationId' is not null or undefined
             assertParamExists('refuseReservation', 'reservationId', reservationId)
-            const localVarPath = `/reservations/{reservationId}/cancel`
+            const localVarPath = `/reservations/{reservationId}/refuse`
                 .replace(`{${"reservationId"}}`, encodeURIComponent(String(reservationId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5218,9 +5529,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5255,9 +5568,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5295,9 +5610,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5335,9 +5652,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5379,9 +5698,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5415,9 +5736,11 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     
@@ -5449,6 +5772,19 @@ export const APIApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.adminTest(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.adminTest']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * @summary 예약 취소
+         * @param {number} reservationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async cancelReservation(reservationId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cancelReservation(reservationId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.cancelReservation']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -5536,12 +5872,12 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @summary 예약 생성
          * @param {number} shopId 
          * @param {CreateReservationRequest} createReservationRequest 
-         * @param {number} [partyId] 파티 ID (선택값). 파티 예약일 경우 전달.
+         * @param {} [UNKNOWN_PARAMETER_NAME] 파티 ID (선택값). 파티 예약일 경우 전달.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createReservation(shopId: number, createReservationRequest: CreateReservationRequest, partyId?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateReservationResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createReservation(shopId, createReservationRequest, partyId, options);
+        async createReservation(shopId: number, createReservationRequest: CreateReservationRequest, UNKNOWN_PARAMETER_NAME?: , options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateReservationResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createReservation(shopId, createReservationRequest, UNKNOWN_PARAMETER_NAME, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.createReservation']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -5627,12 +5963,11 @@ export const APIApiFp = function(configuration?: Configuration) {
         /**
          * 회원 탈퇴 기능(Inprogress)
          * @summary 회원탈퇴
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteUser(refreshToken: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(refreshToken, options);
+        async deleteUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteUser(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.deleteUser']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -5804,7 +6139,7 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 맛집 탐험 파티 게시글 상세 정보를 조회합니다.(Completed)
+         * 맛집 탐험 파티 상세 정보를 조회합니다.(Completed)
          * @summary 파티 상세 조회
          * @param {number} partyId 
          * @param {*} [options] Override http request option.
@@ -5814,6 +6149,19 @@ export const APIApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getPartyDetail(partyId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.getPartyDetail']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 맛집 탐험 파티원 목록을 조회합니다.(Completed)
+         * @summary 파티원 목록 조회
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getPartyMembers(partyId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseListPartyMemberResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getPartyMembers(partyId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.getPartyMembers']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -5976,12 +6324,11 @@ export const APIApiFp = function(configuration?: Configuration) {
         /**
          * 쿠키의 리프레시 토큰을 무효화하고 로그아웃 처리합니다.
          * @summary 로그아웃
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async logout(refreshToken: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.logout(refreshToken, options);
+        async logout(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.logout(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.logout']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -6036,6 +6383,19 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 맛집 탐험 파티의 예약을 위한 예약금을 지불합니다.(Completed)
+         * @summary 파티 예약금 지불
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async payPartyFee(partyId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.payPartyFee(partyId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.payPartyFee']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 맛집 탐험 파티를 참여를 취소합니다.(Completed)
          * @summary 파티 탈퇴
          * @param {number} partyId 
@@ -6049,20 +6409,33 @@ export const APIApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
-         * @summary 액세스 토큰 재발급
-         * @param {string} refreshToken 
+         * 맛집 탐험 파티에서 파티원을 강제 퇴장시킵니다.(Completed)
+         * @summary 파티 강퇴
+         * @param {number} partyId 
+         * @param {number} userId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async refreshToken(refreshToken: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseAccessTokenResponseDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(refreshToken, options);
+        async quitParty1(partyId: number, userId: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseVoid>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.quitParty1(partyId, userId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['APIApi.quitParty1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
+         * @summary 액세스 토큰 재발급
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async refreshToken(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BaseResponseAccessTokenResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['APIApi.refreshToken']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * reservationId에 해당하는 예약을 REFUSED 상태로 변경한다. (Completed)
          * @summary 예약 거절
          * @param {number} reservationId 
          * @param {*} [options] Override http request option.
@@ -6157,6 +6530,16 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.adminTest(options).then((request) => request(axios, basePath));
         },
         /**
+         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * @summary 예약 취소
+         * @param {number} reservationId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        cancelReservation(reservationId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
+            return localVarFp.cancelReservation(reservationId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 모집중인 파티를 모집종료 상태로 변경합니다.(Completed)
          * @summary 파티 모집 완료 상태 변경
          * @param {number} partyId 
@@ -6223,12 +6606,12 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          * @summary 예약 생성
          * @param {number} shopId 
          * @param {CreateReservationRequest} createReservationRequest 
-         * @param {number} [partyId] 파티 ID (선택값). 파티 예약일 경우 전달.
+         * @param {} [UNKNOWN_PARAMETER_NAME] 파티 ID (선택값). 파티 예약일 경우 전달.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createReservation(shopId: number, createReservationRequest: CreateReservationRequest, partyId?: number, options?: RawAxiosRequestConfig): AxiosPromise<CreateReservationResponse> {
-            return localVarFp.createReservation(shopId, createReservationRequest, partyId, options).then((request) => request(axios, basePath));
+        createReservation(shopId: number, createReservationRequest: CreateReservationRequest, UNKNOWN_PARAMETER_NAME?: , options?: RawAxiosRequestConfig): AxiosPromise<CreateReservationResponse> {
+            return localVarFp.createReservation(shopId, createReservationRequest, UNKNOWN_PARAMETER_NAME, options).then((request) => request(axios, basePath));
         },
         /**
          * 리뷰를 작성합니다.(Completed)
@@ -6293,12 +6676,11 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
         /**
          * 회원 탈퇴 기능(Inprogress)
          * @summary 회원탈퇴
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteUser(refreshToken: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.deleteUser(refreshToken, options).then((request) => request(axios, basePath));
+        deleteUser(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteUser(options).then((request) => request(axios, basePath));
         },
         /**
          * 문의글 전체를 조회합니다. (Completed)
@@ -6431,7 +6813,7 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.getParties(status, gender, minAge, maxAge, location, categories, query, cursor, size, options).then((request) => request(axios, basePath));
         },
         /**
-         * 맛집 탐험 파티 게시글 상세 정보를 조회합니다.(Completed)
+         * 맛집 탐험 파티 상세 정보를 조회합니다.(Completed)
          * @summary 파티 상세 조회
          * @param {number} partyId 
          * @param {*} [options] Override http request option.
@@ -6439,6 +6821,16 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          */
         getPartyDetail(partyId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponsePartyDetailResponse> {
             return localVarFp.getPartyDetail(partyId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 맛집 탐험 파티원 목록을 조회합니다.(Completed)
+         * @summary 파티원 목록 조회
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getPartyMembers(partyId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseListPartyMemberResponse> {
+            return localVarFp.getPartyMembers(partyId, options).then((request) => request(axios, basePath));
         },
         /**
          * 결제 내역을 스크롤 방식으로 조회합니다. 사용자의 마이페이지 란에서 조회 가능합니다. (Completed)
@@ -6567,12 +6959,11 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
         /**
          * 쿠키의 리프레시 토큰을 무효화하고 로그아웃 처리합니다.
          * @summary 로그아웃
-         * @param {string} refreshToken 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        logout(refreshToken: string, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
-            return localVarFp.logout(refreshToken, options).then((request) => request(axios, basePath));
+        logout(options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
+            return localVarFp.logout(options).then((request) => request(axios, basePath));
         },
         /**
          *  제목과 내용을 작성하여 문의글을 작성합니다   사진 전송 시 헤더에  Cache-Control 값이 no-cache,no-store,must-revalidate 되어 있어야 합니다  (Completed) 
@@ -6612,6 +7003,16 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.ownerTest(options).then((request) => request(axios, basePath));
         },
         /**
+         * 맛집 탐험 파티의 예약을 위한 예약금을 지불합니다.(Completed)
+         * @summary 파티 예약금 지불
+         * @param {number} partyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        payPartyFee(partyId: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.payPartyFee(partyId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 맛집 탐험 파티를 참여를 취소합니다.(Completed)
          * @summary 파티 탈퇴
          * @param {number} partyId 
@@ -6622,17 +7023,27 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
             return localVarFp.quitParty(partyId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
-         * @summary 액세스 토큰 재발급
-         * @param {string} refreshToken 
+         * 맛집 탐험 파티에서 파티원을 강제 퇴장시킵니다.(Completed)
+         * @summary 파티 강퇴
+         * @param {number} partyId 
+         * @param {number} userId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        refreshToken(refreshToken: string, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseAccessTokenResponseDto> {
-            return localVarFp.refreshToken(refreshToken, options).then((request) => request(axios, basePath));
+        quitParty1(partyId: number, userId: number, options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseVoid> {
+            return localVarFp.quitParty1(partyId, userId, options).then((request) => request(axios, basePath));
         },
         /**
-         * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+         * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
+         * @summary 액세스 토큰 재발급
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        refreshToken(options?: RawAxiosRequestConfig): AxiosPromise<BaseResponseAccessTokenResponseDto> {
+            return localVarFp.refreshToken(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * reservationId에 해당하는 예약을 REFUSED 상태로 변경한다. (Completed)
          * @summary 예약 거절
          * @param {number} reservationId 
          * @param {*} [options] Override http request option.
@@ -6708,6 +7119,18 @@ export class APIApi extends BaseAPI {
      */
     public adminTest(options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).adminTest(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+     * @summary 예약 취소
+     * @param {number} reservationId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public cancelReservation(reservationId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).cancelReservation(reservationId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6789,13 +7212,13 @@ export class APIApi extends BaseAPI {
      * @summary 예약 생성
      * @param {number} shopId 
      * @param {CreateReservationRequest} createReservationRequest 
-     * @param {number} [partyId] 파티 ID (선택값). 파티 예약일 경우 전달.
+     * @param {} [UNKNOWN_PARAMETER_NAME] 파티 ID (선택값). 파티 예약일 경우 전달.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public createReservation(shopId: number, createReservationRequest: CreateReservationRequest, partyId?: number, options?: RawAxiosRequestConfig) {
-        return APIApiFp(this.configuration).createReservation(shopId, createReservationRequest, partyId, options).then((request) => request(this.axios, this.basePath));
+    public createReservation(shopId: number, createReservationRequest: CreateReservationRequest, UNKNOWN_PARAMETER_NAME?: , options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).createReservation(shopId, createReservationRequest, UNKNOWN_PARAMETER_NAME, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -6873,13 +7296,12 @@ export class APIApi extends BaseAPI {
     /**
      * 회원 탈퇴 기능(Inprogress)
      * @summary 회원탈퇴
-     * @param {string} refreshToken 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public deleteUser(refreshToken: string, options?: RawAxiosRequestConfig) {
-        return APIApiFp(this.configuration).deleteUser(refreshToken, options).then((request) => request(this.axios, this.basePath));
+    public deleteUser(options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).deleteUser(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7037,7 +7459,7 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 맛집 탐험 파티 게시글 상세 정보를 조회합니다.(Completed)
+     * 맛집 탐험 파티 상세 정보를 조회합니다.(Completed)
      * @summary 파티 상세 조회
      * @param {number} partyId 
      * @param {*} [options] Override http request option.
@@ -7046,6 +7468,18 @@ export class APIApi extends BaseAPI {
      */
     public getPartyDetail(partyId: number, options?: RawAxiosRequestConfig) {
         return APIApiFp(this.configuration).getPartyDetail(partyId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 맛집 탐험 파티원 목록을 조회합니다.(Completed)
+     * @summary 파티원 목록 조회
+     * @param {number} partyId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public getPartyMembers(partyId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).getPartyMembers(partyId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7197,13 +7631,12 @@ export class APIApi extends BaseAPI {
     /**
      * 쿠키의 리프레시 토큰을 무효화하고 로그아웃 처리합니다.
      * @summary 로그아웃
-     * @param {string} refreshToken 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public logout(refreshToken: string, options?: RawAxiosRequestConfig) {
-        return APIApiFp(this.configuration).logout(refreshToken, options).then((request) => request(this.axios, this.basePath));
+    public logout(options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).logout(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -7252,6 +7685,18 @@ export class APIApi extends BaseAPI {
     }
 
     /**
+     * 맛집 탐험 파티의 예약을 위한 예약금을 지불합니다.(Completed)
+     * @summary 파티 예약금 지불
+     * @param {number} partyId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public payPartyFee(partyId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).payPartyFee(partyId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 맛집 탐험 파티를 참여를 취소합니다.(Completed)
      * @summary 파티 탈퇴
      * @param {number} partyId 
@@ -7264,19 +7709,31 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
-     * @summary 액세스 토큰 재발급
-     * @param {string} refreshToken 
+     * 맛집 탐험 파티에서 파티원을 강제 퇴장시킵니다.(Completed)
+     * @summary 파티 강퇴
+     * @param {number} partyId 
+     * @param {number} userId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public refreshToken(refreshToken: string, options?: RawAxiosRequestConfig) {
-        return APIApiFp(this.configuration).refreshToken(refreshToken, options).then((request) => request(this.axios, this.basePath));
+    public quitParty1(partyId: number, userId: number, options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).quitParty1(partyId, userId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+     * 쿠키의 리프레시 토큰을 이용해 새로운 액세스 토큰을 재발급합니다.
+     * @summary 액세스 토큰 재발급
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof APIApi
+     */
+    public refreshToken(options?: RawAxiosRequestConfig) {
+        return APIApiFp(this.configuration).refreshToken(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * reservationId에 해당하는 예약을 REFUSED 상태로 변경한다. (Completed)
      * @summary 예약 거절
      * @param {number} reservationId 
      * @param {*} [options] Override http request option.
@@ -7452,9 +7909,11 @@ export const ChatControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
             if (cursor !== undefined) {
                 localVarQueryParameter['cursor'] = cursor;
@@ -7493,9 +7952,11 @@ export const ChatControllerApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication JwtAuth required
+            // authentication accessToken required
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication refreshToken required
 
 
     

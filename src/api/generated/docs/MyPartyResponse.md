@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **minAge** | **number** | 최소 나이 | [optional] [default to undefined]
 **maxAge** | **number** | 최대 나이 | [optional] [default to undefined]
 **description** | **string** | 설명 | [optional] [default to undefined]
+**isHost** | **boolean** | 호스트 여부 (본인이 이 파티의 파티장인지 확인) | [optional] [default to undefined]
 
 ## Example
 
@@ -39,6 +40,7 @@ const instance: MyPartyResponse = {
     minAge,
     maxAge,
     description,
+    isHost,
 };
 ```
 

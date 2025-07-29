@@ -5,6 +5,7 @@ All URIs are relative to *https://matjalalzz.shop*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**adminTest**](#admintest) | **GET** /admin/test | |
+|[**cancelReservation**](#cancelreservation) | **PATCH** /reservations/{reservationId}/cancel | 예약 취소|
 |[**completeParty**](#completeparty) | **PATCH** /parties/{partyId}/complete | 파티 모집 완료 상태 변경|
 |[**confirm**](#confirm) | **POST** /payment/confirm | 결제 승인 api |
 |[**confirmReservation**](#confirmreservation) | **PATCH** /reservations/{reservationId}/confirm | 예약 수락|
@@ -32,6 +33,7 @@ All URIs are relative to *https://matjalalzz.shop*
 |[**getOwnerShops**](#getownershops) | **GET** /owner/shops | 사장이 가진 식당들 조회|
 |[**getParties**](#getparties) | **GET** /parties | 파티 목록 조회|
 |[**getPartyDetail**](#getpartydetail) | **GET** /parties/{partyId} | 파티 상세 조회|
+|[**getPartyMembers**](#getpartymembers) | **GET** /parties/{partyId}/members | 파티원 목록 조회|
 |[**getPaymentHistories**](#getpaymenthistories) | **GET** /payment | 결제 내역 조회 api|
 |[**getPendingShop**](#getpendingshop) | **POST** /admin/shops/{shopId} | 관리자가 식당 등록에 대한 요청을 승인 또는 거절 |
 |[**getPendingShop1**](#getpendingshop1) | **GET** /admin/shops | 관리자가 pending 상태인 식당들 리스트를 가져옴|
@@ -48,9 +50,11 @@ All URIs are relative to *https://matjalalzz.shop*
 |[**oauth2Urls**](#oauth2urls) | **GET** /users/authorization-info | OAuth2 로그인 진입점 URL 안내|
 |[**oauthSignup**](#oauthsignup) | **POST** /users/signup/oauth | 회원가입|
 |[**ownerTest**](#ownertest) | **GET** /owner/test | |
+|[**payPartyFee**](#paypartyfee) | **POST** /parties/{partyId}/pay | 파티 예약금 지불|
 |[**quitParty**](#quitparty) | **POST** /parties/{partyId}/quit | 파티 탈퇴|
+|[**quitParty1**](#quitparty1) | **POST** /parties/{partyId}/kick/{userId} | 파티 강퇴|
 |[**refreshToken**](#refreshtoken) | **POST** /users/reissue-token | 액세스 토큰 재발급|
-|[**refuseReservation**](#refusereservation) | **PATCH** /reservations/{reservationId}/cancel | 예약 거절|
+|[**refuseReservation**](#refusereservation) | **PATCH** /reservations/{reservationId}/refuse | 예약 거절|
 |[**saveOrder**](#saveorder) | **POST** /payment/order | 주문 정보 임시 저장 api|
 |[**signup**](#signup) | **POST** /users/signup | 회원가입|
 |[**updateMyInfo**](#updatemyinfo) | **PUT** /users/my-page | 내 정보 수정|
@@ -85,7 +89,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -97,6 +101,57 @@ This endpoint does not have any parameters.
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **cancelReservation**
+> BaseResponseVoid cancelReservation()
+
+reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let reservationId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.cancelReservation(
+    reservationId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **reservationId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseVoid**
+
+### Authorization
+
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | 예약 취소 성공 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -136,7 +191,7 @@ const { status, data } = await apiInstance.completeParty(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -188,7 +243,7 @@ const { status, data } = await apiInstance.confirm(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -239,7 +294,7 @@ const { status, data } = await apiInstance.confirmReservation(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -294,7 +349,7 @@ const { status, data } = await apiInstance.createComment(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -349,7 +404,7 @@ const { status, data } = await apiInstance.createInquiryComment(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -401,7 +456,7 @@ const { status, data } = await apiInstance.createParty(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -435,12 +490,12 @@ const apiInstance = new APIApi(configuration);
 
 let shopId: number; // (default to undefined)
 let createReservationRequest: CreateReservationRequest; //
-let partyId: number; //파티 ID (선택값). 파티 예약일 경우 전달. (optional) (default to undefined)
+let UNKNOWN_PARAMETER_NAME: ; //파티 ID (선택값). 파티 예약일 경우 전달. (optional)
 
 const { status, data } = await apiInstance.createReservation(
     shopId,
     createReservationRequest,
-    partyId
+    UNKNOWN_PARAMETER_NAME
 );
 ```
 
@@ -449,8 +504,8 @@ const { status, data } = await apiInstance.createReservation(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **createReservationRequest** | **CreateReservationRequest**|  | |
+| **UNKNOWN_PARAMETER_NAME** | ****| 파티 ID (선택값). 파티 예약일 경우 전달. | |
 | **shopId** | [**number**] |  | defaults to undefined|
-| **partyId** | [**number**] | 파티 ID (선택값). 파티 예약일 경우 전달. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -459,7 +514,7 @@ const { status, data } = await apiInstance.createReservation(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -511,7 +566,7 @@ const { status, data } = await apiInstance.createReview(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -563,7 +618,7 @@ const { status, data } = await apiInstance.createShop(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -614,7 +669,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -665,7 +720,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -717,7 +772,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -769,7 +824,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -800,18 +855,11 @@ import {
 const configuration = new Configuration();
 const apiInstance = new APIApi(configuration);
 
-let refreshToken: string; // (default to undefined)
-
-const { status, data } = await apiInstance.deleteUser(
-    refreshToken
-);
+const { status, data } = await apiInstance.deleteUser();
 ```
 
 ### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **refreshToken** | [**string**] |  | defaults to undefined|
+This endpoint does not have any parameters.
 
 
 ### Return type
@@ -820,7 +868,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -874,7 +922,7 @@ const { status, data } = await apiInstance.getAllInquiry(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -925,7 +973,7 @@ const { status, data } = await apiInstance.getComments(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -976,7 +1024,7 @@ const { status, data } = await apiInstance.getDetailShop(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1027,7 +1075,7 @@ const { status, data } = await apiInstance.getDetailShopOwner(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1078,7 +1126,7 @@ const { status, data } = await apiInstance.getInquiryComments(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1122,7 +1170,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1176,7 +1224,7 @@ const { status, data } = await apiInstance.getMyParties(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1230,7 +1278,7 @@ const { status, data } = await apiInstance.getMyReservations(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1284,7 +1332,7 @@ const { status, data } = await apiInstance.getMyReviews(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1335,7 +1383,7 @@ const { status, data } = await apiInstance.getOneInquiry(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1379,7 +1427,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1454,7 +1502,7 @@ const { status, data } = await apiInstance.getParties(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1472,7 +1520,7 @@ const { status, data } = await apiInstance.getParties(
 # **getPartyDetail**
 > BaseResponsePartyDetailResponse getPartyDetail()
 
-맛집 탐험 파티 게시글 상세 정보를 조회합니다.(Completed)
+맛집 탐험 파티 상세 정보를 조회합니다.(Completed)
 
 ### Example
 
@@ -1505,7 +1553,58 @@ const { status, data } = await apiInstance.getPartyDetail(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **getPartyMembers**
+> BaseResponseListPartyMemberResponse getPartyMembers()
+
+맛집 탐험 파티원 목록을 조회합니다.(Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let partyId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.getPartyMembers(
+    partyId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **partyId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseListPartyMemberResponse**
+
+### Authorization
+
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1559,7 +1658,7 @@ const { status, data } = await apiInstance.getPaymentHistories(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1614,7 +1713,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1658,7 +1757,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1702,7 +1801,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1763,7 +1862,7 @@ const { status, data } = await apiInstance.getReservations(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1821,7 +1920,7 @@ const { status, data } = await apiInstance.getReviews(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1872,7 +1971,7 @@ const { status, data } = await apiInstance.getShopAdminDetail(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -1941,7 +2040,7 @@ const { status, data } = await apiInstance.getShops(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2001,7 +2100,7 @@ const { status, data } = await apiInstance.getShopsBySearch(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2052,7 +2151,7 @@ const { status, data } = await apiInstance.joinParty(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2104,7 +2203,7 @@ const { status, data } = await apiInstance.login(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2135,18 +2234,11 @@ import {
 const configuration = new Configuration();
 const apiInstance = new APIApi(configuration);
 
-let refreshToken: string; // (default to undefined)
-
-const { status, data } = await apiInstance.logout(
-    refreshToken
-);
+const { status, data } = await apiInstance.logout();
 ```
 
 ### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **refreshToken** | [**string**] |  | defaults to undefined|
+This endpoint does not have any parameters.
 
 
 ### Return type
@@ -2155,7 +2247,7 @@ const { status, data } = await apiInstance.logout(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2207,7 +2299,7 @@ const { status, data } = await apiInstance.newInquiry(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2251,7 +2343,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2303,7 +2395,7 @@ const { status, data } = await apiInstance.oauthSignup(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2346,12 +2438,63 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
  - **Content-Type**: Not defined
  - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **payPartyFee**
+> payPartyFee()
+
+맛집 탐험 파티의 예약을 위한 예약금을 지불합니다.(Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let partyId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.payPartyFee(
+    partyId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **partyId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
 
 
 ### HTTP response details
@@ -2397,7 +2540,7 @@ void (empty response body)
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2409,6 +2552,60 @@ void (empty response body)
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**204** | No Content |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **quitParty1**
+> BaseResponseVoid quitParty1()
+
+맛집 탐험 파티에서 파티원을 강제 퇴장시킵니다.(Completed)
+
+### Example
+
+```typescript
+import {
+    APIApi,
+    Configuration
+} from '@/api/generated';
+
+const configuration = new Configuration();
+const apiInstance = new APIApi(configuration);
+
+let partyId: number; // (default to undefined)
+let userId: number; // (default to undefined)
+
+const { status, data } = await apiInstance.quitParty1(
+    partyId,
+    userId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **partyId** | [**number**] |  | defaults to undefined|
+| **userId** | [**number**] |  | defaults to undefined|
+
+
+### Return type
+
+**BaseResponseVoid**
+
+### Authorization
+
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | OK |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -2428,18 +2625,11 @@ import {
 const configuration = new Configuration();
 const apiInstance = new APIApi(configuration);
 
-let refreshToken: string; // (default to undefined)
-
-const { status, data } = await apiInstance.refreshToken(
-    refreshToken
-);
+const { status, data } = await apiInstance.refreshToken();
 ```
 
 ### Parameters
-
-|Name | Type | Description  | Notes|
-|------------- | ------------- | ------------- | -------------|
-| **refreshToken** | [**string**] |  | defaults to undefined|
+This endpoint does not have any parameters.
 
 
 ### Return type
@@ -2448,7 +2638,7 @@ const { status, data } = await apiInstance.refreshToken(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2466,7 +2656,7 @@ const { status, data } = await apiInstance.refreshToken(
 # **refuseReservation**
 > BaseResponseVoid refuseReservation()
 
-reservationId에 해당하는 예약을 CANCELLED 상태로 변경한다. (Completed)
+reservationId에 해당하는 예약을 REFUSED 상태로 변경한다. (Completed)
 
 ### Example
 
@@ -2499,7 +2689,7 @@ const { status, data } = await apiInstance.refuseReservation(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2551,7 +2741,7 @@ const { status, data } = await apiInstance.saveOrder(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2603,7 +2793,7 @@ const { status, data } = await apiInstance.signup(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2655,7 +2845,7 @@ const { status, data } = await apiInstance.updateMyInfo(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2710,7 +2900,7 @@ const { status, data } = await apiInstance.updateShop(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -2753,7 +2943,7 @@ This endpoint does not have any parameters.
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 

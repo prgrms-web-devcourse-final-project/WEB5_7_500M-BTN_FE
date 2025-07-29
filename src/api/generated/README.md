@@ -52,6 +52,7 @@ All URIs are relative to *https://matjalalzz.shop*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *APIApi* | [**adminTest**](docs/APIApi.md#admintest) | **GET** /admin/test | 
+*APIApi* | [**cancelReservation**](docs/APIApi.md#cancelreservation) | **PATCH** /reservations/{reservationId}/cancel | 예약 취소
 *APIApi* | [**completeParty**](docs/APIApi.md#completeparty) | **PATCH** /parties/{partyId}/complete | 파티 모집 완료 상태 변경
 *APIApi* | [**confirm**](docs/APIApi.md#confirm) | **POST** /payment/confirm | 결제 승인 api 
 *APIApi* | [**confirmReservation**](docs/APIApi.md#confirmreservation) | **PATCH** /reservations/{reservationId}/confirm | 예약 수락
@@ -79,6 +80,7 @@ Class | Method | HTTP request | Description
 *APIApi* | [**getOwnerShops**](docs/APIApi.md#getownershops) | **GET** /owner/shops | 사장이 가진 식당들 조회
 *APIApi* | [**getParties**](docs/APIApi.md#getparties) | **GET** /parties | 파티 목록 조회
 *APIApi* | [**getPartyDetail**](docs/APIApi.md#getpartydetail) | **GET** /parties/{partyId} | 파티 상세 조회
+*APIApi* | [**getPartyMembers**](docs/APIApi.md#getpartymembers) | **GET** /parties/{partyId}/members | 파티원 목록 조회
 *APIApi* | [**getPaymentHistories**](docs/APIApi.md#getpaymenthistories) | **GET** /payment | 결제 내역 조회 api
 *APIApi* | [**getPendingShop**](docs/APIApi.md#getpendingshop) | **POST** /admin/shops/{shopId} | 관리자가 식당 등록에 대한 요청을 승인 또는 거절 
 *APIApi* | [**getPendingShop1**](docs/APIApi.md#getpendingshop1) | **GET** /admin/shops | 관리자가 pending 상태인 식당들 리스트를 가져옴
@@ -95,9 +97,11 @@ Class | Method | HTTP request | Description
 *APIApi* | [**oauth2Urls**](docs/APIApi.md#oauth2urls) | **GET** /users/authorization-info | OAuth2 로그인 진입점 URL 안내
 *APIApi* | [**oauthSignup**](docs/APIApi.md#oauthsignup) | **POST** /users/signup/oauth | 회원가입
 *APIApi* | [**ownerTest**](docs/APIApi.md#ownertest) | **GET** /owner/test | 
+*APIApi* | [**payPartyFee**](docs/APIApi.md#paypartyfee) | **POST** /parties/{partyId}/pay | 파티 예약금 지불
 *APIApi* | [**quitParty**](docs/APIApi.md#quitparty) | **POST** /parties/{partyId}/quit | 파티 탈퇴
+*APIApi* | [**quitParty1**](docs/APIApi.md#quitparty1) | **POST** /parties/{partyId}/kick/{userId} | 파티 강퇴
 *APIApi* | [**refreshToken**](docs/APIApi.md#refreshtoken) | **POST** /users/reissue-token | 액세스 토큰 재발급
-*APIApi* | [**refuseReservation**](docs/APIApi.md#refusereservation) | **PATCH** /reservations/{reservationId}/cancel | 예약 거절
+*APIApi* | [**refuseReservation**](docs/APIApi.md#refusereservation) | **PATCH** /reservations/{reservationId}/refuse | 예약 거절
 *APIApi* | [**saveOrder**](docs/APIApi.md#saveorder) | **POST** /payment/order | 주문 정보 임시 저장 api
 *APIApi* | [**signup**](docs/APIApi.md#signup) | **POST** /users/signup | 회원가입
 *APIApi* | [**updateMyInfo**](docs/APIApi.md#updatemyinfo) | **PUT** /users/my-page | 내 정보 수정
@@ -118,6 +122,7 @@ Class | Method | HTTP request | Description
  - [BaseResponseInquiryOneGetResponse](docs/BaseResponseInquiryOneGetResponse.md)
  - [BaseResponseListChatMessageResponse](docs/BaseResponseListChatMessageResponse.md)
  - [BaseResponseListCommentResponse](docs/BaseResponseListCommentResponse.md)
+ - [BaseResponseListPartyMemberResponse](docs/BaseResponseListPartyMemberResponse.md)
  - [BaseResponseMyInfoResponse](docs/BaseResponseMyInfoResponse.md)
  - [BaseResponseMyPartyPageResponse](docs/BaseResponseMyPartyPageResponse.md)
  - [BaseResponseMyReservationPageResponse](docs/BaseResponseMyReservationPageResponse.md)
@@ -166,6 +171,7 @@ Class | Method | HTTP request | Description
  - [PartyCreateRequest](docs/PartyCreateRequest.md)
  - [PartyDetailResponse](docs/PartyDetailResponse.md)
  - [PartyListResponse](docs/PartyListResponse.md)
+ - [PartyMemberResponse](docs/PartyMemberResponse.md)
  - [PartyScrollResponse](docs/PartyScrollResponse.md)
  - [PaymentHistoryResponse](docs/PaymentHistoryResponse.md)
  - [PaymentScrollResponse](docs/PaymentScrollResponse.md)
@@ -197,8 +203,15 @@ Class | Method | HTTP request | Description
 
 
 Authentication schemes defined for the API:
-<a id="JwtAuth"></a>
-### JwtAuth
+<a id="accessToken"></a>
+### accessToken
 
 - **Type**: Bearer authentication (Authorization)
+
+<a id="refreshToken"></a>
+### refreshToken
+
+- **Type**: API key
+- **API key parameter name**: refreshToken
+- **Location**: 
 

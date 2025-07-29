@@ -45,7 +45,7 @@ const { status, data } = await apiInstance.loadChatHistory(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 
@@ -95,7 +95,7 @@ const { status, data } = await apiInstance.restoreChat(
 
 ### Authorization
 
-[JwtAuth](../README.md#JwtAuth)
+[accessToken](../README.md#accessToken), [refreshToken](../README.md#refreshToken)
 
 ### HTTP request headers
 

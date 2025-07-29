@@ -18,12 +18,12 @@ Name | Type | Description | Notes
 **metAt** | **string** |  | [optional] [default to undefined]
 **deadline** | **string** |  | [optional] [default to undefined]
 **createdAt** | **string** |  | [optional] [default to undefined]
-**hostId** | **number** |  | [optional] [default to undefined]
 **shopId** | **number** |  | [optional] [default to undefined]
 **shopName** | **string** |  | [optional] [default to undefined]
 **shopRoadAddress** | **string** |  | [optional] [default to undefined]
 **shopDetailAddress** | **string** |  | [optional] [default to undefined]
 **shopImage** | **string** |  | [optional] [default to undefined]
+**members** | [**Array&lt;PartyMemberResponse&gt;**](PartyMemberResponse.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -44,12 +44,12 @@ const instance: PartyDetailResponse = {
     metAt,
     deadline,
     createdAt,
-    hostId,
     shopId,
     shopName,
     shopRoadAddress,
     shopDetailAddress,
     shopImage,
+    members,
 };
 ```
 
