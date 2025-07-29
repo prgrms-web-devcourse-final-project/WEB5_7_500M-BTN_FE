@@ -38,6 +38,11 @@ import type {
   BaseResponsePartyDetailResponse,
   MyInfoUpdateRequest,
   ShopCreateRequest,
+  BaseResponseInquiryAllGetResponse,
+  BaseResponseInquiryOneGetResponse,
+  InquiryCreateRequest,
+  BaseResponseListCommentResponse,
+  CommentCreateRequest,
 } from "./generated";
 
 // 공통 에러 타입
@@ -708,6 +713,100 @@ export const useOAuthSignup = () => {
     onSuccess: () => {
       // OAuth 회원가입 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["myInfo"] });
+    },
+  });
+};
+
+// 고객센터 관련 훅들
+
+// 문의글 목록 조회 훅
+export const useInquiries = (params?: { cursor?: number; size?: number }) => {
+  return useQuery({
+    queryKey: ["inquiries", params],
+    queryFn: async () => {
+      const response = await apiClient.getAllInquiry(
+        params?.cursor,
+        params?.size
+      );
+      return response.data;
+    },
+    enabled: true,
+  });
+};
+
+// 문의글 상세 조회 훅
+export const useInquiryDetail = (inquiryId: number) => {
+  return useQuery({
+    queryKey: ["inquiryDetail", inquiryId],
+    queryFn: async () => {
+      const response = await apiClient.getOneInquiry(inquiryId);
+      return response.data;
+    },
+    enabled: !!inquiryId,
+  });
+};
+
+// 문의글 생성 훅
+export const useCreateInquiry = () => {
+  const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
+
+  return useMutation({
+    mutationFn: async (inquiryData: InquiryCreateRequest) => {
+      try {
+        const response = await apiClient.newInquiry(inquiryData);
+        return response.data;
+      } catch (error) {
+        handleError(error, "문의글 생성");
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // 문의글 생성 성공 시 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+    },
+  });
+};
+
+// 문의글 댓글 조회 훅
+export const useInquiryComments = (inquiryId: number) => {
+  return useQuery({
+    queryKey: ["inquiryComments", inquiryId],
+    queryFn: async () => {
+      const response = await apiClient.getInquiryComments(inquiryId);
+      return response.data;
+    },
+    enabled: !!inquiryId,
+  });
+};
+
+// 문의글 댓글 생성 훅
+export const useCreateInquiryComment = () => {
+  const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
+
+  return useMutation({
+    mutationFn: async (params: {
+      inquiryId: number;
+      commentData: CommentCreateRequest;
+    }) => {
+      try {
+        const response = await apiClient.createInquiryComment(
+          params.inquiryId,
+          params.commentData
+        );
+        return response.data;
+      } catch (error) {
+        handleError(error, "문의글 댓글 생성");
+        throw error;
+      }
+    },
+    onSuccess: (_, variables) => {
+      // 댓글 생성 성공 시 관련 쿼리 무효화
+      queryClient.invalidateQueries({
+        queryKey: ["inquiryComments", variables.inquiryId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
     },
   });
 };

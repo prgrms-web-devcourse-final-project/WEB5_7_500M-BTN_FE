@@ -11,24 +11,26 @@ import {
   Stack,
   Alert,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
   Send as SendIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { ImageUpload } from "@/components/common";
-import { CreateInquiryRequest } from "@/types";
+import { useCreateInquiry } from "@/api/hooks";
+import { InquiryCreateRequest } from "@/api/generated";
 
 export default function CreateInquiryPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState<CreateInquiryRequest>({
+  const [formData, setFormData] = useState<InquiryCreateRequest>({
     title: "",
     content: "",
-    images: [],
+    imageCount: 0,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createInquiryMutation = useCreateInquiry();
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -56,35 +58,25 @@ export default function CreateInquiryPage() {
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
-      // 실제 API 호출 대신 시뮬레이션
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await createInquiryMutation.mutateAsync(formData);
       // 성공 시 목록 페이지로 이동
-      router.push("/customer-service?success=true");
+      router.push("/customer-service/inquiries?success=true");
     } catch (error) {
       console.error("문의글 작성 실패:", error);
       setErrors({ submit: "문의글 작성에 실패했습니다. 다시 시도해주세요." });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (
-    field: keyof CreateInquiryRequest,
-    value: string
+    field: keyof InquiryCreateRequest,
+    value: string | number
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // 에러 메시지 제거
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
-  };
-
-  const handleImagesChange = (images: File[]) => {
-    setFormData((prev) => ({ ...prev, images }));
   };
 
   return (
@@ -137,6 +129,7 @@ export default function CreateInquiryPage() {
               error={!!errors.title}
               helperText={errors.title || `${formData.title.length}/100`}
               inputProps={{ maxLength: 100 }}
+              disabled={createInquiryMutation.isPending}
             />
           </Box>
 
@@ -155,15 +148,7 @@ export default function CreateInquiryPage() {
               error={!!errors.content}
               helperText={errors.content || `${formData.content.length}/2000`}
               inputProps={{ maxLength: 2000 }}
-            />
-          </Box>
-
-          {/* 이미지 업로드 */}
-          <Box sx={{ mb: 4 }}>
-            <ImageUpload
-              images={formData.images || []}
-              onImagesChange={handleImagesChange}
-              maxImages={5}
+              disabled={createInquiryMutation.isPending}
             />
           </Box>
 
@@ -173,7 +158,7 @@ export default function CreateInquiryPage() {
               • 문의글은 24시간 이내에 답변드립니다.
               <br />
               • 개인정보가 포함된 내용은 제외하고 작성해주세요.
-              <br />• 이미지는 최대 5개까지 첨부 가능합니다.
+              <br />• 문의글 작성 후 관리자가 검토하여 답변드립니다.
             </Typography>
           </Alert>
 
@@ -182,18 +167,24 @@ export default function CreateInquiryPage() {
             <Button
               variant="outlined"
               onClick={() => router.back()}
-              disabled={isSubmitting}
+              disabled={createInquiryMutation.isPending}
             >
               취소
             </Button>
             <Button
               type="submit"
               variant="contained"
-              startIcon={<SendIcon />}
-              disabled={isSubmitting}
+              startIcon={
+                createInquiryMutation.isPending ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <SendIcon />
+                )
+              }
+              disabled={createInquiryMutation.isPending}
               sx={{ minWidth: 120 }}
             >
-              {isSubmitting ? "작성 중..." : "문의글 작성"}
+              {createInquiryMutation.isPending ? "작성 중..." : "문의글 작성"}
             </Button>
           </Stack>
         </Box>

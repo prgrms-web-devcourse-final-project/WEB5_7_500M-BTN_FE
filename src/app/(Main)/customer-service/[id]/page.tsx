@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Container,
@@ -13,40 +13,31 @@ import {
   ImageList,
   ImageListItem,
   Alert,
+  CircularProgress,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  IconButton,
 } from "@mui/material";
 import {
   ArrowBack as ArrowBackIcon,
   Chat as ChatIcon,
+  Send as SendIcon,
+  Person as PersonIcon,
+  AdminPanelSettings as AdminIcon,
+  Warning as WarningIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { mockInquiries } from "@/data/mockInquiryData";
-import { CustomerInquiry } from "@/types";
-
-const getStatusColor = (status: CustomerInquiry["status"]) => {
-  switch (status) {
-    case "pending":
-      return "warning";
-    case "answered":
-      return "success";
-    case "closed":
-      return "default";
-    default:
-      return "default";
-  }
-};
-
-const getStatusText = (status: CustomerInquiry["status"]) => {
-  switch (status) {
-    case "pending":
-      return "답변 대기";
-    case "answered":
-      return "답변 완료";
-    case "closed":
-      return "처리 완료";
-    default:
-      return "알 수 없음";
-  }
-};
+import {
+  useInquiryDetail,
+  useInquiryComments,
+  useCreateInquiryComment,
+  useMyInfo,
+} from "@/api/hooks";
+import { MyInfoResponseRoleEnum } from "@/api/generated";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -68,9 +59,67 @@ interface InquiryDetailPageProps {
 export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
   const router = useRouter();
   const inquiryId = parseInt(params.id);
-  const inquiry = mockInquiries.find((inq) => inq.id === inquiryId);
+  const [commentContent, setCommentContent] = useState("");
 
-  if (!inquiry) {
+  const {
+    data: inquiryData,
+    isLoading: inquiryLoading,
+    error: inquiryError,
+  } = useInquiryDetail(inquiryId);
+  const { data: commentsData, isLoading: commentsLoading } =
+    useInquiryComments(inquiryId);
+  const createCommentMutation = useCreateInquiryComment();
+  const { data: myInfoData } = useMyInfo();
+
+  const inquiry = inquiryData?.data;
+  const comments = commentsData?.data || [];
+  const userRole = myInfoData?.data?.role;
+  const currentUserId = myInfoData?.data?.userId;
+  const isAdmin = userRole === MyInfoResponseRoleEnum.Admin;
+
+  // TODO: API에서 문의글 작성자 정보를 제공한다면 여기서 권한 체크
+  // const canAccess = isAdmin || inquiry?.writerId === currentUserId;
+  const canAccess = true; // 현재는 모든 사용자가 접근 가능하도록 설정
+
+  const handleSubmitComment = async () => {
+    if (!commentContent.trim() || !isAdmin) return;
+
+    try {
+      await createCommentMutation.mutateAsync({
+        inquiryId,
+        commentData: {
+          content: commentContent.trim(),
+        },
+      });
+      setCommentContent("");
+    } catch (error) {
+      console.error("댓글 작성 실패:", error);
+    }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.shiftKey && isAdmin) {
+      event.preventDefault();
+      handleSubmitComment();
+    }
+  };
+
+  if (inquiryLoading) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="400px"
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (inquiryError || !inquiry) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Paper sx={{ p: 4, textAlign: "center" }}>
@@ -80,8 +129,31 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}
-            onClick={() => router.push("/customer-service")}
+            onClick={() => router.push("/customer-service/inquiries")}
             sx={{ mt: 2 }}
+          >
+            목록으로 돌아가기
+          </Button>
+        </Paper>
+      </Container>
+    );
+  }
+
+  // 권한 체크 (현재는 모든 사용자 접근 허용)
+  if (!canAccess) {
+    return (
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
+          <Typography variant="h6" color="error" gutterBottom>
+            접근 권한이 없습니다
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            다른 사용자의 문의글은 볼 수 없습니다.
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.push("/customer-service/inquiries")}
           >
             목록으로 돌아가기
           </Button>
@@ -103,6 +175,21 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
             >
               뒤로가기
             </Button>
+            {isAdmin && (
+              <Chip
+                icon={<AdminIcon />}
+                label="관리자 모드"
+                color="primary"
+                size="small"
+              />
+            )}
+            {!isAdmin && (
+              <Alert severity="info" icon={<WarningIcon />} sx={{ flex: 1 }}>
+                <Typography variant="body2">
+                  관리자만 답변을 작성할 수 있습니다.
+                </Typography>
+              </Alert>
+            )}
           </Stack>
 
           <Box
@@ -122,15 +209,11 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
               {inquiry.title}
             </Typography>
             <Chip
-              label={getStatusText(inquiry.status)}
-              color={getStatusColor(inquiry.status)}
+              label={comments.length > 0 ? "답변 완료" : "답변 대기"}
+              color={comments.length > 0 ? "success" : "warning"}
               variant="outlined"
             />
           </Box>
-
-          <Typography variant="body2" color="text.secondary">
-            작성일: {formatDate(inquiry.createdAt)}
-          </Typography>
         </Box>
 
         <Divider sx={{ mb: 4 }} />
@@ -177,41 +260,109 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
           </Box>
         )}
 
-        {/* 답변 */}
-        {inquiry.answer ? (
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-              <ChatIcon sx={{ mr: 1, color: "success.main" }} />
-              <Typography variant="h6" color="success.main">
-                답변
-              </Typography>
-            </Box>
-            <Paper
-              variant="outlined"
-              sx={{
-                p: 3,
-                backgroundColor: "success.50",
-                borderColor: "success.main",
-              }}
-            >
-              <Typography
-                variant="body1"
-                sx={{ whiteSpace: "pre-wrap", mb: 2 }}
-              >
-                {inquiry.answer.content}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                답변일: {formatDate(inquiry.answer.createdAt)}
-              </Typography>
-            </Paper>
+        {/* 댓글 목록 */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+            <ChatIcon sx={{ mr: 1, color: "primary.main" }} />
+            <Typography variant="h6">댓글 ({comments.length})</Typography>
           </Box>
-        ) : inquiry.status === "pending" ? (
+
+          {commentsLoading ? (
+            <Box display="flex" justifyContent="center" py={2}>
+              <CircularProgress size={24} />
+            </Box>
+          ) : comments.length > 0 ? (
+            <List>
+              {comments.map((comment) => (
+                <ListItem key={comment.commentId} alignItems="flex-start">
+                  <ListItemAvatar>
+                    <Avatar>
+                      <PersonIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {comment.writer?.nickname || "익명"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {comment.createdAt
+                            ? formatDate(comment.createdAt)
+                            : ""}
+                        </Typography>
+                      </Box>
+                    }
+                    secondary={
+                      <Typography
+                        variant="body2"
+                        sx={{ whiteSpace: "pre-wrap", mt: 1 }}
+                      >
+                        {comment.content}
+                      </Typography>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Alert severity="info">
+              <Typography variant="body2">
+                아직 댓글이 없습니다.
+                {isAdmin
+                  ? " 답변을 작성해보세요!"
+                  : " 관리자가 답변을 기다리고 있습니다."}
+              </Typography>
+            </Alert>
+          )}
+        </Box>
+
+        {/* 댓글 작성 (관리자만) */}
+        {isAdmin && (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              답변 작성
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                placeholder="답변을 입력하세요..."
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={createCommentMutation.isPending}
+              />
+              <IconButton
+                onClick={handleSubmitComment}
+                disabled={
+                  !commentContent.trim() || createCommentMutation.isPending
+                }
+                color="primary"
+                sx={{ alignSelf: "flex-end" }}
+              >
+                {createCommentMutation.isPending ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <SendIcon />
+                )}
+              </IconButton>
+            </Box>
+          </Box>
+        )}
+
+        {/* 일반 사용자에게는 답변 대기 안내 */}
+        {!isAdmin && comments.length === 0 && (
           <Alert severity="info" sx={{ mb: 4 }}>
             <Typography variant="body2">
-              문의하신 내용을 검토하고 있습니다. 24시간 이내에 답변드리겠습니다.
+              문의하신 내용을 검토하고 있습니다. 관리자가 답변을 작성하면 여기에
+              표시됩니다.
             </Typography>
           </Alert>
-        ) : null}
+        )}
 
         {/* 하단 버튼 */}
         <Box
@@ -223,21 +374,10 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
         >
           <Button
             variant="outlined"
-            onClick={() => router.push("/customer-service")}
+            onClick={() => router.push("/customer-service/inquiries")}
           >
             목록으로
           </Button>
-
-          {inquiry.status === "pending" && (
-            <Button
-              variant="contained"
-              onClick={() =>
-                router.push(`/customer-service/${inquiry.id}/edit`)
-              }
-            >
-              수정하기
-            </Button>
-          )}
         </Box>
       </Paper>
     </Container>
