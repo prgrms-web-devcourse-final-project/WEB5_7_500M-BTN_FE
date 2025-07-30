@@ -8,8 +8,6 @@ import {
   Stack,
   Chip,
   Button,
-  Rating,
-  useTheme,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -55,16 +53,7 @@ const getStatus = (party: MyPartyResponse) => {
   };
 };
 
-const categoryIcons: Record<string, string> = {
-  한식: "🍚",
-  일식: "🍣",
-  중식: "🥟",
-  양식: "🍝",
-  기타: "🍽️",
-};
-
 const PartyItem = ({ party }: PartyItemProps) => {
-  const theme = useTheme();
   const status = getStatus(party);
   const isPast = status.label === "종료";
   const [showChat, setShowChat] = useState(false);

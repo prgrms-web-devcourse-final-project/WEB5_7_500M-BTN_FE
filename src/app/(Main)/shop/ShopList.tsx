@@ -17,7 +17,6 @@ import ShopListItemRow from "@/features/shop/ShopListCard";
 import { useShops } from "@/api/hooks";
 import { GetShopsCategoryEnum, ShopsItem } from "@/api/generated";
 import { SEARCH_CONSTANTS } from "@/constants";
-import { debounce } from "@/utils";
 
 const categories = [
   { value: "ALL", label: "전체" },

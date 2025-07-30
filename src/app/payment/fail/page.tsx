@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Box, Paper, Typography, Stack, Button, Alert } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
 
 const PaymentFailContent = () => {
   const searchParams = useSearchParams();

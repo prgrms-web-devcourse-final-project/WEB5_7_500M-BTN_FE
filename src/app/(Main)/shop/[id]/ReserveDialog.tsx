@@ -19,7 +19,7 @@ import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/ko";
 import { getTimeGridOptions } from "./reserveUtils";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import { useCreateReservation, useMyInfo } from "@/api/hooks";
 import {
   requestPayment,

@@ -12,9 +12,8 @@ import {
 import ReservationItem from "./ReservationItem";
 import ReviewDialog from "./ReviewDialog";
 import { useMyReservations, useMyReviews } from "@/api/hooks";
-import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
-import type { MyReservationResponse, MyReviewResponse } from "@/api/generated";
+
+import type { MyReservationResponse } from "@/api/generated";
 
 const ProfileReservationsTab = () => {
   const [filter, setFilter] = React.useState<string>("all");
@@ -23,7 +22,6 @@ const ProfileReservationsTab = () => {
     React.useState<MyReservationResponse | null>(null);
   const [reviewContent, setReviewContent] = React.useState("");
   const [reviewRating, setReviewRating] = React.useState(4.0);
-  const { showToast, hideToast } = useToast();
 
   // API 훅 사용
   const {

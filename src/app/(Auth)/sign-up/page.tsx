@@ -16,7 +16,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import type { SignUpRequest } from "@/api/generated";
 
 export default function SignUpPage() {

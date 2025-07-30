@@ -17,7 +17,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import { useMyInfo } from "@/api/hooks";
 import {
   requestPayment,

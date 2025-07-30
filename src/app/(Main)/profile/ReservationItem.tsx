@@ -7,10 +7,9 @@ import {
   Typography,
   Chip,
   Button,
-  Rating,
 } from "@mui/material";
 import dayjs from "dayjs";
-import type { MyReservationResponse, MyReviewResponse } from "@/api/generated";
+import type { MyReservationResponse } from "@/api/generated";
 
 interface ReservationItemProps {
   reservation: MyReservationResponse;

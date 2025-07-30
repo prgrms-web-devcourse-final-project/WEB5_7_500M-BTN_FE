@@ -79,7 +79,7 @@ const ShopCreateDialog = ({
     closeTime: "23:00:00",
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   // 카카오맵 관련 상태
   const [keyword, setKeyword] = useState("");

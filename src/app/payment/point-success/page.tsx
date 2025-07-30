@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import { confirmPayment } from "@/utils/tossPayments";
 import { useQueryClient } from "@tanstack/react-query";
 

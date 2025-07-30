@@ -16,7 +16,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useOAuthSignup } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import type { OAuthSignUpRequest } from "@/api/generated";
 import { getAccessToken, getToken } from "@/api/client";
 

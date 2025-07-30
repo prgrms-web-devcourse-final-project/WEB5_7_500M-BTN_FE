@@ -267,7 +267,7 @@ const AdminPage = () => {
         <DialogTitle>식당 승인</DialogTitle>
         <DialogContent>
           <Typography>
-            "{selectedShop?.shopName}" 식당을 승인하시겠습니까?
+            &quot;{selectedShop?.shopName}&quot; 식당을 승인하시겠습니까?
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -302,7 +302,7 @@ const AdminPage = () => {
         <DialogTitle>식당 거절</DialogTitle>
         <DialogContent>
           <Typography>
-            "{selectedShop?.shopName}" 식당을 거절하시겠습니까?
+            &quot;{selectedShop?.shopName}&quot; 식당을 거절하시겠습니까?
           </Typography>
         </DialogContent>
         <DialogActions>

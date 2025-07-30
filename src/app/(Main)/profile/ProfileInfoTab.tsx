@@ -26,7 +26,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useMyInfo, useUpdateMyInfo } from "@/api/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import PointChargeDialog from "./PointChargeDialog";
 
 const ProfileInfoTab = () => {

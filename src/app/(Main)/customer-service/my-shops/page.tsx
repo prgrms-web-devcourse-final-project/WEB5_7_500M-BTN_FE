@@ -26,7 +26,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useOwnerShops } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import { ShopCreateDialog } from "@/components/common";
 import {
   OwnerShopItem,
@@ -263,8 +263,6 @@ const MyShopsPage = () => {
         onClose={() => setIsCreateDialogOpen(false)}
         onSuccess={handleShopCreateSuccess}
       />
-
-      <Toast showToast={showToast} hideToast={hideToast} />
     </Container>
   );
 };

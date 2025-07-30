@@ -37,7 +37,7 @@ export const useWebSocket = ({
     try {
       setStatus("CONNECTING");
 
-      let accessToken = getAccessToken();
+      const accessToken = getAccessToken();
       if (!accessToken) {
         logger.error("액세스 토큰이 없습니다.");
         setStatus("ERROR");

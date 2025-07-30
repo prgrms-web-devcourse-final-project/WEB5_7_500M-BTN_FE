@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Box, CircularProgress, Typography, Alert } from "@mui/material";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
+
 import {
   getToken,
   getAccessToken,
