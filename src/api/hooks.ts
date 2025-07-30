@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from "@tanstack/react-query";
 import {
   apiClient,
   setAccessToken,
@@ -950,6 +955,46 @@ export const useRestoreChat = (partyId: number) => {
       }
     },
     enabled: !!partyId,
+    retry: false, // 자동 재시도 비활성화
+  });
+};
+
+// 결제내역 조회 훅
+export const usePaymentHistories = (params?: { size?: number }) => {
+  return useInfiniteQuery({
+    queryKey: ["paymentHistories", params?.size],
+    queryFn: async ({ pageParam }) => {
+      try {
+        const response = await apiClient.getPaymentHistories(
+          params?.size || 10,
+          pageParam
+        );
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 401) {
+            // 401 에러 시 토큰 갱신 시도 (한 번만)
+            try {
+              const success = await refreshAccessToken();
+              if (success) {
+                // 토큰 갱신 성공 시 재시도
+                const retryResponse = await apiClient.getPaymentHistories(
+                  params?.size || 10,
+                  pageParam
+                );
+                return retryResponse.data;
+              }
+            } catch (refreshError) {
+              logApiError("토큰 갱신 실패:", refreshError);
+            }
+          }
+        }
+        throw error;
+      }
+    },
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => lastPage.data?.nextCursor,
     retry: false, // 자동 재시도 비활성화
   });
 };
