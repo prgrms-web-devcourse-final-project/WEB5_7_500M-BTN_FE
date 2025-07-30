@@ -134,7 +134,7 @@ export default function InquiriesPage() {
         >
           <Box>
             <Typography variant="h4" component="h1" fontWeight="bold">
-              {isAdmin ? "전체 문의글 목록" : "내 문의글 목록"}
+              문의글 목록
             </Typography>
             {isAdmin && (
               <Chip
@@ -154,11 +154,6 @@ export default function InquiriesPage() {
             문의글 작성
           </Button>
         </Stack>
-        <Typography variant="body1" color="text.secondary">
-          {isAdmin
-            ? "모든 사용자의 문의글을 관리할 수 있습니다."
-            : "내가 작성한 문의글만 확인할 수 있습니다."}
-        </Typography>
       </Box>
 
       <Paper sx={{ width: "100%", overflow: "hidden" }}>

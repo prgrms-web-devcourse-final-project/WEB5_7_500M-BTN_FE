@@ -1,4 +1,6 @@
 import { loadTossPayments } from "@tosspayments/payment-sdk";
+import { apiClient } from "@/api/client";
+import { TossPaymentConfirmRequest } from "@/api/generated";
 
 // 토스 페이먼츠 클라이언트 키 (테스트용)
 const TOSS_CLIENT_KEY =
@@ -55,37 +57,24 @@ export const requestPayment = async (paymentData: {
   });
 };
 
-// 결제 성공 페이지에서 결제 확인
+// 결제 성공 페이지에서 결제 확인 (OpenAPI 사용)
 export const confirmPayment = async (
   paymentKey: string,
   orderId: string,
   amount: number
 ) => {
   try {
-    // 액세스 토큰 가져오기
-    const accessToken = localStorage.getItem("accessToken");
+    const confirmRequest: TossPaymentConfirmRequest = {
+      paymentKey,
+      orderId,
+      amount,
+    };
 
-    const response = await fetch("/api/payment/confirm", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-      },
-      body: JSON.stringify({
-        paymentKey,
-        orderId,
-        amount,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("결제 확인에 실패했습니다.");
-    }
-
-    return await response.json();
+    const response = await apiClient.confirm(confirmRequest);
+    return response.data;
   } catch (error) {
     console.error("결제 확인 실패:", error);
-    throw error;
+    throw new Error("결제 확인에 실패했습니다.");
   }
 };
 

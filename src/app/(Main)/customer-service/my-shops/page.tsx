@@ -186,6 +186,7 @@ const MyShopsPage = () => {
                   position: "relative",
                 }}
               >
+                <img src={shop.thumbnailUrl} alt="thumbnail" />
                 <Chip
                   label={getStatusText(shop.approve || "PENDING")}
                   color={getStatusColor(shop.approve || "PENDING")}

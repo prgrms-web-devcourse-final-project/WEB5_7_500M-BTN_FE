@@ -77,9 +77,9 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
   const currentUserId = myInfoData?.data?.userId;
   const isAdmin = userRole === MyInfoResponseRoleEnum.Admin;
 
-  // TODO: API에서 문의글 작성자 정보를 제공한다면 여기서 권한 체크
-  // const canAccess = isAdmin || inquiry?.writerId === currentUserId;
-  const canAccess = true; // 현재는 모든 사용자가 접근 가능하도록 설정
+  // 권한 체크: 관리자이거나 문의글 작성자인 경우만 접근 가능
+  // API에서 작성자 정보를 제공하지 않으므로 현재는 모든 사용자 접근 허용
+  const canAccess = true;
 
   const handleSubmitComment = async () => {
     if (!commentContent.trim() || !isAdmin) return;
@@ -120,6 +120,35 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
   }
 
   if (inquiryError || !inquiry) {
+    // 403 에러인 경우 권한 없음 메시지 표시
+    if (
+      inquiryError &&
+      typeof inquiryError === "object" &&
+      "response" in inquiryError &&
+      (inquiryError as any).response?.status === 403
+    ) {
+      return (
+        <Container maxWidth="md" sx={{ py: 4 }}>
+          <Paper sx={{ p: 4, textAlign: "center" }}>
+            <Typography variant="h6" color="error" gutterBottom>
+              권한이 없습니다
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              내가 등록한 문의글만 볼 수 있습니다.
+            </Typography>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => router.push("/customer-service/inquiries")}
+              sx={{ mt: 2 }}
+            >
+              목록으로 돌아가기
+            </Button>
+          </Paper>
+        </Container>
+      );
+    }
+
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Paper sx={{ p: 4, textAlign: "center" }}>
@@ -139,7 +168,7 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
     );
   }
 
-  // 권한 체크 (현재는 모든 사용자 접근 허용)
+  // 권한 체크 (현재는 모든 사용자 접근 허용, 403 에러는 위에서 처리)
   if (!canAccess) {
     return (
       <Container maxWidth="md" sx={{ py: 4 }}>
@@ -148,7 +177,7 @@ export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
             접근 권한이 없습니다
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            다른 사용자의 문의글은 볼 수 없습니다.
+            내가 등록한 문의글만 볼 수 있습니다.
           </Typography>
           <Button
             variant="outlined"

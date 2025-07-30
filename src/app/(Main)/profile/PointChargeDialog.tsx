@@ -32,22 +32,10 @@ interface PointChargeDialogProps {
 }
 
 const POINT_OPTIONS = [
-  { amount: 10000, points: 10000, label: "10,000원 → 10,000포인트" },
-  {
-    amount: 30000,
-    points: 31500,
-    label: "30,000원 → 31,500포인트 (5% 보너스)",
-  },
-  {
-    amount: 50000,
-    points: 55000,
-    label: "50,000원 → 55,000포인트 (10% 보너스)",
-  },
-  {
-    amount: 100000,
-    points: 115000,
-    label: "100,000원 → 115,000포인트 (15% 보너스)",
-  },
+  { amount: 10000, points: 10000, label: "10,000포인트" },
+  { amount: 30000, points: 30000, label: "30,000포인트" },
+  { amount: 50000, points: 50000, label: "50,000포인트" },
+  { amount: 100000, points: 100000, label: "100,000포인트" },
 ];
 
 const PointChargeDialog: React.FC<PointChargeDialogProps> = ({
@@ -156,12 +144,6 @@ const PointChargeDialog: React.FC<PointChargeDialogProps> = ({
                         <Typography variant="body1" fontWeight={500}>
                           {option.label}
                         </Typography>
-                        {option.points > option.amount && (
-                          <Typography variant="caption" color="success.main">
-                            +{formatAmount(option.points - option.amount)}{" "}
-                            포인트 보너스!
-                          </Typography>
-                        )}
                       </Box>
                     }
                   />
