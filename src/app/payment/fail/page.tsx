@@ -10,7 +10,7 @@ import Toast from "@/features/common/Toast";
 const PaymentFailContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
@@ -46,12 +46,6 @@ const PaymentFailContent = () => {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         display="flex"
         alignItems="center"

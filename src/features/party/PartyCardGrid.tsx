@@ -6,10 +6,12 @@ import {
   Typography,
   Stack,
   Chip,
+  Box,
 } from "@mui/material";
 import Link from "next/link";
 import dayjs from "dayjs";
 import type { PartyListResponse } from "@/api/generated";
+import GroupIcon from "@mui/icons-material/Group";
 
 interface PartyCardGridProps {
   party: PartyListResponse;
@@ -46,8 +48,18 @@ const PartyCardGrid = ({ party }: PartyCardGridProps) => {
             {party.shopRoadAddress}
           </Typography>
           <Stack direction="row" spacing={1} mt={1} alignItems="center">
-            <Chip label={dayjs(party.metAt).format("M월 D일 ddd A h:mm")} />
-            <Chip label={`인원: ${party.currentCount}/${party.maxCount}`} />
+            <Chip
+              label={dayjs(party.metAt).format("M월 D일 ddd A h:mm")}
+              size="small"
+            />
+            <Chip
+              icon={<GroupIcon />}
+              label={`${party.currentCount}/${party.maxCount}명`}
+              size="small"
+              color={
+                party.currentCount === party.maxCount ? "error" : "default"
+              }
+            />
           </Stack>
         </CardContent>
       </Card>

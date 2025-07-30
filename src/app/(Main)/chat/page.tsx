@@ -4,15 +4,10 @@ import React from "react";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import ChatList from "@/components/chat/ChatList";
 import { useMyParties } from "@/api/hooks";
-import { mockMyParties } from "@/data/mockPartyData";
 
 const ChatPage = () => {
   const { data: myPartiesData, isLoading, error } = useMyParties();
-  // 임시로 목데이터 사용 (실제 API 데이터가 없을 때)
-  const myParties =
-    myPartiesData?.data?.content && myPartiesData.data.content.length > 0
-      ? myPartiesData.data.content
-      : mockMyParties;
+  const myParties = myPartiesData?.data?.content || [];
 
   if (isLoading) {
     return (

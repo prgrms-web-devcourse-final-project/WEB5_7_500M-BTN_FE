@@ -14,6 +14,7 @@ type SimpleShopCardProps = {
 
 const SimpleShopCard = ({ shop }: SimpleShopCardProps) => {
   const router = useRouter();
+
   return (
     <Card>
       <CardActionArea onClick={() => router.push(`/shop/${shop.shopId}`)}>

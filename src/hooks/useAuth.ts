@@ -12,7 +12,7 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  // 내 정보 조회
+  // 내 정보 조회 - 액세스 토큰이 있을 때만 실행
   const { data: myInfoData, isLoading: isLoadingUser } = useMyInfo();
   const user = myInfoData?.data;
 
@@ -50,12 +50,8 @@ export const useAuth = () => {
   const logoutMutation = useLogout();
   const handleLogout = async () => {
     try {
-      const refreshToken = getToken("refreshToken");
-      if (refreshToken) {
-        await logoutMutation.mutateAsync(refreshToken);
-      }
+      await logoutMutation.mutateAsync();
 
-      removeAccessToken();
       showToast(SUCCESS_MESSAGES.LOGOUT_SUCCESS, "success");
       router.push("/sign-in");
     } catch (error) {

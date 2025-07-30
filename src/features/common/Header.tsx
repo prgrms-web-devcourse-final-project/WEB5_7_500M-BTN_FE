@@ -14,7 +14,8 @@ import NextLink from "next/link";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useMyInfo, useLogout, useMyParties } from "@/api/hooks";
 import { getAccessToken } from "@/api/client";
-import { getTotalUnreadCount } from "@/data/mockChatData";
+import { MyInfoResponseRoleEnum } from "@/api/generated";
+import { useState, useEffect } from "react";
 
 const menuItems = [
   { label: "식당 찾기", path: "/shop" },
@@ -28,10 +29,20 @@ const Header = () => {
   const { data: myInfo } = useMyInfo();
   const { data: myPartiesData } = useMyParties();
   const logoutMutation = useLogout();
-  const isLoggedIn = !!getAccessToken();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  // 채팅 알림 개수 계산
-  const unreadChatCount = getTotalUnreadCount();
+  // 클라이언트 사이드에서만 로그인 상태 확인
+  useEffect(() => {
+    setIsClient(true);
+    setIsLoggedIn(!!getAccessToken());
+  }, []);
+
+  // 관리자 권한 확인
+  const isAdmin = myInfo?.data?.role === MyInfoResponseRoleEnum.Admin;
+
+  // 채팅 알림 개수 계산 (임시로 0으로 설정)
+  const unreadChatCount = 0;
 
   return (
     <AppBar
@@ -95,6 +106,29 @@ const Header = () => {
               {item.label}
             </MuiLink>
           ))}
+          {/* 관리자 버튼 - 관리자 권한이 있는 경우에만 표시 */}
+          {isAdmin && (
+            <MuiLink
+              component={NextLink}
+              href="/admin"
+              underline="none"
+              sx={{
+                fontWeight: pathname === "/admin" ? 700 : 500,
+                color: pathname === "/admin" ? "primary.main" : "text.primary",
+                borderColor:
+                  pathname === "/admin" ? "primary.main" : "transparent",
+                px: 2,
+                fontSize: 16,
+                transition: "color 0.2s",
+                "&:hover": {
+                  color: "primary.light",
+                },
+                cursor: "pointer",
+              }}
+            >
+              관리자
+            </MuiLink>
+          )}
         </Box>
         {/* 우측 로그인/프로필 영역 */}
         <Box
@@ -103,7 +137,7 @@ const Header = () => {
           alignItems="center"
           gap={2}
         >
-          {isLoggedIn ? (
+          {isClient && isLoggedIn ? (
             <>
               <Badge badgeContent={unreadChatCount} color="error" max={99}>
                 <Button
@@ -125,7 +159,15 @@ const Header = () => {
               <Button
                 variant="text"
                 color="primary"
-                onClick={() => logoutMutation.mutate("")}
+                onClick={async () => {
+                  try {
+                    await logoutMutation.mutateAsync();
+                    router.push("/sign-in");
+                  } catch (error) {
+                    // 로그아웃 실패해도 로그인 페이지로 이동
+                    router.push("/sign-in");
+                  }
+                }}
                 disabled={logoutMutation.isPending}
               >
                 로그아웃

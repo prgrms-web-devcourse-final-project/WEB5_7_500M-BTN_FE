@@ -2,15 +2,10 @@ import React from "react";
 import { Stack, Typography, CircularProgress, Alert, Box } from "@mui/material";
 import PartyItem from "./PartyItem";
 import { useMyParties } from "@/api/hooks";
-import { mockMyParties } from "@/data/mockPartyData";
 
 const ProfilePartiesTab = () => {
   const { data: myPartiesData, isLoading, error } = useMyParties();
-  // 임시로 목데이터 사용 (실제 API 데이터가 없을 때)
-  const myParties =
-    myPartiesData?.data?.content && myPartiesData.data.content.length > 0
-      ? myPartiesData.data.content
-      : mockMyParties;
+  const myParties = myPartiesData?.data?.content || [];
 
   if (isLoading) {
     return (

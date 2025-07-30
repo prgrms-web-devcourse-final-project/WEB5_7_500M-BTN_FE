@@ -36,8 +36,19 @@ export default function Toast({
   );
 }
 
-// 토스트 훅
-export function useToast() {
+// 토스트 Context 타입
+interface ToastContextType {
+  showToast: (message: string, severity?: AlertColor) => void;
+  hideToast: () => void;
+}
+
+// 토스트 Context 생성
+const ToastContext = React.createContext<ToastContextType | undefined>(
+  undefined
+);
+
+// 토스트 Provider 컴포넌트
+export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = React.useState<{
     open: boolean;
     message: string;
@@ -63,11 +74,26 @@ export function useToast() {
     setToast((prev) => ({ ...prev, open: false }));
   }, []);
 
-  return {
-    toast,
-    showToast,
-    hideToast,
-  };
+  return (
+    <ToastContext.Provider value={{ showToast, hideToast }}>
+      {children}
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        severity={toast.severity}
+        onClose={hideToast}
+      />
+    </ToastContext.Provider>
+  );
+}
+
+// 토스트 훅 (기존 호환성을 위해 유지)
+export function useToast() {
+  const context = React.useContext(ToastContext);
+  if (!context) {
+    throw new Error("useToast must be used within a ToastProvider");
+  }
+  return context;
 }
 
 // 전역 로딩 컴포넌트
@@ -99,13 +125,11 @@ export function GlobalLoading({
 // 전역 로딩 훅
 export function useGlobalLoading() {
   const [loading, setLoading] = React.useState(false);
-  const [loadingMessage, setLoadingMessage] = React.useState("로딩 중...");
+  const [message, setMessage] = React.useState("로딩 중...");
 
-  const showLoading = React.useCallback((message?: string) => {
+  const showLoading = React.useCallback((msg?: string) => {
+    if (msg) setMessage(msg);
     setLoading(true);
-    if (message) {
-      setLoadingMessage(message);
-    }
   }, []);
 
   const hideLoading = React.useCallback(() => {
@@ -114,7 +138,7 @@ export function useGlobalLoading() {
 
   return {
     loading,
-    loadingMessage,
+    message,
     showLoading,
     hideLoading,
   };

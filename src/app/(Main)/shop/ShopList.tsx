@@ -45,21 +45,28 @@ const ShopList: React.FC<ShopListProps> = ({
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialSearchQuery = searchParams.get("search") || "";
+  const initialSort = searchParams.get("sort") || "NEAR";
+  const initialCategory = searchParams.get("category") || "ALL";
 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategory, setSelectedCategory] = useState<
     GetShopsCategoryEnum | "ALL"
-  >("ALL");
-  const [selectedSort, setSelectedSort] = useState<string>("NEAR");
+  >(initialCategory as GetShopsCategoryEnum | "ALL");
+  const [selectedSort, setSelectedSort] = useState<string>(initialSort);
   const [debouncedSearchQuery, setDebouncedSearchQuery] =
     useState(initialSearchQuery);
   const [selectedShop, setSelectedShop] = useState<ShopsItem | null>(null);
 
-  // URL 파라미터 변경 시 검색어 업데이트
+  // URL 파라미터 변경 시 상태 업데이트
   useEffect(() => {
     const searchFromUrl = searchParams.get("search") || "";
+    const sortFromUrl = searchParams.get("sort") || "NEAR";
+    const categoryFromUrl = searchParams.get("category") || "ALL";
+
     setSearchQuery(searchFromUrl);
     setDebouncedSearchQuery(searchFromUrl);
+    setSelectedSort(sortFromUrl);
+    setSelectedCategory(categoryFromUrl as GetShopsCategoryEnum | "ALL");
   }, [searchParams]);
 
   // 검색어 디바운싱
@@ -79,12 +86,6 @@ const ShopList: React.FC<ShopListProps> = ({
     return () => clearTimeout(timer);
   }, [searchQuery, router, searchParams]);
 
-  // API 호출을 위한 파라미터 설정
-  const categoryFilter =
-    selectedCategory === "ALL"
-      ? undefined
-      : [selectedCategory as GetShopsCategoryEnum];
-
   const {
     data: shopsData,
     isLoading,
@@ -93,8 +94,6 @@ const ShopList: React.FC<ShopListProps> = ({
     latitude: 37.5724, // 종로구 기본 좌표
     longitude: 126.9794, // 종로구 기본 좌표
     radius: 3000, // 3km 반경
-    category: categoryFilter,
-    // sort: selectedSort,
     size: 20,
   });
 
@@ -103,11 +102,31 @@ const ShopList: React.FC<ShopListProps> = ({
   };
 
   const handleCategoryChange = (e: any) => {
-    setSelectedCategory(e.target.value);
+    const newCategory = e.target.value;
+    setSelectedCategory(newCategory);
+
+    // URL 업데이트
+    const params = new URLSearchParams(searchParams.toString());
+    if (newCategory === "ALL") {
+      params.delete("category");
+    } else {
+      params.set("category", newCategory);
+    }
+    router.replace(`/shop?${params.toString()}`);
   };
 
   const handleSortChange = (e: any) => {
-    setSelectedSort(e.target.value);
+    const newSort = e.target.value;
+    setSelectedSort(newSort);
+
+    // URL 업데이트
+    const params = new URLSearchParams(searchParams.toString());
+    if (newSort === "NEAR") {
+      params.delete("sort");
+    } else {
+      params.set("sort", newSort);
+    }
+    router.replace(`/shop?${params.toString()}`);
   };
 
   const handleShopSelect = useCallback(
@@ -120,29 +139,60 @@ const ShopList: React.FC<ShopListProps> = ({
     [onShopSelect]
   );
 
-  // 검색어로 필터링 (클라이언트 사이드) - useMemo로 최적화
-  const filteredShops = useMemo(() => {
-    return (
+  // 검색어와 카테고리로 필터링 및 정렬 (클라이언트 사이드) - useMemo로 최적화
+  const filteredAndSortedShops = useMemo(() => {
+    let filtered =
       shopsData?.data?.content?.filter((shop) => {
-        if (!debouncedSearchQuery) return true;
-        return (
+        // 검색어 필터링
+        const matchesSearch =
+          !debouncedSearchQuery ||
           shop.shopName
             ?.toLowerCase()
             .includes(debouncedSearchQuery.toLowerCase()) ||
           shop.roadAddress
             ?.toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase())
-        );
-      }) || []
-    );
-  }, [shopsData?.data?.content, debouncedSearchQuery]);
+            .includes(debouncedSearchQuery.toLowerCase());
+
+        // 카테고리 필터링
+        const matchesCategory =
+          selectedCategory === "ALL" || shop.category === selectedCategory;
+
+        return matchesSearch && matchesCategory;
+      }) || [];
+
+    // 정렬 적용
+    switch (selectedSort) {
+      case "RATING":
+        filtered = [...filtered].sort((a, b) => {
+          const ratingA = a.rating || 0;
+          const ratingB = b.rating || 0;
+          return ratingB - ratingA; // 높은 평점순
+        });
+        break;
+      case "RESERVATION_COUNT":
+        // 예약 많은순은 현재 API에서 제공하지 않으므로 기본 순서 유지
+        // 추후 API에서 reservationCount 필드가 추가되면 정렬 로직 구현
+        break;
+      case "NEAR":
+      default:
+        // 근처순은 API에서 이미 정렬된 상태로 받아옴
+        break;
+    }
+
+    return filtered;
+  }, [
+    shopsData?.data?.content,
+    debouncedSearchQuery,
+    selectedSort,
+    selectedCategory,
+  ]);
 
   // 필터링된 식당 데이터가 변경될 때마다 부모 컴포넌트에 알림
   useEffect(() => {
-    if (onShopsDataUpdate && filteredShops.length > 0) {
-      onShopsDataUpdate(filteredShops);
+    if (onShopsDataUpdate && filteredAndSortedShops.length > 0) {
+      onShopsDataUpdate(filteredAndSortedShops);
     }
-  }, [filteredShops, onShopsDataUpdate]);
+  }, [filteredAndSortedShops, onShopsDataUpdate]);
 
   return (
     <Box
@@ -222,7 +272,7 @@ const ShopList: React.FC<ShopListProps> = ({
           <Box p={2}>
             <Alert severity="error">식당 목록을 불러오는데 실패했습니다.</Alert>
           </Box>
-        ) : filteredShops.length === 0 ? (
+        ) : filteredAndSortedShops.length === 0 ? (
           <Box p={2}>
             <Typography
               variant="body2"
@@ -235,7 +285,7 @@ const ShopList: React.FC<ShopListProps> = ({
             </Typography>
           </Box>
         ) : (
-          filteredShops.map((shop) => (
+          filteredAndSortedShops.map((shop: ShopsItem) => (
             <ShopListItemRow
               key={shop.shopId}
               shop={shop}

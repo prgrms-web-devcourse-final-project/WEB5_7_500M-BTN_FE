@@ -15,7 +15,7 @@ import {
 function OAuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -133,50 +133,6 @@ function OAuthCallbackContent() {
 
   if (error) {
     return (
-      <>
-        <Toast
-          open={toast.open}
-          message={toast.message}
-          severity={toast.severity}
-          onClose={hideToast}
-        />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "100vh",
-            gap: 2,
-          }}
-        >
-          <Alert severity="error" sx={{ maxWidth: 400 }}>
-            <Typography variant="h6" gutterBottom>
-              인증 실패
-            </Typography>
-            <Typography variant="body2">{error}</Typography>
-          </Alert>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ cursor: "pointer" }}
-            onClick={() => router.push("/sign-in")}
-          >
-            로그인 페이지로 돌아가기
-          </Typography>
-        </Box>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         sx={{
           display: "flex",
@@ -187,15 +143,43 @@ function OAuthCallbackContent() {
           gap: 2,
         }}
       >
-        <CircularProgress size={60} />
-        <Typography variant="h6" color="text.secondary">
-          OAuth 인증 처리 중...
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          잠시만 기다려주세요.
+        <Alert severity="error" sx={{ maxWidth: 400 }}>
+          <Typography variant="h6" gutterBottom>
+            인증 실패
+          </Typography>
+          <Typography variant="body2">{error}</Typography>
+        </Alert>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ cursor: "pointer" }}
+          onClick={() => router.push("/sign-in")}
+        >
+          로그인 페이지로 돌아가기
         </Typography>
       </Box>
-    </>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        gap: 2,
+      }}
+    >
+      <CircularProgress size={60} />
+      <Typography variant="h6" color="text.secondary">
+        OAuth 인증 처리 중...
+      </Typography>
+      <Typography variant="body2" color="text.secondary">
+        잠시만 기다려주세요.
+      </Typography>
+    </Box>
   );
 }
 

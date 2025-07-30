@@ -36,6 +36,40 @@ export const removeAccessToken = (): void => {
   }
 };
 
+// 토큰 갱신 함수
+export const refreshAccessToken = async (): Promise<boolean> => {
+  try {
+    logAuth("토큰 갱신 시도");
+
+    // 리프레시 토큰이 쿠키에 있는지 확인
+    // const refreshToken = getCookie("refreshToken");
+    // if (!refreshToken) {
+    //   logAuth("리프레시 토큰이 없음");
+    //   return false;
+    // }
+
+    // 토큰 갱신 API 호출 - 인터셉터를 거치지 않는 직접 호출
+    const response = await axiosInstance.post("/users/reissue-token");
+    const newAccessToken = response.data?.data?.accessToken;
+
+    if (newAccessToken) {
+      setAccessToken(newAccessToken);
+      logAuth("토큰 갱신 성공", {
+        newToken: newAccessToken.substring(0, 20) + "...",
+      });
+      return true;
+    } else {
+      logAuth("토큰 갱신 실패 - 응답에 액세스 토큰이 없음");
+      return false;
+    }
+  } catch (error) {
+    logAuth("토큰 갱신 실패", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return false;
+  }
+};
+
 // 쿠키 관리 함수들
 export const setCookie = (
   name: string,
@@ -186,6 +220,27 @@ export const refreshApiClient = (): void => {
   logAuth("API 클라이언트 재생성");
 };
 
+// 토큰 갱신 중인지 확인하는 플래그
+let isRefreshing = false;
+// 갱신 대기 중인 요청들을 저장하는 배열
+let failedQueue: Array<{
+  resolve: (value: any) => void;
+  reject: (error: any) => void;
+}> = [];
+
+// 대기 중인 요청들을 처리하는 함수
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 // 요청 인터셉터 - 토큰 자동 추가
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -200,7 +255,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// 응답 인터셉터 - 401 에러 처리 및 쿠키에서 리프레시 토큰 확인
+// 응답 인터셉터 - 401 에러 처리 및 토큰 갱신
 axiosInstance.interceptors.response.use(
   (response) => {
     // 응답에서 Set-Cookie 헤더 확인
@@ -210,12 +265,77 @@ axiosInstance.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
-    if (error.response?.status === 401) {
-      removeAccessToken();
-      // 리프레시 토큰도 제거
-      removeCookie("refreshToken");
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      // 토큰 갱신 API 요청인지 확인
+      if (originalRequest.url?.includes("/users/reissue-token")) {
+        logAuth("토큰 갱신 API 자체가 401 에러 - 로그아웃 처리");
+        removeAccessToken();
+        removeCookie("refreshToken");
+
+        // 로그인 페이지로 리다이렉트 (클라이언트 사이드에서만)
+        // if (typeof window !== "undefined") {
+        //   window.location.href = "/sign-in";
+        // }
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        // 이미 토큰 갱신 중이면 대기열에 추가
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const success = await refreshAccessToken();
+        console.log("hihi", success);
+        if (success) {
+          const newToken = getAccessToken();
+          processQueue(null, newToken);
+
+          // 원래 요청 재시도
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return axiosInstance(originalRequest);
+        } else {
+          // 토큰 갱신 실패 시 로그아웃 처리
+          removeAccessToken();
+          removeCookie("refreshToken");
+          processQueue(error, null);
+
+          // 로그인 페이지로 리다이렉트 (클라이언트 사이드에서만)
+          // if (typeof window !== "undefined") {
+          //   window.location.href = "/sign-in";
+          // }
+          return Promise.reject(error);
+        }
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        removeAccessToken();
+        removeCookie("refreshToken");
+
+        // 로그인 페이지로 리다이렉트 (클라이언트 사이드에서만)
+        if (typeof window !== "undefined") {
+          window.location.href = "/sign-in";
+        }
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );

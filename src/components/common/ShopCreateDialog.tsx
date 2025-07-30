@@ -188,11 +188,13 @@ const ShopCreateDialog = ({
               const blob = await base64Response.blob();
 
               // presigned URL로 이미지 업로드
+              // API 문서에 따르면 Cache-Control 헤더가 필요함
               const uploadResponse = await fetch(item.url, {
                 method: "PUT",
                 body: blob,
                 headers: {
-                  "Content-Type": blob.type,
+                  "Content-Type": blob.type || "image/jpeg",
+                  "Cache-Control": "no-cache,no-store,must-revalidate",
                 },
               });
 

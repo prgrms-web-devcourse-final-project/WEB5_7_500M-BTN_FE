@@ -32,7 +32,6 @@ interface ReviewDialogProps {
   setReviewContent: (v: string) => void;
   reviewRating: number;
   setReviewRating: (v: number) => void;
-  isEdit: boolean;
 }
 
 const ReviewDialog = ({
@@ -44,7 +43,6 @@ const ReviewDialog = ({
   setReviewContent,
   reviewRating,
   setReviewRating,
-  isEdit,
 }: ReviewDialogProps) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -120,7 +118,7 @@ const ReviewDialog = ({
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>리뷰 {isEdit ? "수정" : "작성"}</DialogTitle>
+      <DialogTitle>리뷰 작성</DialogTitle>
       <DialogContent>
         <Stack spacing={2} mt={1}>
           <Typography fontWeight={600}>

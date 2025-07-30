@@ -21,7 +21,7 @@ const PointSuccessContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,12 +67,6 @@ const PointSuccessContent = () => {
   if (error) {
     return (
       <>
-        <Toast
-          open={toast.open}
-          message={toast.message}
-          severity={toast.severity}
-          onClose={hideToast}
-        />
         <Box
           display="flex"
           alignItems="center"
@@ -105,12 +99,6 @@ const PointSuccessContent = () => {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         display="flex"
         alignItems="center"

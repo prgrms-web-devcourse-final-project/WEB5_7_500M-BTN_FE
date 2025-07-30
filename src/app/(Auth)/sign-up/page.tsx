@@ -22,7 +22,7 @@ import type { SignUpRequest } from "@/api/generated";
 export default function SignUpPage() {
   const router = useRouter();
   const signUpMutation = useSignUp();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   const [formData, setFormData] = React.useState<SignUpRequest>({
     email: "",
@@ -67,12 +67,6 @@ export default function SignUpPage() {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         sx={{
           flex: 1,

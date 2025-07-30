@@ -24,7 +24,7 @@ function OAuthSignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const oauthSignupMutation = useOAuthSignup();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [formData, setFormData] = React.useState<OAuthSignUpRequest>({
     nickname: "",
     phoneNumber: "",
@@ -72,12 +72,6 @@ function OAuthSignupContent() {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         sx={{
           flex: 1,

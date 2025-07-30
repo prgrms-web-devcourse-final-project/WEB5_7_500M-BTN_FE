@@ -33,7 +33,7 @@ const ProfileInfoTab = () => {
   const { data: myInfoData, isLoading, error } = useMyInfo();
   const updateMyInfoMutation = useUpdateMyInfo();
   const queryClient = useQueryClient();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast } = useToast();
   const myInfo = myInfoData?.data;
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -105,12 +105,6 @@ const ProfileInfoTab = () => {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Stack spacing={3}>
         <Stack direction="row" spacing={3} alignItems="center">
           <Avatar

@@ -44,7 +44,7 @@ const PointPaymentDialog: React.FC<PointPaymentDialogProps> = ({
   shop,
   onReserveSuccess,
 }) => {
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const { data: myInfo } = useMyInfo();
   const createReservationMutation = useCreateReservation();
 
@@ -91,7 +91,7 @@ const PointPaymentDialog: React.FC<PointPaymentDialogProps> = ({
       // 2. 결제 방법에 따라 처리
       if (paymentMethod === "point") {
         // 포인트 결제 (백엔드에서 처리될 것으로 예상)
-        showToast("포인트로 예약이 완료되었습니다!", "success");
+        showToast("예약이 완료되었습니다!", "success");
         onReserveSuccess?.();
         onClose();
       } else {
@@ -135,12 +135,6 @@ const PointPaymentDialog: React.FC<PointPaymentDialogProps> = ({
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogContent sx={{ p: 3 }}>
           <Stack spacing={3}>

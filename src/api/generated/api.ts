@@ -1682,7 +1682,7 @@ export interface OrderSaveRequest {
    * @type {number}
    * @memberof OrderSaveRequest
    */
-  "결제 금액"?: number;
+  amount?: number;
 }
 /**
  *

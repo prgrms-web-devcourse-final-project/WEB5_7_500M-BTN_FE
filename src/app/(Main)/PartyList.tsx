@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Stack, Typography, Grid, CircularProgress } from "@mui/material";
-import SimplePartyCard from "@/features/party/SimplePartyCard";
+import PartyCardGrid from "@/features/party/PartyCardGrid";
 import { useParties } from "@/api/hooks";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
@@ -44,7 +44,7 @@ const PartyList = () => {
       <Grid container spacing={3}>
         {partiesData.data.content.map((party) => (
           <Grid key={party.partyId} size={{ xs: 12, sm: 6, md: 4 }}>
-            <SimplePartyCard party={party} />
+            <PartyCardGrid party={party} />
           </Grid>
         ))}
       </Grid>

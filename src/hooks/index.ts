@@ -9,3 +9,4 @@ export {
   useLocalStorageArray,
   useLocalStorageObject,
 } from "./useLocalStorage";
+export { useWebSocket } from "./useWebSocket";

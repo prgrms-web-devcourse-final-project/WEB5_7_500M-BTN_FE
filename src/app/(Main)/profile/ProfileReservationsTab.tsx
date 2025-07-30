@@ -23,7 +23,7 @@ const ProfileReservationsTab = () => {
     React.useState<MyReservationResponse | null>(null);
   const [reviewContent, setReviewContent] = React.useState("");
   const [reviewRating, setReviewRating] = React.useState(4.0);
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
 
   // API 훅 사용
   const {
@@ -46,12 +46,11 @@ const ProfileReservationsTab = () => {
     return r.status === filter;
   });
 
-  // 리뷰 작성/수정 다이얼로그 열기
+  // 리뷰 작성 다이얼로그 열기
   const handleOpenReviewDialog = (reservation: MyReservationResponse) => {
     setReviewTarget(reservation);
-    const review = reviews.find((r) => r.shopName === reservation.shopName);
-    setReviewContent(review ? review.content || "" : "");
-    setReviewRating(review ? review.rating || 4.0 : 4.0);
+    setReviewContent("");
+    setReviewRating(4.0);
     setReviewDialogOpen(true);
   };
 
@@ -86,12 +85,6 @@ const ProfileReservationsTab = () => {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Stack spacing={2}>
         <Typography variant="h6" fontWeight={600}>
           내 예약 목록
@@ -143,7 +136,6 @@ const ProfileReservationsTab = () => {
           setReviewContent={setReviewContent}
           reviewRating={reviewRating}
           setReviewRating={setReviewRating}
-          isEdit={reviews.some((r) => r.shopName === reviewTarget?.shopName)}
         />
       </Stack>
     </>

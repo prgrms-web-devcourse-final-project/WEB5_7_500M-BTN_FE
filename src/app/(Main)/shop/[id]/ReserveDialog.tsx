@@ -9,9 +9,6 @@ import {
   Paper,
   CircularProgress,
   Box,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
   Divider,
   Alert,
 } from "@mui/material";
@@ -48,8 +45,8 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [people, setPeople] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState<"point" | "card">("point");
-  const { toast, showToast, hideToast } = useToast();
+  const [paymentMethod, setPaymentMethod] = useState<"point">("point");
+  const { showToast, hideToast } = useToast();
 
   const createReservationMutation = useCreateReservation();
   const { data: myInfoData } = useMyInfo();
@@ -99,7 +96,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
       return;
     }
 
-    if (paymentMethod === "point" && !canUsePoints) {
+    if (!canUsePoints) {
       showToast("포인트가 부족합니다. 충전 후 이용해주세요.", "error");
       return;
     }
@@ -116,27 +113,10 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
         },
       });
 
-      // 2. 결제 방법에 따라 처리
-      if (paymentMethod === "point") {
-        // 포인트 결제 (백엔드에서 처리될 것으로 예상)
-        showToast("포인트로 예약이 완료되었습니다!", "success");
-        onReserveSuccess?.();
-        onClose();
-      } else {
-        // 카드 결제 (기존 토스페이먼츠 방식)
-        const orderId = generateOrderId();
-        const orderName = `${shop.shopName} 예약 (${selectedDate.format(
-          "MM/DD"
-        )} ${selectedTime})`;
-
-        await requestPayment({
-          amount: reservationFee,
-          orderId,
-          orderName,
-          customerName: myInfo.name || myInfo.nickname || "고객",
-          customerEmail: myInfo.email || "",
-        });
-      }
+      // 포인트 결제 (백엔드에서 처리될 것으로 예상)
+      showToast("예약이 완료되었습니다!", "success");
+      onReserveSuccess?.();
+      onClose();
 
       // 결제 요청이 성공하면 토스 페이먼츠 페이지로 리다이렉트됨
       // 성공/실패는 각각의 페이지에서 처리됨
@@ -148,12 +128,6 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogContent sx={{ p: 4, position: "relative" }}>
           <IconButton
@@ -272,51 +246,6 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
             )}
           </Paper>
 
-          <Divider sx={{ my: 2 }} />
-
-          {/* 결제 방법 선택 */}
-          <Typography variant="subtitle1" fontWeight={600} mb={1}>
-            결제 방법
-          </Typography>
-          <RadioGroup
-            value={paymentMethod}
-            onChange={(e) =>
-              setPaymentMethod(e.target.value as "point" | "card")
-            }
-            sx={{ mb: 2 }}
-          >
-            <FormControlLabel
-              value="point"
-              control={<Radio />}
-              label={
-                <Box>
-                  <Typography variant="body1" fontWeight={500}>
-                    포인트 결제
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {canUsePoints
-                      ? `${formatAmount(reservationFee)} 포인트 차감`
-                      : "포인트 부족 - 충전 필요"}
-                  </Typography>
-                </Box>
-              }
-              disabled={!canUsePoints}
-            />
-            <FormControlLabel
-              value="card"
-              control={<Radio />}
-              label={
-                <Box>
-                  <Typography variant="body1" fontWeight={500}>
-                    카드 결제
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    토스페이먼츠로 안전하게 결제
-                  </Typography>
-                </Box>
-              }
-            />
-          </RadioGroup>
           <Button
             variant="contained"
             color="primary"
@@ -326,7 +255,7 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
               !selectedDate ||
               !selectedTime ||
               createReservationMutation.isPending ||
-              (paymentMethod === "point" && !canUsePoints)
+              !canUsePoints
             }
             onClick={handlePayment}
             startIcon={

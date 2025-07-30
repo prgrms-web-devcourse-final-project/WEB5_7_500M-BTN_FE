@@ -59,7 +59,6 @@ const ReservationItem = ({
 
   const isCompleted = reservation.status === "TERMINATED";
   const canReview = isCompleted && !hasReview;
-  const canEditReview = isCompleted && hasReview;
 
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
@@ -108,21 +107,6 @@ const ReservationItem = ({
               onClick={onReviewClick}
             >
               리뷰 작성
-            </Button>
-          )}
-
-          {canEditReview && (
-            <Button
-              variant="outlined"
-              size="small"
-              sx={{
-                borderColor: "#43a047",
-                color: "#43a047",
-                "&:hover": { borderColor: "#388e3c", color: "#388e3c" },
-              }}
-              onClick={onReviewClick}
-            >
-              리뷰 수정
             </Button>
           )}
         </Stack>

@@ -21,7 +21,6 @@ import LockIcon from "@mui/icons-material/Lock";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import ChatButton from "@/components/chat/ChatButton";
 import ChatRoom from "@/components/chat/ChatRoom";
-import { getUnreadCount } from "@/data/mockChatData";
 import { useQuitParty } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
 import type { MyPartyResponse } from "@/api/generated";
@@ -96,7 +95,11 @@ const PartyItem = ({ party }: PartyItemProps) => {
       >
         <CardMedia
           component="img"
-          image="/default-shop-image.jpg"
+          image={
+            (party as any).shopImage ||
+            (party as any).thumbnailUrl ||
+            "/default-shop-image.jpg"
+          }
           alt={party.shopName || "식당"}
           sx={{
             width: { xs: "100%", sm: 120 },
@@ -178,7 +181,7 @@ const PartyItem = ({ party }: PartyItemProps) => {
             <ChatButton
               onClick={() => setShowChat(true)}
               size="small"
-              unreadCount={getUnreadCount(party.partyId?.toString() || "")}
+              unreadCount={0}
               disabled={isPast}
             />
             <Button
@@ -255,8 +258,14 @@ const PartyItem = ({ party }: PartyItemProps) => {
                 await quitPartyMutation.mutateAsync(party.partyId || 0);
                 showToast("파티에서 나갔습니다.", "success");
                 setShowQuitDialog(false);
-              } catch (error) {
-                // 에러는 이미 useQuitParty 훅에서 자동으로 처리됨
+              } catch (error: any) {
+                // API 에러 응답에서 메시지 추출
+                if (error?.response?.data?.message) {
+                  showToast(error.response.data.message, "error");
+                } else {
+                  // 기본 에러 메시지
+                  showToast("파티 나가기에 실패했습니다.", "error");
+                }
               }
             }}
             color="error"

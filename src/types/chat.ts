@@ -11,6 +11,27 @@ export interface ChatMessage {
   isMyMessage: boolean;
 }
 
+// 웹소켓 메시지 타입
+export interface WebSocketMessage {
+  id: number;
+  sendAt: string;
+  type:
+    | "CHAT"
+    | "JOIN"
+    | "LEAVE"
+    | "PAYMENT_REQUEST"
+    | "PAYMENT_COMPLETE"
+    | "RESERVATION_COMPLETE"
+    | "PARTY_DELETED"
+    | "ERROR"
+    | "KICK";
+  message: string | null;
+  userId: number;
+  userNickName: string;
+  userProfile: string;
+  partyId: number;
+}
+
 // 채팅방 정보 타입
 export interface ChatRoomInfo {
   partyId: string;
@@ -39,4 +60,17 @@ export interface PartyInfo {
   maxCount: number;
   metAt: Date;
   status: "RECRUITING" | "COMPLETED" | "CANCELLED";
+}
+
+// 웹소켓 연결 상태
+export type WebSocketStatus =
+  | "CONNECTING"
+  | "CONNECTED"
+  | "DISCONNECTED"
+  | "ERROR";
+
+// 웹소켓 메시지 전송 타입
+export interface SendMessagePayload {
+  message: string;
+  partyId: number;
 }

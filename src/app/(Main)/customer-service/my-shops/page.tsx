@@ -63,7 +63,7 @@ const getStatusText = (status: OwnerShopItemApproveEnum) => {
 
 const MyShopsPage = () => {
   const router = useRouter();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { data: ownerShopsData, isLoading, error, refetch } = useOwnerShops();
@@ -186,7 +186,11 @@ const MyShopsPage = () => {
                   position: "relative",
                 }}
               >
-                <img src={shop.thumbnailUrl} alt="thumbnail" />
+                <img
+                  src={shop.thumbnailUrl}
+                  alt="thumbnail"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
                 <Chip
                   label={getStatusText(shop.approve || "PENDING")}
                   color={getStatusColor(shop.approve || "PENDING")}
@@ -260,7 +264,7 @@ const MyShopsPage = () => {
         onSuccess={handleShopCreateSuccess}
       />
 
-      <Toast {...toast} onClose={hideToast} />
+      <Toast showToast={showToast} hideToast={hideToast} />
     </Container>
   );
 };

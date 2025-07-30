@@ -11,11 +11,11 @@ import {
 } from "@/components/common/FormField";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import type { LoginRequest } from "@/api/generated";
-import Toast, { useToast } from "@/features/common/Toast";
+import { useToast } from "@/features/common/Toast";
 
 export default function LoginPage() {
   const { login, isLoggingIn } = useAuth();
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast } = useToast();
 
   // 폼 상태 관리
   const form = useForm<LoginRequest>(
@@ -39,12 +39,6 @@ export default function LoginPage() {
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Box
         display="flex"
         justifyContent="center"

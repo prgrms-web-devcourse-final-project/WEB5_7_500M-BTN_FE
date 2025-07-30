@@ -1,7 +1,9 @@
-import { Box, Stack, Typography, Avatar } from "@mui/material";
+import { Box, Stack, Typography, Avatar, IconButton } from "@mui/material";
 import type { ShopsItem } from "@/api/generated";
 import Link from "next/link";
 import { getCategoryLabel } from "@/constants";
+import { useRouter } from "next/navigation";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 interface ShopListItemRowProps {
   shop: ShopsItem;
@@ -14,11 +16,19 @@ const ShopListItemRow: React.FC<ShopListItemRowProps> = ({
   isSelected = false,
   onClick,
 }) => {
+  const router = useRouter();
+
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
       e.preventDefault();
       onClick();
     }
+  };
+
+  const handleDetailClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    router.push(`/shop/${shop.shopId}`);
   };
 
   return (
@@ -44,23 +54,29 @@ const ShopListItemRow: React.FC<ShopListItemRowProps> = ({
         onClick={handleClick}
       >
         <Box flex={1} minWidth={0}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            spacing={1}
-          >
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Typography variant="subtitle1" fontWeight={700} noWrap>
-                {shop.shopName}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" noWrap>
-                {getCategoryLabel(shop.category || "")}
-              </Typography>
-            </Stack>
+          <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
+            <Typography variant="subtitle1" fontWeight={700} noWrap>
+              {shop.shopName}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {getCategoryLabel(shop.category || "")}
+            </Typography>
             <Typography variant="body2" color="warning.main" fontWeight={600}>
               ★ {shop.rating?.toFixed(1) || "0.0"}
             </Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton
+              size="small"
+              onClick={handleDetailClick}
+              sx={{
+                color: "primary.main",
+                "&:hover": {
+                  backgroundColor: "rgba(25, 118, 210, 0.08)",
+                },
+              }}
+            >
+              <ArrowForwardIcon fontSize="small" />
+            </IconButton>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1} mt={0.5}>
             <Typography variant="body2" color="text.secondary" noWrap>

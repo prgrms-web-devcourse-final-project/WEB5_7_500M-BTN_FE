@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, notFound, useRouter } from "next/navigation";
 import {
   Box,
@@ -30,13 +30,11 @@ import {
   useMyParties,
 } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
-import Toast from "@/features/common/Toast";
 import { useAuth } from "@/hooks/useAuth";
 import ChatButton from "@/components/chat/ChatButton";
 import ChatRoom from "@/components/chat/ChatRoom";
 import PartyMemberList from "@/components/party/PartyMemberList";
-import { getUnreadCount } from "@/data/mockChatData";
-import { getPartyMembers, kickPartyMember } from "@/data/mockPartyMembers";
+import PartyComments from "@/components/party/PartyComments";
 import type { PartyDetailResponse } from "@/api/generated";
 
 dayjs.locale("ko");
@@ -64,9 +62,38 @@ const PartyDetailPage = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [showChat, setShowChat] = useState(false);
-  const [partyMembers, setPartyMembers] = useState(() =>
-    getPartyMembers(partyId || "")
-  );
+  // 실제 API 데이터의 members를 사용
+  const [partyMembers, setPartyMembers] = useState(() => {
+    // API 데이터가 있으면 API 데이터 사용
+    if (party?.members && party.members.length > 0) {
+      return party.members.map((member) => ({
+        id: member.userId?.toString() || "",
+        name: member.userNickname || "",
+        avatar: member.userProfile || "",
+        isHost: member.isHost || false,
+        joinedAt: new Date(), // API에서 joinedAt 정보가 없으므로 현재 시간 사용
+        isOnline: true, // API에서 isOnline 정보가 없으므로 기본값 사용
+      }));
+    }
+    return [];
+  });
+
+  // party 데이터가 변경될 때마다 파티원 목록 업데이트
+  useEffect(() => {
+    if (party?.members && party.members.length > 0) {
+      const apiMembers = party.members.map((member) => ({
+        id: member.userId?.toString() || "",
+        name: member.userNickname || "",
+        avatar: member.userProfile || "",
+        isHost: member.isHost || false,
+        joinedAt: new Date(),
+        isOnline: true,
+      }));
+      setPartyMembers(apiMembers);
+    } else {
+      setPartyMembers([]);
+    }
+  }, [party]);
 
   if (isLoading) {
     return (
@@ -89,11 +116,15 @@ const PartyDetailPage = () => {
     );
   }
 
-  const isHost = myInfo?.userId === party.hostId;
-  // 임시로 참여 상태 확인 (실제 API 데이터가 없을 때는 임시로 참여한 것으로 처리)
-  const isJoined =
-    myParties.some((myParty) => myParty.partyId === party.partyId) ||
-    (party?.partyId && party.partyId <= 3); // 임시 파티 ID 1, 2, 3은 참여한 것으로 처리
+  // 호스트 판단: members 배열에서 isHost가 true인 멤버를 찾음
+  const isHost = !!party.members?.some(
+    (member) => member.isHost && member.userId === myInfo?.userId
+  );
+
+  // 참여 상태 확인 (실제 API 데이터 사용)
+  const isJoined = myParties.some(
+    (myParty) => myParty.partyId === party.partyId
+  );
 
   const handleJoinParty = async () => {
     if (!isAuthenticated) {
@@ -104,8 +135,14 @@ const PartyDetailPage = () => {
     try {
       await joinPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에 참여했습니다!", "success");
-    } catch (error) {
-      // 에러는 이미 useJoinParty 훅에서 자동으로 처리됨
+    } catch (error: any) {
+      // API 에러 응답에서 메시지 추출
+      if (error?.response?.data?.message) {
+        showToast(error.response.data.message, "error");
+      } else {
+        // 기본 에러 메시지
+        showToast("파티 참여에 실패했습니다.", "error");
+      }
     }
   };
 
@@ -113,14 +150,20 @@ const PartyDetailPage = () => {
     try {
       await quitPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에서 나갔습니다.", "success");
-    } catch (error) {
-      // 에러는 이미 useQuitParty 훅에서 자동으로 처리됨
+    } catch (error: any) {
+      // API 에러 응답에서 메시지 추출
+      if (error?.response?.data?.message) {
+        showToast(error.response.data.message, "error");
+      } else {
+        // 기본 에러 메시지
+        showToast("파티 나가기에 실패했습니다.", "error");
+      }
     }
   };
 
   const handleKickMember = (memberId: string) => {
-    const updatedMembers = kickPartyMember(partyId || "", memberId);
-    setPartyMembers(updatedMembers);
+    // 강퇴 기능은 추후 API 연동
+    setPartyMembers((prev) => prev.filter((member) => member.id !== memberId));
     showToast("파티원을 강퇴했습니다.", "success");
   };
 
@@ -299,9 +342,7 @@ const PartyDetailPage = () => {
                   <ChatButton
                     onClick={() => setShowChat(true)}
                     size="large"
-                    unreadCount={getUnreadCount(
-                      party.partyId?.toString() || ""
-                    )}
+                    unreadCount={0}
                   />
                 )}
               </Stack>
@@ -328,14 +369,9 @@ const PartyDetailPage = () => {
           </>
         )}
 
-        {/* 댓글 영역 - 임시로 비활성화 */}
+        {/* 댓글 영역 */}
         <Paper elevation={1} sx={{ p: 3, mt: 4 }}>
-          <Typography variant="h6" fontWeight={700} mb={2}>
-            댓글
-          </Typography>
-          <Typography color="text.secondary" textAlign="center" py={4}>
-            댓글 기능은 준비 중입니다.
-          </Typography>
+          <PartyComments partyId={numericPartyId} />
         </Paper>
       </Box>
 

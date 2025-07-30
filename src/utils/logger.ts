@@ -44,5 +44,6 @@ export const logApiError = (operation: string, error: unknown) => {
 
 // 인증 관련 로깅 전용 함수
 export const logAuth = (operation: string, data?: unknown) => {
+  console.log("logAuth", operation, data);
   logger.debug(`Auth ${operation}`, data);
 };

@@ -30,7 +30,7 @@ import {
   AdminPanelSettings as AdminIcon,
   Warning as WarningIcon,
 } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   useInquiryDetail,
   useInquiryComments,
@@ -50,15 +50,10 @@ const formatDate = (dateString: string) => {
   });
 };
 
-interface InquiryDetailPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function InquiryDetailPage({ params }: InquiryDetailPageProps) {
+export default function InquiryDetailPage() {
   const router = useRouter();
-  const inquiryId = parseInt(params.id);
+  const params = useParams();
+  const inquiryId = parseInt(params.id as string);
   const [commentContent, setCommentContent] = useState("");
 
   const {

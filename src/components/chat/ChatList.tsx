@@ -21,8 +21,6 @@ import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import ChatRoom from "./ChatRoom";
 import type { MyPartyResponse } from "@/api/generated";
-import type { ChatRoomInfo } from "@/types/chat";
-import { getChatRoomInfo } from "@/data/mockChatData";
 
 dayjs.locale("ko");
 
@@ -121,7 +119,6 @@ const ChatList: React.FC<ChatListProps> = ({ parties }) => {
 
         <List sx={{ p: 0 }}>
           {parties.map((party, index) => {
-            const chatInfo = getChatRoomInfo(party.partyId?.toString() || "");
             const isLast = index === parties.length - 1;
 
             return (
@@ -142,7 +139,7 @@ const ChatList: React.FC<ChatListProps> = ({ parties }) => {
                 >
                   <ListItemAvatar>
                     <Badge
-                      badgeContent={chatInfo?.onlineCount || 0}
+                      badgeContent={party.currentCount || 0}
                       color="success"
                       max={99}
                       sx={{
@@ -188,54 +185,35 @@ const ChatList: React.FC<ChatListProps> = ({ parties }) => {
                         >
                           {party.shopName}
                         </Typography>
-                        {chatInfo && (
-                          <Stack
-                            direction="row"
-                            alignItems="center"
-                            spacing={1}
-                            mt={0.5}
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          mt={0.5}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="text.primary"
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              maxWidth: 200,
+                            }}
                           >
-                            <Typography
-                              variant="body2"
-                              color="text.primary"
-                              sx={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                maxWidth: 200,
-                              }}
-                            >
-                              {chatInfo.lastMessage}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              {formatLastMessageTime(chatInfo.lastMessageTime)}
-                            </Typography>
-                          </Stack>
-                        )}
+                            파티 채팅방입니다
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {party.metAt
+                              ? formatLastMessageTime(new Date(party.metAt))
+                              : ""}
+                          </Typography>
+                        </Stack>
                       </Box>
                     }
                   />
 
                   <Stack alignItems="flex-end" spacing={1}>
-                    {chatInfo && chatInfo.unreadCount > 0 && (
-                      <Badge
-                        badgeContent={chatInfo.unreadCount}
-                        color="error"
-                        max={99}
-                        sx={{
-                          "& .MuiBadge-badge": {
-                            fontSize: "0.7rem",
-                            height: "18px",
-                            minWidth: "18px",
-                          },
-                        }}
-                      >
-                        <ChatIcon color="primary" />
-                      </Badge>
-                    )}
                     <Typography variant="caption" color="text.secondary">
                       {party.currentCount}/{party.maxCount}명
                     </Typography>
@@ -250,31 +228,30 @@ const ChatList: React.FC<ChatListProps> = ({ parties }) => {
       </Paper>
 
       {/* 채팅방 모달 */}
-      {selectedChat && (
-        <ChatRoom
-          party={{
-            id: selectedChat,
-            title:
-              parties.find((p) => p.partyId?.toString() === selectedChat)
-                ?.title || "",
-            shopName:
-              parties.find((p) => p.partyId?.toString() === selectedChat)
-                ?.shopName || "",
-            currentCount:
-              parties.find((p) => p.partyId?.toString() === selectedChat)
-                ?.currentCount || 0,
-            maxCount:
-              parties.find((p) => p.partyId?.toString() === selectedChat)
-                ?.maxCount || 0,
-            metAt: new Date(
-              parties.find((p) => p.partyId?.toString() === selectedChat)
-                ?.metAt || ""
-            ),
-            status: "RECRUITING",
-          }}
-          onClose={handleCloseChat}
-        />
-      )}
+      {selectedChat &&
+        (() => {
+          const selectedParty = parties.find(
+            (p) => p.partyId?.toString() === selectedChat
+          );
+          if (!selectedParty) return null;
+
+          return (
+            <ChatRoom
+              party={{
+                id: selectedChat,
+                title: selectedParty.title || "",
+                shopName: selectedParty.shopName || "",
+                currentCount: selectedParty.currentCount || 0,
+                maxCount: selectedParty.maxCount || 0,
+                metAt: new Date(
+                  selectedParty.metAt || new Date().toISOString()
+                ),
+                status: "RECRUITING",
+              }}
+              onClose={handleCloseChat}
+            />
+          );
+        })()}
     </>
   );
 };

@@ -68,7 +68,7 @@ const statusLabel: Record<string, string> = {
 };
 
 const ReservationsPage = () => {
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const [selectedShopId, setSelectedShopId] = useState<number | undefined>(
     undefined
   );
@@ -166,7 +166,7 @@ const ReservationsPage = () => {
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>식당 선택</InputLabel>
                 <Select
@@ -185,7 +185,7 @@ const ReservationsPage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth>
                 <InputLabel>예약 상태</InputLabel>
                 <Select
@@ -381,7 +381,7 @@ const ReservationsPage = () => {
         </TableContainer>
       )}
 
-      <Toast {...toast} onClose={hideToast} />
+      <Toast />
     </Container>
   );
 };

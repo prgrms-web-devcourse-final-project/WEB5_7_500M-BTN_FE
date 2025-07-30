@@ -3,12 +3,15 @@ import {
   apiClient,
   setAccessToken,
   removeAccessToken,
+  refreshAccessToken,
   refreshApiClient,
   getCookie,
   setCookie,
   removeCookie,
   debugCookies,
   getToken,
+  getAccessToken,
+  axiosInstance,
 } from "./client";
 import { logApiError, logAuth } from "@/utils/logger";
 import { useApiError, useApiErrorHandler } from "@/hooks/useApiError";
@@ -44,6 +47,10 @@ import type {
   BaseResponseListCommentResponse,
   CommentCreateRequest,
 } from "./generated";
+import { ChatControllerApi } from "./generated";
+
+// ChatControllerApi 인스턴스 생성 - 인증 토큰이 포함된 axios 인스턴스 사용
+const chatApi = new ChatControllerApi(undefined, undefined, axiosInstance);
 
 // 공통 에러 타입
 export interface ApiError {
@@ -161,7 +168,7 @@ export const useMyInfo = () => {
         throw error;
       }
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 
   // 자동 에러 처리
@@ -184,7 +191,7 @@ export const useMyReservations = (params?: {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -199,7 +206,7 @@ export const useMyParties = (params?: { size?: number; cursor?: number }) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -214,7 +221,7 @@ export const useMyReviews = (params?: { size?: number; cursor?: number }) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -226,7 +233,7 @@ export const useOwnerShops = () => {
       const response = await apiClient.getOwnerShops();
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -483,7 +490,7 @@ export const useJoinParty = () => {
       try {
         return await apiClient.joinParty(partyId);
       } catch (error) {
-        handleError(error, "파티 참여");
+        // 에러 처리는 컴포넌트에서 직접 처리하도록 변경
         throw error;
       }
     },
@@ -498,14 +505,13 @@ export const useJoinParty = () => {
 // 파티 나가기 훅
 export const useQuitParty = () => {
   const queryClient = useQueryClient();
-  const { handleError } = useApiErrorHandler();
 
   return useMutation({
     mutationFn: async (partyId: number) => {
       try {
         return await apiClient.quitParty(partyId);
       } catch (error) {
-        handleError(error, "파티 나가기");
+        // 에러 처리는 컴포넌트에서 직접 처리하도록 변경
         throw error;
       }
     },
@@ -513,6 +519,73 @@ export const useQuitParty = () => {
       // 파티 나가기 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ["parties"] });
       queryClient.invalidateQueries({ queryKey: ["myParties"] });
+    },
+  });
+};
+
+// 파티 댓글 조회 훅
+export const usePartyComments = (partyId: number) => {
+  return useQuery({
+    queryKey: ["partyComments", partyId],
+    queryFn: async () => {
+      const response = await apiClient.getComments(partyId);
+      return response.data;
+    },
+    enabled: !!partyId,
+  });
+};
+
+// 파티 댓글 생성 훅
+export const useCreatePartyComment = () => {
+  const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
+
+  return useMutation({
+    mutationFn: async (params: {
+      partyId: number;
+      commentData: CommentCreateRequest;
+    }) => {
+      try {
+        const response = await apiClient.createComment(
+          params.partyId,
+          params.commentData
+        );
+        return response.data;
+      } catch (error) {
+        handleError(error, "파티 댓글 생성");
+        throw error;
+      }
+    },
+    onSuccess: (_, variables) => {
+      // 댓글 생성 성공 시 관련 쿼리 무효화
+      queryClient.invalidateQueries({
+        queryKey: ["partyComments", variables.partyId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["partyDetail", variables.partyId],
+      });
+    },
+  });
+};
+
+// 파티 댓글 삭제 훅
+export const useDeletePartyComment = () => {
+  const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
+
+  return useMutation({
+    mutationFn: async (commentId: number) => {
+      try {
+        const response = await apiClient.deleteComment(commentId);
+        return response.data;
+      } catch (error) {
+        handleError(error, "파티 댓글 삭제");
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // 댓글 삭제 성공 시 모든 파티 댓글 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["partyComments"] });
     },
   });
 };
@@ -536,8 +609,8 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (refreshToken: string) => {
-      await apiClient.logout(refreshToken);
+    mutationFn: async () => {
+      await apiClient.logout();
       // 로컬 스토리지에서 토큰 제거
       removeAccessToken();
       // 클라이언트 재생성
@@ -609,6 +682,7 @@ export const uploadImageToS3 = async (
       body: file,
       headers: {
         "Content-Type": file.type,
+        "Cache-Control": "no-cache,no-store,must-revalidate",
       },
     });
   } catch (error) {
@@ -635,7 +709,7 @@ export const useReservations = (params?: {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -730,7 +804,7 @@ export const useInquiries = (params?: { cursor?: number; size?: number }) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: !!getAccessToken(),
   });
 };
 
@@ -808,5 +882,74 @@ export const useCreateInquiryComment = () => {
       });
       queryClient.invalidateQueries({ queryKey: ["inquiries"] });
     },
+  });
+};
+
+// 채팅 기록 조회 훅
+export const useChatHistory = (partyId: number, cursor?: number) => {
+  return useQuery({
+    queryKey: ["chatHistory", partyId, cursor],
+    queryFn: async () => {
+      try {
+        const response = await chatApi.loadChatHistory(partyId, cursor || 0);
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 401) {
+            // 401 에러 시 토큰 갱신 시도 (한 번만)
+            try {
+              const success = await refreshAccessToken();
+              if (success) {
+                // 토큰 갱신 성공 시 재시도
+                const retryResponse = await chatApi.loadChatHistory(
+                  partyId,
+                  cursor || 0
+                );
+                return retryResponse.data;
+              }
+            } catch (refreshError) {
+              logApiError("토큰 갱신 실패:", refreshError);
+            }
+          }
+        }
+        throw error;
+      }
+    },
+    enabled: !!partyId,
+    retry: false, // 자동 재시도 비활성화
+  });
+};
+
+// 채팅 복구 훅
+export const useRestoreChat = (partyId: number) => {
+  return useQuery({
+    queryKey: ["restoreChat", partyId],
+    queryFn: async () => {
+      try {
+        const response = await chatApi.restoreChat(partyId);
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 401) {
+            // 401 에러 시 토큰 갱신 시도 (한 번만)
+            try {
+              const success = await refreshAccessToken();
+              if (success) {
+                // 토큰 갱신 성공 시 재시도
+                const retryResponse = await chatApi.restoreChat(partyId);
+                return retryResponse.data;
+              }
+            } catch (refreshError) {
+              logApiError("토큰 갱신 실패:", refreshError);
+            }
+          }
+        }
+        throw error;
+      }
+    },
+    enabled: !!partyId,
+    retry: false, // 자동 재시도 비활성화
   });
 };

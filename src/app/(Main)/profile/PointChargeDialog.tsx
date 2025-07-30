@@ -24,6 +24,7 @@ import {
   generateOrderId,
   formatAmount,
 } from "@/utils/tossPayments";
+import { apiClient } from "@/api/client";
 
 interface PointChargeDialogProps {
   open: boolean;
@@ -43,7 +44,7 @@ const PointChargeDialog: React.FC<PointChargeDialogProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, hideToast } = useToast();
   const { data: myInfo } = useMyInfo();
   const [selectedOption, setSelectedOption] = useState<string>("10000");
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -74,6 +75,8 @@ const PointChargeDialog: React.FC<PointChargeDialogProps> = ({
     try {
       const orderId = generateOrderId();
       const orderName = `포인트 충전 (${formatAmount(amount)}원)`;
+
+      apiClient.saveOrder({ orderId, amount });
 
       await requestPayment({
         amount,
@@ -110,12 +113,6 @@ const PointChargeDialog: React.FC<PointChargeDialogProps> = ({
 
   return (
     <>
-      <Toast
-        open={toast.open}
-        message={toast.message}
-        severity={toast.severity}
-        onClose={hideToast}
-      />
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
           <Typography variant="h6" fontWeight={600}>
