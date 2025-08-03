@@ -12,13 +12,6 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
 import KakaoMap from "../KakaoMap";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
@@ -26,6 +19,7 @@ import {
   usePartyDetail,
   useJoinParty,
   useQuitParty,
+  useCompleteParty,
   useMyInfo,
   useMyParties,
 } from "@/api/hooks";
@@ -52,6 +46,7 @@ const PartyDetailPage = () => {
   const { data: myPartiesData } = useMyParties();
   const joinPartyMutation = useJoinParty();
   const quitPartyMutation = useQuitParty();
+  const completePartyMutation = useCompleteParty();
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
 
@@ -165,6 +160,24 @@ const PartyDetailPage = () => {
       } else {
         // 기본 에러 메시지
         showToast("파티 나가기에 실패했습니다.", "error");
+      }
+    }
+  };
+
+  const handleCompleteParty = async () => {
+    try {
+      await completePartyMutation.mutateAsync(numericPartyId);
+      showToast("파티 모집이 완료되었습니다!", "success");
+      queryClient.invalidateQueries({
+        queryKey: ["partyDetail", numericPartyId],
+      });
+    } catch (error: any) {
+      // API 에러 응답에서 메시지 추출
+      if (error?.response?.data?.message) {
+        showToast(error.response.data.message, "error");
+      } else {
+        // 기본 에러 메시지
+        showToast("파티 모집 완료에 실패했습니다.", "error");
       }
     }
   };
@@ -332,19 +345,31 @@ const PartyDetailPage = () => {
                   </Button>
                 )}
                 {isHost && (
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="large"
-                    fullWidth
-                    disabled={party.status !== "RECRUITING"}
-                    onClick={() => {
-                      // 파티 삭제 로직 (추후 구현)
-                      showToast("파티 삭제 기능은 추후 구현됩니다.", "info");
-                    }}
-                  >
-                    파티 삭제
-                  </Button>
+                  <>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      fullWidth
+                      disabled={party.status !== "RECRUITING"}
+                      onClick={handleCompleteParty}
+                    >
+                      파티 모집 완료
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="large"
+                      fullWidth
+                      disabled={party.status !== "RECRUITING"}
+                      onClick={() => {
+                        // 파티 삭제 로직 (추후 구현)
+                        showToast("파티 삭제 기능은 추후 구현됩니다.", "info");
+                      }}
+                    >
+                      파티 삭제
+                    </Button>
+                  </>
                 )}
                 {isJoined && (
                   <ChatButton

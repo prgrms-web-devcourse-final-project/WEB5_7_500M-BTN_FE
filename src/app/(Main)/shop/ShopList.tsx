@@ -14,7 +14,7 @@ import {
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ShopListItemRow from "@/features/shop/ShopListCard";
-import { useShops } from "@/api/hooks";
+import { useShops, useShopsBySearch } from "@/api/hooks";
 import { GetShopsCategoryEnum, ShopsItem } from "@/api/generated";
 import { SEARCH_CONSTANTS } from "@/constants";
 import useGeolocation from "@/hooks/useGeolocation";
@@ -117,6 +117,16 @@ const ShopList: React.FC<ShopListProps> = ({
     size: 20,
   });
 
+  const {
+    data: shopsSearchData,
+    isLoading: isShopsSearchLoading,
+    error: shopsSearchError,
+    refetch: refetchShopsSearch,
+  } = useShopsBySearch({
+    query: debouncedSearchQuery,
+    size: 20,
+  });
+
   // 재탐색 핸들러
   const handleReSearch = useCallback(
     (center: { latitude: number; longitude: number }) => {
@@ -169,26 +179,33 @@ const ShopList: React.FC<ShopListProps> = ({
     [onShopSelect]
   );
 
-  // 검색어와 카테고리로 필터링 및 정렬 (클라이언트 사이드) - useMemo로 최적화
+  // 검색어가 있으면 검색 API 결과를, 없으면 일반 API 결과를 사용
+  const shopsToDisplay = useMemo(() => {
+    if (debouncedSearchQuery.trim()) {
+      // 검색 API 결과에서 필드 매핑
+      const searchResults = shopsSearchData?.data?.shops || [];
+      return searchResults.map((shop: any) => ({
+        ...shop,
+        shopName: shop.name || shop.shopName, // name을 shopName으로 매핑
+        roadAddress: shop.address || shop.roadAddress, // address를 roadAddress로 매핑
+      }));
+    }
+    return shopsData?.data?.content || [];
+  }, [
+    debouncedSearchQuery,
+    shopsSearchData?.data?.shops,
+    shopsData?.data?.content,
+  ]);
+
+  // 카테고리로 필터링 및 정렬 (클라이언트 사이드) - useMemo로 최적화
   const filteredAndSortedShops = useMemo(() => {
-    let filtered =
-      shopsData?.data?.content?.filter((shop) => {
-        // 검색어 필터링
-        const matchesSearch =
-          !debouncedSearchQuery ||
-          shop.shopName
-            ?.toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase()) ||
-          shop.roadAddress
-            ?.toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase());
+    let filtered = shopsToDisplay.filter((shop) => {
+      // 카테고리 필터링
+      const matchesCategory =
+        selectedCategory === "ALL" || shop.category === selectedCategory;
 
-        // 카테고리 필터링
-        const matchesCategory =
-          selectedCategory === "ALL" || shop.category === selectedCategory;
-
-        return matchesSearch && matchesCategory;
-      }) || [];
+      return matchesCategory;
+    });
 
     // 정렬 적용
     switch (selectedSort) {
@@ -210,12 +227,7 @@ const ShopList: React.FC<ShopListProps> = ({
     }
 
     return filtered;
-  }, [
-    shopsData?.data?.content,
-    debouncedSearchQuery,
-    selectedSort,
-    selectedCategory,
-  ]);
+  }, [shopsToDisplay, selectedSort, selectedCategory]);
 
   // 필터링된 식당 데이터가 변경될 때마다 부모 컴포넌트에 알림
   useEffect(() => {
@@ -305,7 +317,45 @@ const ShopList: React.FC<ShopListProps> = ({
 
       {/* 식당 리스트 */}
       <Box flex={1} overflow="auto" pb={2}>
-        {isLoading ? (
+        {debouncedSearchQuery.trim() ? (
+          // 검색 중일 때
+          isShopsSearchLoading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="200px"
+            >
+              <CircularProgress />
+            </Box>
+          ) : shopsSearchError ? (
+            <Box p={2}>
+              <Alert severity="error">
+                검색 결과를 불러오는데 실패했습니다.
+              </Alert>
+            </Box>
+          ) : filteredAndSortedShops.length === 0 ? (
+            <Box p={2}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+              >
+                검색 결과가 없습니다.
+              </Typography>
+            </Box>
+          ) : (
+            filteredAndSortedShops.map((shop: ShopsItem) => (
+              <ShopListItemRow
+                key={shop.shopId}
+                shop={shop}
+                isSelected={selectedShop?.shopId === shop.shopId}
+                onClick={() => handleShopSelect(shop)}
+              />
+            ))
+          )
+        ) : // 일반 목록일 때
+        isLoading ? (
           <Box
             display="flex"
             justifyContent="center"
@@ -325,9 +375,7 @@ const ShopList: React.FC<ShopListProps> = ({
               color="text.secondary"
               textAlign="center"
             >
-              {debouncedSearchQuery
-                ? "검색 결과가 없습니다."
-                : "등록된 식당이 없습니다."}
+              등록된 식당이 없습니다.
             </Typography>
           </Box>
         ) : (

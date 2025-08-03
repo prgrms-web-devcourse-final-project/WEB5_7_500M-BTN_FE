@@ -69,47 +69,54 @@ const PartyItem = ({ party }: PartyItemProps) => {
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
           alignItems: "stretch",
-          boxShadow: 2,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           borderRadius: 3,
-          opacity: isPast ? 0.5 : 1,
-          filter: isPast ? "grayscale(0.2)" : "none",
-          transition: "box-shadow 0.2s, transform 0.2s",
+          opacity: isPast ? 0.6 : 1,
+          filter: isPast ? "grayscale(0.3)" : "none",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           "&:hover": {
-            boxShadow: 6,
-            transform: isPast ? undefined : "scale(1.02)",
+            boxShadow: isPast
+              ? "0 2px 8px rgba(0,0,0,0.1)"
+              : "0 8px 24px rgba(0,0,0,0.15)",
+            transform: isPast ? "none" : "translateY(-2px)",
           },
-          minHeight: 120,
+          minHeight: 140,
           mb: 2,
+          border: "1px solid rgba(0,0,0,0.08)",
         }}
       >
-        <CardMedia
-          component="img"
-          image={
-            (party as any).shopImage ||
-            (party as any).thumbnailUrl ||
-            "/default-shop-image.jpg"
-          }
-          alt={party.shopName || "식당"}
-          sx={{
-            width: { xs: "100%", sm: 120 },
-            height: { xs: 140, sm: "auto" },
-            objectFit: "cover",
-            borderRadius: { xs: "12px 12px 0 0", sm: "12px 0 0 12px" },
-          }}
-        />
         <CardContent
           sx={{
             flex: 1,
-            p: 2,
+            p: 3,
             position: "relative",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            "&:last-child": { pb: 3 },
           }}
         >
           <Box>
-            <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
-              <Typography fontWeight={700} fontSize={18} noWrap>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1.5}
+              mb={1.5}
+              sx={{
+                flexWrap: { xs: "wrap", sm: "nowrap" },
+                gap: { xs: 1, sm: 1.5 },
+              }}
+            >
+              <Typography
+                fontWeight={700}
+                fontSize={{ xs: 16, sm: 18 }}
+                noWrap
+                sx={{
+                  color: "text.primary",
+                  flex: { sm: 1 },
+                  minWidth: 0,
+                }}
+              >
                 {party.title}
               </Typography>
               <Chip
@@ -117,32 +124,93 @@ const PartyItem = ({ party }: PartyItemProps) => {
                 label={status.label}
                 color={status.color as any}
                 size="small"
-                sx={{ fontWeight: 700 }}
+                sx={{
+                  fontWeight: 700,
+                  "&.MuiChip-colorPrimary": {
+                    backgroundColor: "primary.main",
+                    color: "white",
+                  },
+                  "&.MuiChip-colorError": {
+                    backgroundColor: "error.main",
+                    color: "white",
+                  },
+                  "&.MuiChip-colorDefault": {
+                    backgroundColor: "grey.300",
+                    color: "text.primary",
+                  },
+                }}
               />
               <Chip
                 label={dayjs(party.metAt).format("M월 D일 ddd A h:mm")}
                 size="small"
                 color="default"
-                sx={{ ml: 0.5 }}
+                sx={{
+                  ml: { xs: 0, sm: 0.5 },
+                  backgroundColor: "grey.100",
+                  color: "text.secondary",
+                  fontWeight: 500,
+                }}
               />
             </Stack>
-            <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              mb={1}
+              sx={{
+                "& .MuiTypography-root": {
+                  color: "text.secondary",
+                  fontWeight: 500,
+                },
+              }}
+            >
               <Typography variant="body2" color="text.secondary" noWrap>
                 {party.shopName}
               </Typography>
             </Stack>
-            <Typography variant="body2" color="text.secondary" noWrap mb={1}>
-              주소 정보 없음
-            </Typography>
-            <Stack direction="row" spacing={1} alignItems="center" mt={0.5}>
+            {/* <Typography
+              variant="body2"
+              color="text.secondary"
+              noWrap
+              mb={1.5}
+              sx={{
+                fontSize: "0.875rem",
+                opacity: 0.7,
+              }}
+            >
+              {party.}
+            </Typography> */}
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              mt={0.5}
+              sx={{
+                "& .MuiChip-root": {
+                  fontWeight: 600,
+                },
+              }}
+            >
               <Chip
                 label={`인원: ${party.currentCount || 0}/${
                   party.maxCount || 0
                 }`}
                 size="small"
                 color="info"
+                sx={{
+                  backgroundColor: "info.light",
+                  color: "info.contrastText",
+                  fontWeight: 600,
+                }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  fontSize: "0.75rem",
+                  opacity: 0.8,
+                }}
+              >
                 (최소 {party.minCount || 0}명)
               </Typography>
             </Stack>
@@ -150,12 +218,14 @@ const PartyItem = ({ party }: PartyItemProps) => {
               <Typography
                 variant="body2"
                 color="text.secondary"
-                mt={1}
+                mt={1.5}
                 sx={{
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
+                  lineHeight: 1.5,
+                  opacity: 0.8,
                 }}
               >
                 {party.description}
@@ -164,8 +234,16 @@ const PartyItem = ({ party }: PartyItemProps) => {
           </Box>
           <Stack
             direction="row"
-            spacing={1}
-            sx={{ alignSelf: "flex-end", mt: 2 }}
+            spacing={1.5}
+            sx={{
+              alignSelf: "flex-end",
+              mt: 2,
+              "& .MuiButton-root": {
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                px: { xs: 1.5, sm: 2 },
+                py: { xs: 0.5, sm: 0.75 },
+              },
+            }}
           >
             <ChatButton
               onClick={() => setShowChat(true)}
@@ -183,6 +261,16 @@ const PartyItem = ({ party }: PartyItemProps) => {
                 borderRadius: 2,
                 fontWeight: 600,
                 textTransform: "none",
+                borderColor: "error.main",
+                color: "error.main",
+                "&:hover": {
+                  backgroundColor: "error.light",
+                  borderColor: "error.dark",
+                },
+                "&:disabled": {
+                  borderColor: "grey.300",
+                  color: "grey.400",
+                },
               }}
             >
               나가기
@@ -196,6 +284,16 @@ const PartyItem = ({ party }: PartyItemProps) => {
                 fontWeight: 600,
                 boxShadow: "none",
                 textTransform: "none",
+                backgroundColor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                },
+                "&:disabled": {
+                  backgroundColor: "grey.300",
+                  color: "grey.500",
+                },
               }}
               disabled={isPast}
             >
@@ -204,8 +302,6 @@ const PartyItem = ({ party }: PartyItemProps) => {
           </Stack>
         </CardContent>
       </Card>
-
-      {/* 채팅방 모달 */}
       {showChat && (
         <ChatRoom
           party={{
@@ -220,25 +316,58 @@ const PartyItem = ({ party }: PartyItemProps) => {
           onClose={() => setShowChat(false)}
         />
       )}
-
-      {/* 파티 나가기 확인 다이얼로그 */}
       <Dialog
         open={showQuitDialog}
         onClose={() => setShowQuitDialog(false)}
         maxWidth="sm"
         fullWidth
+        sx={{
+          "& .MuiDialog-paper": {
+            borderRadius: 3,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+          },
+        }}
       >
-        <DialogTitle sx={{ fontWeight: 600 }}>파티 나가기</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1" gutterBottom>
+        <DialogTitle
+          sx={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
+            pb: 1,
+          }}
+        >
+          파티 나가기
+        </DialogTitle>
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography
+            variant="body1"
+            gutterBottom
+            sx={{
+              fontWeight: 500,
+              mb: 2,
+            }}
+          >
             <strong>{party.title}</strong> 파티에서 나가시겠습니까?
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              lineHeight: 1.6,
+              opacity: 0.8,
+            }}
+          >
             파티를 나가면 다시 참여할 수 없으며, 채팅 기록도 삭제됩니다.
           </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowQuitDialog(false)} color="inherit">
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button
+            onClick={() => setShowQuitDialog(false)}
+            color="inherit"
+            sx={{
+              textTransform: "none",
+              fontWeight: 500,
+            }}
+          >
             취소
           </Button>
           <Button
@@ -248,17 +377,23 @@ const PartyItem = ({ party }: PartyItemProps) => {
                 showToast("파티에서 나갔습니다.", "success");
                 setShowQuitDialog(false);
               } catch (error: any) {
-                // API 에러 응답에서 메시지 추출
                 if (error?.response?.data?.message) {
                   showToast(error.response.data.message, "error");
                 } else {
-                  // 기본 에러 메시지
                   showToast("파티 나가기에 실패했습니다.", "error");
                 }
               }
             }}
             color="error"
             variant="contained"
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              backgroundColor: "error.main",
+              "&:hover": {
+                backgroundColor: "error.dark",
+              },
+            }}
           >
             나가기
           </Button>

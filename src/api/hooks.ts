@@ -530,6 +530,27 @@ export const useQuitParty = () => {
   });
 };
 
+// 파티 모집 완료 훅
+export const useCompleteParty = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (partyId: number) => {
+      try {
+        return await apiClient.completeParty(partyId);
+      } catch (error) {
+        // 에러 처리는 컴포넌트에서 직접 처리하도록 변경
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // 파티 모집 완료 성공 시 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["parties"] });
+      queryClient.invalidateQueries({ queryKey: ["myParties"] });
+    },
+  });
+};
+
 // 파티 댓글 조회 훅
 export const usePartyComments = (partyId: number) => {
   return useQuery({
@@ -763,7 +784,6 @@ export const useOAuth2Urls = () => {
         const response = await apiClient.oauth2Urls();
         return response.data;
       } catch (error) {
-        console.error("OAuth URL 조회 실패:", error);
         // OAuth URL이 없을 경우 기본 URL 반환
         return {
           google: "/oauth2/authorization/google",
@@ -1084,4 +1104,28 @@ export const useUpdateShop = () => {
   });
 
   return mutation;
+};
+
+// 파티 예약금 지불 훅
+export const usePayPartyFee = () => {
+  const queryClient = useQueryClient();
+  const { handleError } = useApiErrorHandler();
+
+  return useMutation({
+    mutationFn: async (partyId: number) => {
+      try {
+        const response = await apiClient.payPartyFee(partyId);
+        return response.data;
+      } catch (error) {
+        handleError(error, "파티 예약금 지불");
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // 파티 예약금 지불 성공 시 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["parties"] });
+      queryClient.invalidateQueries({ queryKey: ["myParties"] });
+      queryClient.invalidateQueries({ queryKey: ["partyDetail"] });
+    },
+  });
 };

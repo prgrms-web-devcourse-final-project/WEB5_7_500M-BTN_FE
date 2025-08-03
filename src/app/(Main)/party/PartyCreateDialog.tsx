@@ -41,6 +41,14 @@ import type {
   ShopsItem,
 } from "@/api/generated";
 import { getCategoryLabel } from "@/constants";
+import "dayjs/locale/ko";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// 한국 시간대 설정
+dayjs.locale("ko");
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 // window.kakao 타입 선언 (ShopMap.tsx 참고)
 declare global {
@@ -48,8 +56,6 @@ declare global {
     kakao: unknown;
   }
 }
-
-const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
 
 interface PartyCreateDialogProps {
   open: boolean;
@@ -121,8 +127,8 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
         category: shop.category,
         roadAddress: shop.address,
         detailAddress: "",
-        latitude: 37.566826, // 기본값 (실제로는 주소 검색으로 얻어야 함)
-        longitude: 126.9786567, // 기본값
+        latitude: shop.latitude,
+        longitude: shop.longitude,
         rating: shop.rating,
         thumbnailUrl: shop.thumbnailUrl,
       })
@@ -136,12 +142,14 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
       return;
     }
 
+    // 디버깅: 시간 값 확인
+
     try {
       const partyData: PartyCreateRequest = {
         title,
         shopId: selectedShop.shopId!, // API의 shopId 사용
-        metAt: metAt.toISOString(),
-        deadline: deadline.toISOString(),
+        metAt: metAt.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+        deadline: deadline.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         genderCondition: genderCondition as "W" | "M" | "A",
         minAge,
         maxAge,

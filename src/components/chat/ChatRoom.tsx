@@ -14,16 +14,23 @@ import {
   Fade,
   Alert,
   CircularProgress,
+  Popover,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
+import PaymentIcon from "@mui/icons-material/Payment";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import type { PartyInfo, WebSocketMessage } from "@/types/chat";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { useRestoreChat } from "@/api/hooks";
+import { useRestoreChat, usePayPartyFee } from "@/api/hooks";
 import { useAuth } from "@/hooks/useAuth";
 
 dayjs.locale("ko");
@@ -39,6 +46,8 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<WebSocketMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   // 채팅 기록 복구
   const {
@@ -46,6 +55,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
     isLoading: isLoadingHistory,
     error: restoreError,
   } = useRestoreChat(Number(party.id));
+
+  // 파티 예약금 지불 훅
+  const payPartyFeeMutation = usePayPartyFee();
 
   // 콜백 함수들을 useCallback으로 안정화
   const handleWebSocketMessage = useCallback((newMessage: WebSocketMessage) => {
@@ -155,9 +167,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
                 : msg.type === "LEAVE"
                 ? `${msg.userNickname}님이 퇴장했습니다.`
                 : msg.type === "PAYMENT_REQUEST"
-                ? "결제 요청이 발생했습니다."
+                ? "예약금 지불 요청이 발생했습니다."
                 : msg.type === "PAYMENT_COMPLETE"
-                ? "결제가 완료되었습니다."
+                ? "예약금 지불이 완료되었습니다."
                 : msg.type === "RESERVATION_COMPLETE"
                 ? "예약이 완료되었습니다."
                 : msg.type === "PARTY_DELETED"
@@ -194,7 +206,13 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
               {msg.userNickname.charAt(0)}
             </Avatar>
           )}
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMyMessage ? "flex-end" : "flex-start",
+            }}
+          >
             {!isMyMessage && (
               <Typography
                 variant="caption"
@@ -207,6 +225,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
             <Paper
               elevation={1}
               sx={{
+                width: "fit-content",
                 p: 1.5,
                 bgcolor: isMyMessage
                   ? theme.palette.primary.main
@@ -238,6 +257,30 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
         </Box>
       </Box>
     );
+  };
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handlePayPartyFee = async () => {
+    if (!party.id) return;
+
+    setIsPaymentLoading(true);
+    try {
+      await payPartyFeeMutation.mutateAsync(Number(party.id));
+      alert("예약금 지불이 완료되었습니다.");
+      handleMenuClose();
+    } catch (error) {
+      console.error("예약금 지불 실패:", error);
+      // 에러는 usePayPartyFee에서 이미 처리됨
+    } finally {
+      setIsPaymentLoading(false);
+    }
   };
 
   return (
@@ -295,11 +338,46 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               {status === "CONNECTING" && <CircularProgress size={16} />}
               {status === "DISCONNECTED" && <WifiOffIcon color="error" />}
-              <IconButton size="small">
+              <IconButton size="small" onClick={handleMenuClick}>
                 <MoreVertIcon />
               </IconButton>
             </Box>
           </Box>
+
+          {/* 메뉴 Popover */}
+          <Popover
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <List sx={{ minWidth: 200 }}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={handlePayPartyFee}
+                  disabled={isPaymentLoading}
+                >
+                  <ListItemIcon>
+                    {isPaymentLoading ? (
+                      <CircularProgress size={20} />
+                    ) : (
+                      <PaymentIcon />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={isPaymentLoading ? "지불 중..." : "예약금 지불"}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Popover>
 
           {/* 연결 상태 알림 */}
           {status === "DISCONNECTED" && (

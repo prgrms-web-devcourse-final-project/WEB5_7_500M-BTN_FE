@@ -73,7 +73,6 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
 
   const openTime = formatTime(shop.openTime);
   const closeTime = formatTime(shop.closeTime);
-  console.log(openTime, closeTime);
 
   // 시간 그리드 옵션 생성
   const timeSlots = selectedDate

@@ -120,7 +120,6 @@ const ProfileMyShopsReservationTab = () => {
   const reservations =
     ((reservationsData as any)?.data?.content as ReservationContent[]) || [];
 
-  console.log(reservationsData);
   // 예약에 해당하는 식당 정보를 찾는 함수
   const getShopInfo = (shopName: string) => {
     return shops.find((shop) => shop.shopName === shopName);

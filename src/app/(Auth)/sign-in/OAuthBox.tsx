@@ -26,8 +26,6 @@ export default function OAuthBox() {
     naver: `${API_BASE_URL}/oauth2/authorization/naver`,
   };
 
-  console.log("oauthUrls", oauthUrls);
-
   // API에서 가져온 URL이 있으면 서버 URL과 결합, 없으면 기본 URL 사용
   const urls = oauthUrls
     ? {
@@ -71,7 +69,6 @@ export default function OAuthBox() {
               const oauthUrl = `${
                 urls.google
               }?redirect_uri=${encodeURIComponent(callbackUrl)}`;
-              console.log("Google OAuth 시작:", oauthUrl);
               window.location.href = oauthUrl;
             }}
             sx={{
@@ -104,7 +101,6 @@ export default function OAuthBox() {
               const oauthUrl = `${urls.kakao}?redirect_uri=${encodeURIComponent(
                 callbackUrl
               )}`;
-              console.log("Kakao OAuth 시작:", oauthUrl);
               window.location.href = oauthUrl;
             }}
             sx={{
@@ -136,7 +132,6 @@ export default function OAuthBox() {
               const oauthUrl = `${urls.naver}?redirect_uri=${encodeURIComponent(
                 callbackUrl
               )}`;
-              console.log("Naver OAuth 시작:", oauthUrl);
               window.location.href = oauthUrl;
             }}
             sx={{

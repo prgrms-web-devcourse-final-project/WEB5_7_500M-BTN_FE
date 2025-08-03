@@ -301,7 +301,6 @@ axiosInstance.interceptors.response.use(
 
       try {
         const success = await refreshAccessToken();
-        console.log("hihi", success);
         if (success) {
           const newToken = getAccessToken();
           processQueue(null, newToken);

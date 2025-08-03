@@ -57,15 +57,12 @@ function OAuthSignupContent() {
         const refreshToken = getToken("refreshToken");
 
         if (accessToken || refreshToken) {
-          console.log("OAuth 회원가입 후 토큰 확인됨");
           router.push("/");
         } else {
-          console.log("OAuth 회원가입 후 토큰 없음, 로그인 페이지로 이동");
           router.push("/sign-in");
         }
       }, 1000);
     } catch (error) {
-      console.error("OAuth 회원가입 실패:", error);
       showToast("OAuth 회원가입에 실패했습니다. 다시 시도해주세요.", "error");
     }
   };

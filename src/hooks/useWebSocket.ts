@@ -116,7 +116,6 @@ export const useWebSocket = ({
         userSubscriptionRef.current = client.subscribe(
           "/user/queue",
           (message) => {
-            console.log(message);
             try {
               const data: WebSocketMessage = JSON.parse(message.body);
               logger.debug("개별 메시지 수신:", data);
