@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Paper, Typography, Stack, Chip, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { ShopsItem } from "@/api/generated";
+import { MyLocation } from "@mui/icons-material";
 
 const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
 
@@ -17,12 +18,16 @@ interface ShopMapProps {
   shops?: ShopsItem[];
   selectedShopId?: number;
   onShopSelect?: (shop: ShopsItem) => void;
+  userLocation?: { latitude: number; longitude: number };
+  onReSearch?: (center: { latitude: number; longitude: number }) => void;
 }
 
 const ShopMap: React.FC<ShopMapProps> = ({
   shops = [],
   selectedShopId,
   onShopSelect,
+  userLocation,
+  onReSearch,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -66,13 +71,16 @@ const ShopMap: React.FC<ShopMapProps> = ({
   const initializeMap = () => {
     if (!mapRef.current) return;
 
-    const defaultCenter = new (window.kakao as any).maps.LatLng(
-      37.5724, // 종로구 기본 좌표
-      126.9794
-    );
+    // 사용자 위치가 있으면 사용자 위치로, 없으면 기본 위치로
+    const center = userLocation
+      ? new (window.kakao as any).maps.LatLng(
+          userLocation.latitude,
+          userLocation.longitude
+        )
+      : new (window.kakao as any).maps.LatLng(37.5724, 126.9794); // 종로구 기본 좌표
 
     mapInstance.current = new (window.kakao as any).maps.Map(mapRef.current, {
-      center: defaultCenter,
+      center: center,
       level: 3,
     });
 
@@ -163,6 +171,17 @@ const ShopMap: React.FC<ShopMapProps> = ({
     };
   };
 
+  // 현재 지역에서 재탐색 함수
+  const handleReSearch = () => {
+    if (!mapInstance.current || !onReSearch) return;
+
+    const center = mapInstance.current.getCenter();
+    const latitude = center.getLat();
+    const longitude = center.getLng();
+
+    onReSearch({ latitude, longitude });
+  };
+
   // shops 데이터 변경 시 마커 재생성
   useEffect(() => {
     if (mapInstance.current) {
@@ -185,9 +204,55 @@ const ShopMap: React.FC<ShopMapProps> = ({
     }
   }, [selectedShopId, shops]);
 
+  // 사용자 위치가 변경되면 지도를 해당 위치로 이동
+  useEffect(() => {
+    if (!mapInstance.current || !userLocation) return;
+
+    const position = new (window.kakao as any).maps.LatLng(
+      userLocation.latitude,
+      userLocation.longitude
+    );
+    mapInstance.current.setCenter(position);
+    mapInstance.current.setLevel(3);
+  }, [userLocation]);
+
   return (
     <Box width="100%" height="100vh" bgcolor="#e5e5e5" position="relative">
       <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
+
+      {/* 현재 지역에서 재탐색 버튼 오버레이 */}
+      <Box
+        position="absolute"
+        top={16}
+        left="50%"
+        sx={{
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+        }}
+      >
+        <Button
+          variant="contained"
+          startIcon={<MyLocation />}
+          onClick={handleReSearch}
+          sx={{
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            color: "#1976d2",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+            borderRadius: "24px",
+            px: 3,
+            py: 1,
+            fontWeight: 600,
+            fontSize: "14px",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 1)",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+            },
+          }}
+        >
+          현재 지역에서 재탐색
+        </Button>
+      </Box>
     </Box>
   );
 };

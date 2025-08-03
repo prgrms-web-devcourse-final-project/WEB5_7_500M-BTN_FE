@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { useOwnerShops } from "@/api/hooks";
 import { useToast } from "@/features/common/Toast";
 
-import { ShopCreateDialog } from "@/components/common";
+import { ShopCreateDialog, ShopUpdateDialog } from "@/components/common";
 import {
   OwnerShopItem,
   OwnerShopItemCategoryEnum,
@@ -61,9 +61,16 @@ const getStatusText = (status: OwnerShopItemApproveEnum) => {
 };
 
 const ProfileMyShopsTab = () => {
+  const [key, setKey] = useState(Date.now());
   const router = useRouter();
   const { showToast, hideToast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [selectedShopId, setSelectedShopId] = useState<number | null>(null);
+  const [imageRetryCount, setImageRetryCount] = useState<{
+    [key: number]: number;
+  }>({});
+  const [imageError, setImageError] = useState<{ [key: number]: boolean }>({});
 
   const { data: ownerShopsData, isLoading, error, refetch } = useOwnerShops();
 
@@ -82,11 +89,50 @@ const ProfileMyShopsTab = () => {
   };
 
   const handleViewShop = (shopId: number) => {
-    router.push(`/shop/${shopId}`);
+    setSelectedShopId(shopId);
+    setIsUpdateDialogOpen(true);
   };
 
   const handleShopCreateSuccess = () => {
     refetch();
+    setKey(Date.now());
+  };
+
+  const handleShopUpdateSuccess = () => {
+    refetch();
+    setKey(Date.now());
+  };
+
+  const handleImageError = (shopId: number) => {
+    const currentRetryCount = imageRetryCount[shopId] || 0;
+    const maxRetries = 3;
+
+    if (currentRetryCount < maxRetries) {
+      const delay = Math.pow(2, currentRetryCount) * 1000; // 지수 백오프: 1초, 2초, 4초
+
+      setTimeout(() => {
+        setImageRetryCount((prev) => ({
+          ...prev,
+          [shopId]: currentRetryCount + 1,
+        }));
+        setImageError((prev) => ({
+          ...prev,
+          [shopId]: false,
+        }));
+      }, delay);
+    } else {
+      setImageError((prev) => ({
+        ...prev,
+        [shopId]: true,
+      }));
+    }
+  };
+
+  const handleImageLoad = (shopId: number) => {
+    setImageError((prev) => ({
+      ...prev,
+      [shopId]: false,
+    }));
   };
 
   if (isLoading) {
@@ -174,23 +220,29 @@ const ProfileMyShopsTab = () => {
                 <Box
                   sx={{
                     height: 200,
-                    backgroundImage: shop.thumbnailUrl
-                      ? `url(${shop.thumbnailUrl})`
-                      : "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)",
+                    backgroundImage:
+                      shop.thumbnailUrl && !imageError[shop.shopId!]
+                        ? `url(${shop.thumbnailUrl})`
+                        : "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)",
                     backgroundSize: "20px 20px",
                     backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
                     position: "relative",
                   }}
                 >
-                  <img
-                    src={shop.thumbnailUrl}
-                    alt="thumbnail"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {shop.thumbnailUrl && (
+                    <img
+                      src={`${shop.thumbnailUrl}?key=${key}`}
+                      alt="thumbnail"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: imageError[shop.shopId!] ? "none" : "block",
+                      }}
+                      onError={() => handleImageError(shop.shopId!)}
+                      onLoad={() => handleImageLoad(shop.shopId!)}
+                    />
+                  )}
                   <Chip
                     label={getStatusText(shop.approve || "PENDING")}
                     color={getStatusColor(shop.approve || "PENDING")}
@@ -249,6 +301,18 @@ const ProfileMyShopsTab = () => {
         onClose={() => setIsCreateDialogOpen(false)}
         onSuccess={handleShopCreateSuccess}
       />
+
+      {selectedShopId && (
+        <ShopUpdateDialog
+          open={isUpdateDialogOpen}
+          onClose={() => {
+            setIsUpdateDialogOpen(false);
+            setSelectedShopId(null);
+          }}
+          onSuccess={handleShopUpdateSuccess}
+          shopId={selectedShopId}
+        />
+      )}
     </>
   );
 };

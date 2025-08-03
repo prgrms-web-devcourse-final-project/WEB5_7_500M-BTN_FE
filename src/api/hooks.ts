@@ -51,6 +51,8 @@ import type {
   InquiryCreateRequest,
   BaseResponseListCommentResponse,
   CommentCreateRequest,
+  BaseResponseShopOwnerDetailResponse,
+  ShopUpdateRequest,
 } from "./generated";
 import { ChatControllerApi } from "./generated";
 
@@ -998,4 +1000,88 @@ export const usePaymentHistories = (params?: { size?: number }) => {
     getNextPageParam: (lastPage) => lastPage.data?.nextCursor,
     retry: false, // 자동 재시도 비활성화
   });
+};
+
+// 식당 상세 정보 조회 (소유자용)
+export const useShopOwnerDetail = (shopId: number) => {
+  return useQuery({
+    queryKey: ["shopOwnerDetail", shopId],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.getDetailShopOwner(shopId);
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 401) {
+            // 401 에러 시 토큰 갱신 시도 (한 번만)
+            try {
+              const success = await refreshAccessToken();
+              if (success) {
+                // 토큰 갱신 성공 시 재시도
+                const retryResponse = await apiClient.getDetailShopOwner(
+                  shopId
+                );
+                return retryResponse.data;
+              }
+            } catch (refreshError) {
+              logApiError("토큰 갱신 실패:", refreshError);
+            }
+          }
+        }
+        throw error;
+      }
+    },
+    enabled: !!shopId,
+    retry: false, // 자동 재시도 비활성화
+  });
+};
+
+// 식당 정보 수정
+export const useUpdateShop = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      shopId,
+      shopUpdateRequest,
+    }: {
+      shopId: number;
+      shopUpdateRequest: ShopUpdateRequest;
+    }) => {
+      try {
+        const response = await apiClient.updateShop(shopId, shopUpdateRequest);
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 401) {
+            // 401 에러 시 토큰 갱신 시도 (한 번만)
+            try {
+              const success = await refreshAccessToken();
+              if (success) {
+                // 토큰 갱신 성공 시 재시도
+                const retryResponse = await apiClient.updateShop(
+                  shopId,
+                  shopUpdateRequest
+                );
+                return retryResponse.data;
+              }
+            } catch (refreshError) {
+              logApiError("토큰 갱신 실패:", refreshError);
+            }
+          }
+        }
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ["ownerShops"] });
+      queryClient.invalidateQueries({ queryKey: ["shopOwnerDetail"] });
+      queryClient.invalidateQueries({ queryKey: ["shopDetail"] });
+    },
+  });
+
+  return mutation;
 };

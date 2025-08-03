@@ -10,3 +10,4 @@ export {
   useLocalStorageObject,
 } from "./useLocalStorage";
 export { useWebSocket } from "./useWebSocket";
+export { default as useGeolocation } from "./useGeolocation";

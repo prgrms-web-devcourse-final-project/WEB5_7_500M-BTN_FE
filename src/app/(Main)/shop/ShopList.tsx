@@ -17,6 +17,7 @@ import ShopListItemRow from "@/features/shop/ShopListCard";
 import { useShops } from "@/api/hooks";
 import { GetShopsCategoryEnum, ShopsItem } from "@/api/generated";
 import { SEARCH_CONSTANTS } from "@/constants";
+import useGeolocation from "@/hooks/useGeolocation";
 
 const categories = [
   { value: "ALL", label: "전체" },
@@ -35,11 +36,15 @@ const sorts = [
 interface ShopListProps {
   onShopSelect?: (shop: ShopsItem) => void;
   onShopsDataUpdate?: (shops: ShopsItem[]) => void;
+  onReSearch?: (
+    reSearchHandler: (center: { latitude: number; longitude: number }) => void
+  ) => void;
 }
 
 const ShopList: React.FC<ShopListProps> = ({
   onShopSelect,
   onShopsDataUpdate,
+  onReSearch,
 }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -55,6 +60,10 @@ const ShopList: React.FC<ShopListProps> = ({
   const [debouncedSearchQuery, setDebouncedSearchQuery] =
     useState(initialSearchQuery);
   const [selectedShop, setSelectedShop] = useState<ShopsItem | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   // URL 파라미터 변경 시 상태 업데이트
   useEffect(() => {
@@ -85,16 +94,38 @@ const ShopList: React.FC<ShopListProps> = ({
     return () => clearTimeout(timer);
   }, [searchQuery, router, searchParams]);
 
+  const { location: userLocation } = useGeolocation();
+
+  // 현재 위치 설정 (사용자 위치 또는 기본 위치)
+  useEffect(() => {
+    if (userLocation) {
+      setCurrentLocation(userLocation);
+    } else {
+      setCurrentLocation({ latitude: 37.5724, longitude: 126.9794 });
+    }
+  }, [userLocation]);
+
   const {
     data: shopsData,
     isLoading,
     error,
+    refetch,
   } = useShops({
-    latitude: 37.5724, // 종로구 기본 좌표
-    longitude: 126.9794, // 종로구 기본 좌표
+    latitude: currentLocation?.latitude ?? 37.5724,
+    longitude: currentLocation?.longitude ?? 126.9794,
     radius: 3000, // 3km 반경
     size: 20,
   });
+
+  // 재탐색 핸들러
+  const handleReSearch = useCallback(
+    (center: { latitude: number; longitude: number }) => {
+      setCurrentLocation(center);
+      // 새로운 위치로 API 재호출
+      refetch();
+    },
+    [refetch]
+  );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -193,6 +224,13 @@ const ShopList: React.FC<ShopListProps> = ({
     }
   }, [filteredAndSortedShops, onShopsDataUpdate]);
 
+  // 재탐색 함수를 부모 컴포넌트에 전달
+  useEffect(() => {
+    if (onReSearch) {
+      onReSearch(handleReSearch);
+    }
+  }, [onReSearch, handleReSearch]);
+
   return (
     <Box
       width={400}
@@ -220,6 +258,15 @@ const ShopList: React.FC<ShopListProps> = ({
           placeholder="식당 검색"
           value={searchQuery}
           onChange={handleSearchChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.stopPropagation();
+              e.preventDefault();
+              handleSearchChange(
+                e as unknown as React.ChangeEvent<HTMLInputElement>
+              );
+            }
+          }}
           inputProps={{ "aria-label": "식당 검색" }}
         />
       </Paper>
