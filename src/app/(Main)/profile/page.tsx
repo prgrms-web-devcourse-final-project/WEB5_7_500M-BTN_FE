@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Box, Tabs, Tab } from "@mui/material";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
@@ -22,7 +22,7 @@ const TAB_LABELS = [
   "나의 식당 예약 현황",
 ];
 
-const ProfilePage = () => {
+const ProfileContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -77,6 +77,14 @@ const ProfilePage = () => {
       {/* 나의 식당 예약 현황 */}
       {tab === 5 && <ProfileMyShopsReservationTab />}
     </Box>
+  );
+};
+
+const ProfilePage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 };
 
