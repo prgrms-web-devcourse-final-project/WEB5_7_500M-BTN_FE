@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Box,
   Paper,
@@ -47,19 +47,26 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
     error: restoreError,
   } = useRestoreChat(Number(party.id));
 
+  // 콜백 함수들을 useCallback으로 안정화
+  const handleWebSocketMessage = useCallback((newMessage: WebSocketMessage) => {
+    setMessages((prev) => [...prev, newMessage]);
+  }, []);
+
+  const handleWebSocketError = useCallback((error: any) => {
+    console.error("웹소켓 에러:", error);
+  }, []);
+
+  const handleWebSocketKick = useCallback(() => {
+    alert("파티에서 강퇴되었습니다.");
+    onClose();
+  }, [onClose]);
+
   // 웹소켓 연결
   const { status, sendMessage, connect, disconnect } = useWebSocket({
     partyId: Number(party.id),
-    onMessage: (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
-    },
-    onError: (error) => {
-      console.error("웹소켓 에러:", error);
-    },
-    onKick: () => {
-      alert("파티에서 강퇴되었습니다.");
-      onClose();
-    },
+    onMessage: handleWebSocketMessage,
+    onError: handleWebSocketError,
+    onKick: handleWebSocketKick,
   });
 
   const scrollToBottom = () => {
@@ -78,7 +85,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
         id: msg.id || Date.now(),
         message: msg.message || "",
         userId: msg.userId || 0,
-        userNickName: msg.userNickName || "",
+        userNickname: msg.userNickname || "",
         userProfile: msg.userProfile || "",
         type: msg.type || "CHAT",
         sendAt: msg.sendAt || new Date().toISOString(),
@@ -144,9 +151,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
           <Chip
             label={
               msg.type === "JOIN"
-                ? `${msg.userNickName}님이 입장했습니다.`
+                ? `${msg.userNickname}님이 입장했습니다.`
                 : msg.type === "LEAVE"
-                ? `${msg.userNickName}님이 퇴장했습니다.`
+                ? `${msg.userNickname}님이 퇴장했습니다.`
                 : msg.type === "PAYMENT_REQUEST"
                 ? "결제 요청이 발생했습니다."
                 : msg.type === "PAYMENT_COMPLETE"
@@ -184,7 +191,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
         >
           {!isMyMessage && (
             <Avatar src={msg.userProfile} sx={{ width: 32, height: 32 }}>
-              {msg.userNickName.charAt(0)}
+              {msg.userNickname.charAt(0)}
             </Avatar>
           )}
           <Box>
@@ -194,7 +201,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
                 color="text.secondary"
                 sx={{ ml: 1, mb: 0.5, display: "block" }}
               >
-                {msg.userNickName}
+                {msg.userNickname}
               </Typography>
             )}
             <Paper
@@ -207,9 +214,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ party, onClose }) => {
                 color: isMyMessage
                   ? theme.palette.primary.contrastText
                   : theme.palette.text.primary,
-                borderRadius: 2,
-                borderTopLeftRadius: isMyMessage ? 2 : 0,
-                borderTopRightRadius: isMyMessage ? 0 : 2,
+                borderRadius: 1,
+                borderBottomRightRadius: isMyMessage ? "0px" : "8px",
+                borderBottomLeftRadius: isMyMessage ? "8px" : "0px",
               }}
             >
               <Typography variant="body2" sx={{ wordBreak: "break-word" }}>

@@ -842,6 +842,7 @@ export const useCreateInquiry = () => {
     },
     onSuccess: () => {
       // 문의글 생성 성공 시 관련 쿼리 무효화
+      // 새로운 문의글이 첫 페이지에 추가되므로 페이지네이션 상태를 초기화
       queryClient.invalidateQueries({ queryKey: ["inquiries"] });
     },
   });
@@ -881,11 +882,11 @@ export const useCreateInquiryComment = () => {
       }
     },
     onSuccess: (_, variables) => {
-      // 댓글 생성 성공 시 관련 쿼리 무효화
+      // 댓글 생성 성공 시 해당 문의글의 댓글만 무효화
       queryClient.invalidateQueries({
         queryKey: ["inquiryComments", variables.inquiryId],
       });
-      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+      // 문의글 목록은 무효화하지 않음 (페이지네이션 상태 유지)
     },
   });
 };

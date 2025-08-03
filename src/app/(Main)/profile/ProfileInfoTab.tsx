@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Stack,
   Avatar,
@@ -23,7 +23,13 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import { useMyInfo, useUpdateMyInfo } from "@/api/hooks";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import {
+  useMyInfo,
+  useUpdateMyInfo,
+  useProfilePresignedUrl,
+  uploadImageToS3,
+} from "@/api/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/features/common/Toast";
 
@@ -32,9 +38,11 @@ import PointChargeDialog from "./PointChargeDialog";
 const ProfileInfoTab = () => {
   const { data: myInfoData, isLoading, error } = useMyInfo();
   const updateMyInfoMutation = useUpdateMyInfo();
+  const profilePresignedUrlMutation = useProfilePresignedUrl();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const myInfo = myInfoData?.data;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [pointChargeDialogOpen, setPointChargeDialogOpen] = useState(false);
@@ -43,7 +51,63 @@ const ProfileInfoTab = () => {
     age: "",
     gender: "",
     phoneNumber: "",
+    profileImage: null as File | null,
   });
+
+  // 프로필 이미지 업로드 처리
+  const handleProfileImageUpload = async (file: File) => {
+    try {
+      // 1. PreSigned URL 요청
+      const presignedResponse = await profilePresignedUrlMutation.mutateAsync();
+      const presignedUrl = presignedResponse.data?.url;
+
+      if (!presignedUrl) {
+        throw new Error("PreSigned URL을 받지 못했습니다.");
+      }
+
+      // 2. S3에 이미지 업로드
+      await uploadImageToS3(file, presignedUrl);
+
+      // 3. 프로필 정보 업데이트 (이미지 키 포함)
+      const updateData = {
+        nickname: myInfo?.nickname || "",
+        age: myInfo?.age || undefined,
+        gender: myInfo?.gender || undefined,
+        phoneNumber: myInfo?.phoneNumber || "",
+        profileKey: presignedResponse.data?.key || "",
+      };
+
+      await updateMyInfoMutation.mutateAsync(updateData);
+
+      // 4. 쿼리 무효화로 데이터 새로고침
+      queryClient.invalidateQueries({ queryKey: ["myInfo"] });
+
+      showToast("프로필 이미지가 업로드되었습니다.", "success");
+    } catch (error) {
+      console.error("프로필 이미지 업로드 실패:", error);
+      showToast("프로필 이미지 업로드에 실패했습니다.", "error");
+    }
+  };
+
+  // 이미지 파일 선택 처리
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // 파일 크기 검증 (5MB 이하)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("파일 크기는 5MB 이하여야 합니다.", "error");
+        return;
+      }
+
+      // 파일 타입 검증
+      if (!file.type.startsWith("image/")) {
+        showToast("이미지 파일만 업로드 가능합니다.", "error");
+        return;
+      }
+
+      handleProfileImageUpload(file);
+    }
+  };
 
   // 수정 다이얼로그 열기
   const handleEditClick = () => {
@@ -53,6 +117,7 @@ const ProfileInfoTab = () => {
         age: myInfo.age?.toString() || "",
         gender: myInfo.gender || "",
         phoneNumber: myInfo.phoneNumber || "",
+        profileImage: null,
       });
       setEditDialogOpen(true);
     }
@@ -107,10 +172,38 @@ const ProfileInfoTab = () => {
     <>
       <Stack spacing={3}>
         <Stack direction="row" spacing={3} alignItems="center">
-          <Avatar
-            src={myInfo.profile || "/default-avatar.png"}
-            sx={{ width: 80, height: 80 }}
-          />
+          <Box sx={{ position: "relative" }}>
+            <Avatar
+              src={myInfo.profile || "/default-avatar.png"}
+              sx={{
+                width: 80,
+                height: 80,
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            />
+            <IconButton
+              size="small"
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                backgroundColor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+                width: 24,
+                height: 24,
+              }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <PhotoCameraIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+          </Box>
           <Box flex={1}>
             <Typography variant="h5" fontWeight={700} mb={0.5}>
               {myInfo.nickname}
@@ -118,7 +211,6 @@ const ProfileInfoTab = () => {
             <Typography color="text.secondary" mb={0.5}>
               {myInfo.name} ({myInfo.email})
             </Typography>
-            <Chip label="맛집 탐험가" color="primary" size="small" />
           </Box>
           <IconButton
             onClick={handleEditClick}
@@ -128,16 +220,7 @@ const ProfileInfoTab = () => {
             <EditIcon />
           </IconButton>
         </Stack>
-        <Divider />
-        <Box>
-          <Typography variant="subtitle1" fontWeight={600} mb={1}>
-            내 소개
-          </Typography>
-          <Typography color="text.secondary">
-            안녕하세요! 맛집 탐험을 좋아하는 {myInfo.nickname}입니다. 다양한
-            사람들과 함께 식사하는 걸 즐깁니다.
-          </Typography>
-        </Box>
+
         <Divider />
         <Box>
           <Typography variant="subtitle1" fontWeight={600} mb={1}>
@@ -189,6 +272,15 @@ const ProfileInfoTab = () => {
           </Stack>
         </Box>
       </Stack>
+
+      {/* 숨겨진 파일 입력 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageSelect}
+        style={{ display: "none" }}
+      />
 
       {/* 프로필 수정 다이얼로그 */}
       <Dialog

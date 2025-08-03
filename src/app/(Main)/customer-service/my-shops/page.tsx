@@ -68,7 +68,11 @@ const MyShopsPage = () => {
 
   const { data: ownerShopsData, isLoading, error, refetch } = useOwnerShops();
 
-  const shops = ownerShopsData?.data?.shopItem || [];
+  const ownerShops = ownerShopsData?.data?.shopItem?.sort(
+    (a, b) => (b.shopId ?? 0) - (a.shopId ?? 0)
+  );
+
+  const shops = ownerShops || [];
 
   const handleCreateShop = () => {
     setIsCreateDialogOpen(true);

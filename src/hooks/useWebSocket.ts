@@ -32,6 +32,18 @@ export const useWebSocket = ({
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 3;
 
+  // 콜백 함수들을 useRef로 안정화
+  const onMessageRef = useRef(onMessage);
+  const onErrorRef = useRef(onError);
+  const onKickRef = useRef(onKick);
+
+  // 콜백 함수들 업데이트
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+    onErrorRef.current = onError;
+    onKickRef.current = onKick;
+  }, [onMessage, onError, onKick]);
+
   // 웹소켓 연결
   const connect = useCallback(async () => {
     try {
@@ -93,7 +105,7 @@ export const useWebSocket = ({
               logger.debug("파티 메시지 수신:", data);
 
               setMessages((prev) => [...prev, data]);
-              onMessage?.(data);
+              onMessageRef.current?.(data);
             } catch (error) {
               logger.error("파티 메시지 파싱 오류:", error);
             }
@@ -104,16 +116,17 @@ export const useWebSocket = ({
         userSubscriptionRef.current = client.subscribe(
           "/user/queue",
           (message) => {
+            console.log(message);
             try {
               const data: WebSocketMessage = JSON.parse(message.body);
               logger.debug("개별 메시지 수신:", data);
 
               if (data.type === "KICK") {
                 logger.warn("파티에서 강퇴되었습니다.");
-                onKick?.();
+                onKickRef.current?.();
               } else if (data.type === "ERROR") {
                 logger.error("웹소켓 에러 메시지:", data.message);
-                onError?.(data);
+                onErrorRef.current?.(data);
               }
             } catch (error) {
               logger.error("개별 메시지 파싱 오류:", error);
@@ -172,7 +185,7 @@ export const useWebSocket = ({
         }
 
         setStatus("ERROR");
-        onError?.(frame);
+        onErrorRef.current?.(frame);
       };
 
       client.onWebSocketError = async (error) => {
@@ -225,7 +238,7 @@ export const useWebSocket = ({
         }
 
         setStatus("ERROR");
-        onError?.(error);
+        onErrorRef.current?.(error);
       };
 
       client.onWebSocketClose = () => {
@@ -238,9 +251,9 @@ export const useWebSocket = ({
     } catch (error) {
       logger.error("WebSocket 연결 실패:", error);
       setStatus("ERROR");
-      onError?.(error);
+      onErrorRef.current?.(error);
     }
-  }, [partyId, onMessage, onError, onKick]);
+  }, [partyId]); // partyId만 의존성으로 유지
 
   // 웹소켓 연결 해제
   const disconnect = useCallback(() => {

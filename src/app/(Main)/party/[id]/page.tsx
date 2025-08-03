@@ -36,11 +36,13 @@ import ChatRoom from "@/components/chat/ChatRoom";
 import PartyMemberList from "@/components/party/PartyMemberList";
 import PartyComments from "@/components/party/PartyComments";
 import type { PartyDetailResponse } from "@/api/generated";
+import { useQueryClient } from "@tanstack/react-query";
 
 dayjs.locale("ko");
 
 const PartyDetailPage = () => {
   const params = useParams();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const partyId = Array.isArray(params.id) ? params.id[0] : params.id;
   const numericPartyId = parseInt(partyId || "0", 10);
@@ -135,6 +137,9 @@ const PartyDetailPage = () => {
     try {
       await joinPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에 참여했습니다!", "success");
+      queryClient.invalidateQueries({
+        queryKey: ["partyDetail", numericPartyId],
+      });
     } catch (error: any) {
       // API 에러 응답에서 메시지 추출
       if (error?.response?.data?.message) {
@@ -150,6 +155,9 @@ const PartyDetailPage = () => {
     try {
       await quitPartyMutation.mutateAsync(numericPartyId);
       showToast("파티에서 나갔습니다.", "success");
+      queryClient.invalidateQueries({
+        queryKey: ["partyDetail", numericPartyId],
+      });
     } catch (error: any) {
       // API 에러 응답에서 메시지 추출
       if (error?.response?.data?.message) {

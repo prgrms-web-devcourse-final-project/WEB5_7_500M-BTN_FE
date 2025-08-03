@@ -264,7 +264,7 @@ const PartyCreateDialog: React.FC<PartyCreateDialogProps> = ({
                   disablePast
                   sx={{ width: "100%" }}
                 />
-                <DatePicker
+                <DateTimePicker
                   label="모집 마감일자"
                   value={deadline}
                   onChange={setDeadline}

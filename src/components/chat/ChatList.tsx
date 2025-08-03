@@ -185,30 +185,6 @@ const ChatList: React.FC<ChatListProps> = ({ parties }) => {
                         >
                           {party.shopName}
                         </Typography>
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          spacing={1}
-                          mt={0.5}
-                        >
-                          <Typography
-                            variant="body2"
-                            color="text.primary"
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                              maxWidth: 200,
-                            }}
-                          >
-                            파티 채팅방입니다
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {party.metAt
-                              ? formatLastMessageTime(new Date(party.metAt))
-                              : ""}
-                          </Typography>
-                        </Stack>
                       </Box>
                     }
                   />

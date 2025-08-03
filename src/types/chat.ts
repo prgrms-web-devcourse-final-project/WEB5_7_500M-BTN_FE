@@ -27,7 +27,7 @@ export interface WebSocketMessage {
     | "KICK";
   message: string | null;
   userId: number;
-  userNickName: string;
+  userNickname: string;
   userProfile: string;
   partyId: number;
 }

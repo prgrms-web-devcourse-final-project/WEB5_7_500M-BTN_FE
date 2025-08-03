@@ -18,8 +18,9 @@ import {
   Send as SendIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { useCreateInquiry } from "@/api/hooks";
+import { useCreateInquiry, uploadImageToS3 } from "@/api/hooks";
 import { InquiryCreateRequest } from "@/api/generated";
+import ImageUpload from "@/components/common/ImageUpload";
 
 export default function CreateInquiryPage() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function CreateInquiryPage() {
     content: "",
     imageCount: 0,
   });
+  const [images, setImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const createInquiryMutation = useCreateInquiry();
@@ -59,9 +61,30 @@ export default function CreateInquiryPage() {
     }
 
     try {
-      await createInquiryMutation.mutateAsync(formData);
-      // 성공 시 목록 페이지로 이동
-      router.push("/customer-service/inquiries?success=true");
+      // 이미지 개수 업데이트
+      const updatedFormData = {
+        ...formData,
+        imageCount: images.length,
+      };
+
+      // 문의글 생성 API 호출 (presigned URL 받기)
+      const response = await createInquiryMutation.mutateAsync(updatedFormData);
+
+      // presigned URL이 있고 이미지가 있는 경우 S3에 업로드
+      if (response?.data?.items && images.length > 0) {
+        const uploadPromises = images.map((image, index) => {
+          const presignedUrlItem = response.data?.items?.[index];
+          if (presignedUrlItem?.url) {
+            return uploadImageToS3(image, presignedUrlItem.url);
+          }
+          return Promise.resolve();
+        });
+
+        await Promise.all(uploadPromises);
+      }
+
+      // 성공 시 목록 페이지로 이동 (replace로 이동)
+      router.replace(`/customer-service/${response.data?.refId}`);
     } catch (error) {
       console.error("문의글 작성 실패:", error);
       setErrors({ submit: "문의글 작성에 실패했습니다. 다시 시도해주세요." });
@@ -77,6 +100,10 @@ export default function CreateInquiryPage() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
+  };
+
+  const handleImagesChange = (newImages: File[]) => {
+    setImages(newImages);
   };
 
   return (
@@ -152,13 +179,24 @@ export default function CreateInquiryPage() {
             />
           </Box>
 
+          {/* 이미지 업로드 */}
+          <Box sx={{ mb: 4 }}>
+            <ImageUpload
+              images={images}
+              onImagesChange={handleImagesChange}
+              maxImages={5}
+            />
+          </Box>
+
           {/* 안내사항 */}
           <Alert severity="info" sx={{ mb: 4 }}>
             <Typography variant="body2">
               • 문의글은 24시간 이내에 답변드립니다.
               <br />
               • 개인정보가 포함된 내용은 제외하고 작성해주세요.
-              <br />• 문의글 작성 후 관리자가 검토하여 답변드립니다.
+              <br />
+              • 문의글 작성 후 관리자가 검토하여 답변드립니다.
+              <br />• 이미지는 최대 5개까지 첨부할 수 있습니다.
             </Typography>
           </Alert>
 

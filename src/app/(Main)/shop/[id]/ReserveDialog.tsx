@@ -41,7 +41,6 @@ const ReserveDialog: React.FC<ReserveDialogProps> = ({
   shop,
   onReserveSuccess,
 }) => {
-  shop.reservationFee = 1000;
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [people, setPeople] = useState(1);

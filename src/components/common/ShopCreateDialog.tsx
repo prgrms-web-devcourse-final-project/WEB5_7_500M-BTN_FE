@@ -30,6 +30,7 @@ import { useToast } from "@/features/common/Toast";
 import { ShopCreateRequestCategoryEnum } from "@/api/generated";
 import KakaoMap from "@/app/(Main)/party/KakaoMap";
 import { getCategoryLabel } from "@/constants";
+import axios, { AxiosError } from "axios";
 
 // window.kakao 타입 선언
 declare global {
@@ -187,20 +188,18 @@ const ShopCreateDialog = ({
               const base64Response = await fetch(imageData);
               const blob = await base64Response.blob();
 
-              // presigned URL로 이미지 업로드
-              // API 문서에 따르면 Cache-Control 헤더가 필요함
-              const uploadResponse = await fetch(item.url, {
-                method: "PUT",
-                body: blob,
-                headers: {
-                  "Content-Type": blob.type || "image/jpeg",
-                  "Cache-Control": "no-cache,no-store,must-revalidate",
-                },
-              });
-
-              if (!uploadResponse.ok) {
+              try {
+                await axios.put(item.url, blob, {
+                  headers: {
+                    "Content-Type": blob.type || "image/jpeg",
+                    "Cache-Control": "no-cache,no-store,must-revalidate",
+                  },
+                });
+              } catch (error: any) {
                 throw new Error(
-                  `이미지 업로드 실패: ${uploadResponse.statusText}`
+                  `이미지 업로드 실패: ${
+                    error?.response?.statusText || error.message
+                  }`
                 );
               }
             }
@@ -209,6 +208,7 @@ const ShopCreateDialog = ({
 
         try {
           await Promise.all(uploadPromises);
+          await new Promise((resolve) => setTimeout(resolve, 4000));
           showToast("식당과 이미지가 성공적으로 업로드되었습니다.", "success");
         } catch (uploadError) {
           console.error("이미지 업로드 실패:", uploadError);
@@ -225,8 +225,12 @@ const ShopCreateDialog = ({
       handleClose();
       onSuccess?.();
     } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
       console.error("식당 생성 실패:", error);
-      showToast("식당 생성에 실패했습니다.", "error");
+      showToast(
+        err.response?.data?.message || "식당 생성에 실패했습니다.",
+        "error"
+      );
     }
   };
 

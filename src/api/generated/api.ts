@@ -8571,7 +8571,7 @@ export const APIApiFactory = function (
     createReservation(
       shopId: number,
       createReservationRequest: CreateReservationRequest,
-      UNKNOWN_PARAMETER_NAME?: number | undefined,
+      UNKNOWN_PARAMETER_NAME?: number,
       options?: RawAxiosRequestConfig
     ): AxiosPromise<CreateReservationResponse> {
       return localVarFp
@@ -9493,7 +9493,7 @@ export class APIApi extends BaseAPI {
   public createReservation(
     shopId: number,
     createReservationRequest: CreateReservationRequest,
-    UNKNOWN_PARAMETER_NAME?: number | undefined,
+    UNKNOWN_PARAMETER_NAME?: number,
     options?: RawAxiosRequestConfig
   ) {
     return APIApiFp(this.configuration)
