@@ -68,7 +68,6 @@ const ShopPage: React.FC = () => {
           shops={shopsData}
           selectedShopId={selectedShop?.shopId}
           onShopSelect={handleShopSelect}
-          userLocation={userLocation}
           onReSearch={handleMapReSearch}
         />
       </Box>

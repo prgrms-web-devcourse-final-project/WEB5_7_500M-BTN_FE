@@ -4,6 +4,7 @@ import { Box, Paper, Typography, Stack, Chip, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { ShopsItem } from "@/api/generated";
 import { MyLocation } from "@mui/icons-material";
+import { useGeolocation } from "@/hooks";
 
 const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
 
@@ -18,7 +19,6 @@ interface ShopMapProps {
   shops?: ShopsItem[];
   selectedShopId?: number;
   onShopSelect?: (shop: ShopsItem) => void;
-  userLocation?: { latitude: number; longitude: number };
   onReSearch?: (center: { latitude: number; longitude: number }) => void;
 }
 
@@ -26,9 +26,9 @@ const ShopMap: React.FC<ShopMapProps> = ({
   shops = [],
   selectedShopId,
   onShopSelect,
-  userLocation,
   onReSearch,
 }) => {
+  const { location: userLocation } = useGeolocation();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markersRef = useRef<any[]>([]);

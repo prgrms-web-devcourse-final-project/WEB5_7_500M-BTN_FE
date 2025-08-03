@@ -201,7 +201,7 @@ const ShopUpdateDialog = ({
             } as ImageData;
           });
 
-          const processedImages = await Promise.all(imagePromises);
+          const processedImages = await Promise.all(imagePromises as any);
           setImages(processedImages);
         };
 
