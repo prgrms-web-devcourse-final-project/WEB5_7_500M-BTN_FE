@@ -222,11 +222,25 @@ export const useMyReviews = (params?: { size?: number; cursor?: number }) => {
   return useQuery({
     queryKey: ["myReviews", params],
     queryFn: async () => {
-      const response = await apiClient.getMyReviews(
-        params?.size,
-        params?.cursor
-      );
-      return response.data;
+      try {
+        const response = await apiClient.getMyReviews(
+          params?.size,
+          params?.cursor
+        );
+        return response.data;
+      } catch (error) {
+        if (error && typeof error === "object" && "response" in error) {
+          const apiError = error as { response?: { status?: number } };
+          if (apiError.response?.status === 403) {
+            // 403 에러는 OAuth 사용자가 추가 정보를 입력하지 않았을 때 발생
+            // 추가회원가입 페이지로 리다이렉트
+            if (typeof window !== "undefined") {
+              window.location.href = "/auth/signup";
+            }
+          }
+        }
+        throw error;
+      }
     },
     enabled: !!getAccessToken(),
   });
