@@ -105,9 +105,10 @@ function OAuthCallbackContent() {
 
           if (savedAccessToken || refreshToken) {
             // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
-            try {
-              await apiClient.getMyInfo();
-              // 403 에러가 발생하지 않으면 정상 로그인
+            const myInfoResponse = await apiClient.getMyInfo();
+
+            // 응답이 정상적으로 오고 데이터가 있으면 정상 로그인
+            if (myInfoResponse.data && myInfoResponse.data.data) {
               clearInterval(progressInterval);
               setProgress(100);
               setStatus("success");
@@ -117,30 +118,17 @@ function OAuthCallbackContent() {
                 router.push("/");
               }, 1500);
               return;
-            } catch (myInfoError) {
-              // 403 에러가 발생하면 추가회원가입 페이지로 리다이렉트
-              if (
-                myInfoError &&
-                typeof myInfoError === "object" &&
-                "response" in myInfoError
-              ) {
-                const apiError = myInfoError as {
-                  response?: { status?: number };
-                };
-                if (apiError.response?.status === 403) {
-                  clearInterval(progressInterval);
-                  setProgress(100);
-                  setStatus("success");
-                  showToast("추가 정보를 입력해주세요.", "info");
-                  setTimeout(() => {
-                    setStatus("redirecting");
-                    router.push("/auth/signup");
-                  }, 1500);
-                  return;
-                }
-              }
-              // 다른 에러는 그대로 던짐
-              throw myInfoError;
+            } else {
+              // 응답은 오지만 데이터가 없으면 추가회원가입 페이지로 리다이렉트
+              clearInterval(progressInterval);
+              setProgress(100);
+              setStatus("success");
+              showToast("추가 정보를 입력해주세요.", "info");
+              setTimeout(() => {
+                setStatus("redirecting");
+                router.push("/auth/signup");
+              }, 1500);
+              return;
             }
           } else {
             clearInterval(progressInterval);
@@ -165,16 +153,28 @@ function OAuthCallbackContent() {
               // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
               apiClient
                 .getMyInfo()
-                .then(() => {
-                  // 403 에러가 발생하지 않으면 정상 로그인
-                  clearInterval(progressInterval);
-                  setProgress(100);
-                  setStatus("success");
-                  showToast("OAuth 로그인 성공!", "success");
-                  setTimeout(() => {
-                    setStatus("redirecting");
-                    router.push("/");
-                  }, 1500);
+                .then((myInfoResponse) => {
+                  // 응답이 정상적으로 오고 데이터가 있으면 정상 로그인
+                  if (myInfoResponse.data && myInfoResponse.data.data) {
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    setStatus("success");
+                    showToast("OAuth 로그인 성공!", "success");
+                    setTimeout(() => {
+                      setStatus("redirecting");
+                      router.push("/");
+                    }, 1500);
+                  } else {
+                    // 응답은 오지만 데이터가 없으면 추가회원가입 페이지로 리다이렉트
+                    clearInterval(progressInterval);
+                    setProgress(100);
+                    setStatus("success");
+                    showToast("추가 정보를 입력해주세요.", "info");
+                    setTimeout(() => {
+                      setStatus("redirecting");
+                      router.push("/auth/signup");
+                    }, 1500);
+                  }
                 })
                 .catch((myInfoError) => {
                   // 403 에러가 발생하면 추가회원가입 페이지로 리다이렉트
