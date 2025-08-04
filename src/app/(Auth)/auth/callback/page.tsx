@@ -62,15 +62,90 @@ function OAuthCallbackContent() {
         // 액세스 토큰 파라미터 확인 (직접 토큰이 전달된 경우)
         const accessTokenParam = searchParams.get("accessToken");
         if (accessTokenParam) {
+          console.log(
+            "🔍 [OAuth Callback] accessToken 파라미터 발견:",
+            accessTokenParam.substring(0, 20) + "..."
+          );
           setAccessToken(accessTokenParam);
-          setStatus("success");
-          setProgress(100);
-          showToast("OAuth 로그인 성공!", "success");
-          setTimeout(() => {
-            setStatus("redirecting");
-            router.push("/");
-          }, 1500);
-          return;
+
+          // 토큰이 설정된 후 myInfo API 호출하여 유효성 검증
+          try {
+            console.log("🔍 [OAuth Callback] myInfo API 호출 시작...");
+            const myInfoResponse = await apiClient.getMyInfo();
+            console.log("🔍 [OAuth Callback] myInfo API 응답:", myInfoResponse);
+
+            // 응답이 정상적으로 오고 데이터가 있으면 정상 로그인
+            if (myInfoResponse.data && myInfoResponse.data.data) {
+              console.log(
+                "🔍 [OAuth Callback] myInfo 데이터 확인됨:",
+                myInfoResponse.data.data
+              );
+              clearInterval(progressInterval);
+              setProgress(100);
+              setStatus("success");
+              showToast("OAuth 로그인 성공!", "success");
+              setTimeout(() => {
+                setStatus("redirecting");
+                router.push("/");
+              }, 1500);
+              return;
+            } else {
+              console.log(
+                "🔍 [OAuth Callback] myInfo 데이터 없음, 추가회원가입 필요"
+              );
+              clearInterval(progressInterval);
+              setProgress(100);
+              setStatus("success");
+              showToast("추가 정보를 입력해주세요.", "info");
+              setTimeout(() => {
+                setStatus("redirecting");
+                router.push("/auth/signup");
+              }, 1500);
+              return;
+            }
+          } catch (myInfoError) {
+            console.error("🔍 [OAuth Callback] myInfo API 에러:", myInfoError);
+
+            // 403 에러가 발생하면 추가회원가입 페이지로 리다이렉트
+            if (
+              myInfoError &&
+              typeof myInfoError === "object" &&
+              "response" in myInfoError
+            ) {
+              const apiError = myInfoError as {
+                response?: { status?: number };
+              };
+              console.log(
+                "🔍 [OAuth Callback] API 에러 상태:",
+                apiError.response?.status
+              );
+
+              if (apiError.response?.status === 403) {
+                console.log("🔍 [OAuth Callback] 403 에러 - 추가회원가입 필요");
+                clearInterval(progressInterval);
+                setProgress(100);
+                setStatus("success");
+                showToast("추가 정보를 입력해주세요.", "info");
+                setTimeout(() => {
+                  setStatus("redirecting");
+                  router.push("/auth/signup");
+                }, 1500);
+                return;
+              }
+            }
+
+            // 다른 에러는 정상 로그인으로 처리
+            console.log("🔍 [OAuth Callback] 기타 에러 - 정상 로그인으로 처리");
+            clearInterval(progressInterval);
+            setProgress(100);
+            setStatus("success");
+            showToast("OAuth 로그인 성공!", "success");
+            setTimeout(() => {
+              setStatus("redirecting");
+              router.push("/");
+            }, 1500);
+            return;
+          }
         }
 
         // 코드 파라미터 확인 (기존 OAuth 플로우)
@@ -102,13 +177,26 @@ function OAuthCallbackContent() {
           // 토큰 확인
           const savedAccessToken = getAccessToken();
           const refreshToken = getToken("refreshToken");
+          console.log("🔍 [OAuth Callback] 저장된 토큰 확인:", {
+            hasAccessToken: !!savedAccessToken,
+            hasRefreshToken: !!refreshToken,
+            accessTokenPreview: savedAccessToken
+              ? savedAccessToken.substring(0, 20) + "..."
+              : null,
+          });
 
           if (savedAccessToken || refreshToken) {
             // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
+            console.log("🔍 [OAuth Callback] myInfo API 호출 시작...");
             const myInfoResponse = await apiClient.getMyInfo();
+            console.log("🔍 [OAuth Callback] myInfo API 응답:", myInfoResponse);
 
             // 응답이 정상적으로 오고 데이터가 있으면 정상 로그인
             if (myInfoResponse.data && myInfoResponse.data.data) {
+              console.log(
+                "🔍 [OAuth Callback] myInfo 데이터 확인됨:",
+                myInfoResponse.data.data
+              );
               clearInterval(progressInterval);
               setProgress(100);
               setStatus("success");
@@ -119,6 +207,9 @@ function OAuthCallbackContent() {
               }, 1500);
               return;
             } else {
+              console.log(
+                "🔍 [OAuth Callback] myInfo 데이터 없음, 추가회원가입 필요"
+              );
               // 응답은 오지만 데이터가 없으면 추가회원가입 페이지로 리다이렉트
               clearInterval(progressInterval);
               setProgress(100);
@@ -148,14 +239,37 @@ function OAuthCallbackContent() {
           const checkTokens = () => {
             const accessToken = getAccessToken();
             const refreshToken = getToken("refreshToken");
+            console.log(
+              `🔍 [OAuth Callback] Retry ${
+                retryCount + 1
+              }/${maxRetries} - 토큰 확인:`,
+              {
+                hasAccessToken: !!accessToken,
+                hasRefreshToken: !!refreshToken,
+                accessTokenPreview: accessToken
+                  ? accessToken.substring(0, 20) + "..."
+                  : null,
+              }
+            );
 
             if (accessToken || refreshToken) {
               // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
+              console.log(
+                "🔍 [OAuth Callback] myInfo API 호출 시작 (retry)..."
+              );
               apiClient
                 .getMyInfo()
                 .then((myInfoResponse) => {
+                  console.log(
+                    "🔍 [OAuth Callback] myInfo API 응답 (retry):",
+                    myInfoResponse
+                  );
                   // 응답이 정상적으로 오고 데이터가 있으면 정상 로그인
                   if (myInfoResponse.data && myInfoResponse.data.data) {
+                    console.log(
+                      "🔍 [OAuth Callback] myInfo 데이터 확인됨 (retry):",
+                      myInfoResponse.data.data
+                    );
                     clearInterval(progressInterval);
                     setProgress(100);
                     setStatus("success");
@@ -165,6 +279,9 @@ function OAuthCallbackContent() {
                       router.push("/");
                     }, 1500);
                   } else {
+                    console.log(
+                      "🔍 [OAuth Callback] myInfo 데이터 없음, 추가회원가입 필요 (retry)"
+                    );
                     // 응답은 오지만 데이터가 없으면 추가회원가입 페이지로 리다이렉트
                     clearInterval(progressInterval);
                     setProgress(100);
@@ -177,6 +294,10 @@ function OAuthCallbackContent() {
                   }
                 })
                 .catch((myInfoError) => {
+                  console.error(
+                    "🔍 [OAuth Callback] myInfo API 에러 (retry):",
+                    myInfoError
+                  );
                   // 403 에러가 발생하면 추가회원가입 페이지로 리다이렉트
                   if (
                     myInfoError &&
@@ -186,7 +307,14 @@ function OAuthCallbackContent() {
                     const apiError = myInfoError as {
                       response?: { status?: number };
                     };
+                    console.log(
+                      "🔍 [OAuth Callback] API 에러 상태 (retry):",
+                      apiError.response?.status
+                    );
                     if (apiError.response?.status === 403) {
+                      console.log(
+                        "🔍 [OAuth Callback] 403 에러 - 추가회원가입 필요 (retry)"
+                      );
                       clearInterval(progressInterval);
                       setProgress(100);
                       setStatus("success");
@@ -199,6 +327,9 @@ function OAuthCallbackContent() {
                     }
                   }
                   // 다른 에러는 정상 로그인으로 처리
+                  console.log(
+                    "🔍 [OAuth Callback] 기타 에러 - 정상 로그인으로 처리 (retry)"
+                  );
                   clearInterval(progressInterval);
                   setProgress(100);
                   setStatus("success");
@@ -213,8 +344,12 @@ function OAuthCallbackContent() {
 
             retryCount++;
             if (retryCount < maxRetries) {
+              console.log(`🔍 [OAuth Callback] ${retryCount}초 후 재시도...`);
               setTimeout(checkTokens, 500);
             } else {
+              console.log(
+                "🔍 [OAuth Callback] 최대 재시도 횟수 초과, 추가회원가입으로 이동"
+              );
               clearInterval(progressInterval);
               setProgress(100);
               setStatus("success");
