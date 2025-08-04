@@ -719,15 +719,36 @@ export const uploadImageToS3 = async (
   presignedUrl: string
 ): Promise<void> => {
   try {
-    await fetch(presignedUrl, {
+    console.log("이미지 업로드 시작:", {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      presignedUrl: presignedUrl.substring(0, 50) + "...",
+    });
+
+    const response = await fetch(presignedUrl, {
       method: "PUT",
       body: file,
       headers: {
         "Content-Type": file.type,
         "Cache-Control": "no-cache,no-store,must-revalidate",
       },
+      mode: "cors", // CORS 모드 명시적 설정
     });
+
+    console.log("이미지 업로드 응답:", {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed with status: ${response.status}`);
+    }
+
+    console.log("이미지 업로드 성공");
   } catch (error) {
+    console.error("이미지 업로드 실패:", error);
     logApiError("이미지 업로드", error);
     throw new Error("이미지 업로드에 실패했습니다.");
   }

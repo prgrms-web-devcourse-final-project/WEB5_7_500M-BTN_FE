@@ -189,13 +189,21 @@ const ShopCreateDialog = ({
               const blob = await base64Response.blob();
 
               try {
-                await axios.put(item.url, blob, {
+                const response = await axios.put(item.url, blob, {
                   headers: {
                     "Content-Type": blob.type || "image/jpeg",
                     "Cache-Control": "no-cache,no-store,must-revalidate",
                   },
+                  timeout: 30000, // 타임아웃 설정
                 });
+
+                if (response.status !== 200) {
+                  throw new Error(
+                    `Upload failed with status: ${response.status}`
+                  );
+                }
               } catch (error: any) {
+                console.error("이미지 업로드 상세 에러:", error);
                 throw new Error(
                   `이미지 업로드 실패: ${
                     error?.response?.statusText || error.message
