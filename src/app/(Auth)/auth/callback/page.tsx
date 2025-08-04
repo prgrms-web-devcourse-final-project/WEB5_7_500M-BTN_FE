@@ -20,6 +20,7 @@ import {
   getAccessToken,
   setAccessToken,
   axiosInstance,
+  apiClient,
 } from "@/api/client";
 
 function OAuthCallbackContent() {
@@ -105,7 +106,7 @@ function OAuthCallbackContent() {
           if (savedAccessToken || refreshToken) {
             // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
             try {
-              await axiosInstance.get("/users/my-info");
+              await apiClient.getMyInfo();
               // 403 에러가 발생하지 않으면 정상 로그인
               clearInterval(progressInterval);
               setProgress(100);
@@ -162,8 +163,8 @@ function OAuthCallbackContent() {
 
             if (accessToken || refreshToken) {
               // 토큰이 있으면 내 정보 API를 호출하여 403 에러 확인
-              axiosInstance
-                .get("/users/my-info")
+              apiClient
+                .getMyInfo()
                 .then(() => {
                   // 403 에러가 발생하지 않으면 정상 로그인
                   clearInterval(progressInterval);
