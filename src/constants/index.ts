@@ -1,13 +1,14 @@
 // API 관련 상수
 export const API_CONSTANTS = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.shop",
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store",
   TIMEOUT: 10000,
   TOKEN_PREFIX: "Bearer ",
 } as const;
 
 // 카카오맵 관련 상수
 export const KAKAO_MAP_CONSTANTS = {
-  API_KEY: "c1ae6914a310b40050898f16a0aebb5f",
+  API_KEY:
+    process.env.NEXT_PUBLIC_KAKAO_API_KEY || "c1ae6914a310b40050898f16a0aebb5f",
   DEFAULT_CENTER: { lat: 37.566826, lng: 126.9786567 },
   DEFAULT_ZOOM: 3,
 } as const;

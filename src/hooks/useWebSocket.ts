@@ -63,7 +63,7 @@ export const useWebSocket = ({
 
       // SockJS를 사용한 웹소켓 연결 - 토큰을 쿼리 파라미터와 헤더 모두에 전달
       const socket = new SockJS(
-        `https://matjalalzz.shop/ws?token=${encodeURIComponent(accessToken)}`
+        `https://matjalalzz.store/ws?token=${encodeURIComponent(accessToken)}`
       );
 
       const client = new Client({
@@ -83,7 +83,7 @@ export const useWebSocket = ({
         // 연결 시 쿼리 파라미터 로깅 추가
         beforeConnect: () => {
           logger.debug("STOMP 연결 전 쿼리 파라미터 확인", {
-            url: `https://matjalalzz.shop/ws?token=${accessToken.substring(
+            url: `https://matjalalzz.store/ws?token=${accessToken.substring(
               0,
               20
             )}...`,

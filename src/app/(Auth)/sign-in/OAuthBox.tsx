@@ -17,7 +17,7 @@ export default function OAuthBox() {
 
   // API 기본 URL
   const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.shop";
+    process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store";
 
   // 기본 OAuth URL (API에서 가져오지 못할 경우 사용)
   const defaultOAuthUrls = {

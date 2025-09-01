@@ -145,7 +145,7 @@ removeAccessToken();
 `.env.local` 파일에서 API 기본 URL을 설정할 수 있습니다:
 
 ```
-NEXT_PUBLIC_API_BASE_URL=https://matjalalzz.shop
+NEXT_PUBLIC_API_BASE_URL=https://matjalalzz.store
 ```
 
 ## 개발 도구
