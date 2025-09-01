@@ -4,7 +4,7 @@ import { logger, logAuth } from "@/utils/logger";
 
 // API 기본 URL
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.shop";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store";
 
 // Axios 인스턴스 생성
 export const axiosInstance = axios.create({
