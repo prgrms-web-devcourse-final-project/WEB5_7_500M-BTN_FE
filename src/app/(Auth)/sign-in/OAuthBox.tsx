@@ -11,19 +11,16 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useOAuth2Urls } from "@/api/hooks";
+import { API_CONSTANTS } from "@/constants";
 
 export default function OAuthBox() {
   const { data: oauthUrls, isLoading, error } = useOAuth2Urls();
 
-  // API 기본 URL
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store";
-
   // 기본 OAuth URL (API에서 가져오지 못할 경우 사용)
   const defaultOAuthUrls = {
-    google: `${API_BASE_URL}/oauth2/authorization/google`,
-    kakao: `${API_BASE_URL}/oauth2/authorization/kakao`,
-    naver: `${API_BASE_URL}/oauth2/authorization/naver`,
+    google: `${API_CONSTANTS.BASE_URL}/oauth2/authorization/google`,
+    kakao: `${API_CONSTANTS.BASE_URL}/oauth2/authorization/kakao`,
+    naver: `${API_CONSTANTS.BASE_URL}/oauth2/authorization/naver`,
   };
 
   // API에서 가져온 URL이 있으면 서버 URL과 결합, 없으면 기본 URL 사용
@@ -31,13 +28,13 @@ export default function OAuthBox() {
     ? {
         google: oauthUrls.google?.startsWith("http")
           ? oauthUrls.google
-          : `${API_BASE_URL}${oauthUrls.google}`,
+          : `${API_CONSTANTS.BASE_URL}${oauthUrls.google}`,
         kakao: oauthUrls.kakao?.startsWith("http")
           ? oauthUrls.kakao
-          : `${API_BASE_URL}${oauthUrls.kakao}`,
+          : `${API_CONSTANTS.BASE_URL}${oauthUrls.kakao}`,
         naver: oauthUrls.naver?.startsWith("http")
           ? oauthUrls.naver
-          : `${API_BASE_URL}${oauthUrls.naver}`,
+          : `${API_CONSTANTS.BASE_URL}${oauthUrls.naver}`,
       }
     : defaultOAuthUrls;
 

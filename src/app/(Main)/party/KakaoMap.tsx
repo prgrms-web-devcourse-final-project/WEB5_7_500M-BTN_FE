@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { KAKAO_MAP_CONSTANTS } from "@/constants";
 
 interface KakaoMapProps {
   center?: { lat: number; lng: number };
@@ -8,8 +9,6 @@ interface KakaoMapProps {
   onSearchResults?: (results: any[]) => void;
   zoomLevel?: number;
 }
-
-const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
 
 declare global {
   interface Window {
@@ -40,7 +39,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&libraries=services&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_CONSTANTS.API_KEY}&libraries=services&autoload=false`;
     script.async = true;
     script.onload = () => {
       if ((window.kakao as any)?.maps) {

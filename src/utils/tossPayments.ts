@@ -1,11 +1,7 @@
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 import { apiClient } from "@/api/client";
 import { TossPaymentConfirmRequest } from "@/api/generated";
-
-// 토스 페이먼츠 클라이언트 키 (테스트용)
-const TOSS_CLIENT_KEY =
-  process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ||
-  "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+import { TOSS_PAYMENTS_CONSTANTS } from "@/constants";
 
 // 토스 페이먼츠 인스턴스 초기화
 let tossPayments: any = null;
@@ -13,7 +9,7 @@ let tossPayments: any = null;
 export const initializeTossPayments = async () => {
   if (!tossPayments) {
     try {
-      tossPayments = await loadTossPayments(TOSS_CLIENT_KEY);
+      tossPayments = await loadTossPayments(TOSS_PAYMENTS_CONSTANTS.CLIENT_KEY);
     } catch (error) {
       console.error("토스 페이먼츠 초기화 실패:", error);
       throw new Error("토스 페이먼츠를 초기화할 수 없습니다.");

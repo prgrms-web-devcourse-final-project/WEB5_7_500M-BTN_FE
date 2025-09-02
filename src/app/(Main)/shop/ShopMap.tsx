@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { ShopsItem } from "@/api/generated";
 import { MyLocation } from "@mui/icons-material";
 import { useGeolocation } from "@/hooks";
-
-const KAKAO_API_KEY = "c1ae6914a310b40050898f16a0aebb5f";
+import { KAKAO_MAP_CONSTANTS } from "@/constants";
 
 // window에 kakao 타입 선언
 declare global {
@@ -44,7 +43,7 @@ const ShopMap: React.FC<ShopMapProps> = ({
 
     const script = document.createElement("script");
     script.type = "text/javascript";
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&libraries=services&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_CONSTANTS.API_KEY}&libraries=services&autoload=false`;
     script.async = true;
     document.body.appendChild(script);
 

@@ -1,15 +1,12 @@
 import axios from "axios";
 import { Configuration, APIApi } from "./generated";
 import { logger, logAuth } from "@/utils/logger";
-
-// API 기본 URL
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store";
+import { API_CONSTANTS } from "@/constants";
 
 // Axios 인스턴스 생성
 export const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
+  baseURL: API_CONSTANTS.BASE_URL,
+  timeout: API_CONSTANTS.TIMEOUT,
   withCredentials: true, // 쿠키 자동 전송을 위한 설정
   headers: {
     "Content-Type": "application/json",
@@ -173,7 +170,7 @@ export const debugCookies = (): void => {
   logger.debug("현재 도메인:", window.location.hostname);
   logger.debug("현재 프로토콜:", window.location.protocol);
   logger.debug("현재 포트:", window.location.port);
-  logger.debug("API 서버 URL:", API_BASE_URL);
+  logger.debug("API 서버 URL:", API_CONSTANTS.BASE_URL);
   logger.debug("모든 쿠키:", document.cookie);
   logger.debug("쿠키 개수:", document.cookie.split(";").length);
 
@@ -206,9 +203,9 @@ export const debugCookies = (): void => {
 // API 클라이언트 생성 함수
 const createApiClient = () => {
   const configuration = new Configuration({
-    basePath: API_BASE_URL,
+    basePath: API_CONSTANTS.BASE_URL,
   });
-  return new APIApi(configuration, API_BASE_URL, axiosInstance);
+  return new APIApi(configuration, API_CONSTANTS.BASE_URL, axiosInstance);
 };
 
 // 싱글톤 인스턴스

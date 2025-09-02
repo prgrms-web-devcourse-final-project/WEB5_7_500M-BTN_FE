@@ -1,23 +1,20 @@
 // API 관련 상수
 export const API_CONSTANTS = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://matjalalzz.store",
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL!,
   TIMEOUT: 10000,
   TOKEN_PREFIX: "Bearer ",
 } as const;
 
 // 카카오맵 관련 상수
 export const KAKAO_MAP_CONSTANTS = {
-  API_KEY:
-    process.env.NEXT_PUBLIC_KAKAO_API_KEY || "c1ae6914a310b40050898f16a0aebb5f",
+  API_KEY: process.env.NEXT_PUBLIC_KAKAO_API_KEY!,
   DEFAULT_CENTER: { lat: 37.566826, lng: 126.9786567 },
   DEFAULT_ZOOM: 3,
 } as const;
 
 // 토스페이먼츠 관련 상수
 export const TOSS_PAYMENTS_CONSTANTS = {
-  CLIENT_KEY:
-    process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ||
-    "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq",
+  CLIENT_KEY: process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!,
 } as const;
 
 // 쿠키 관련 상수
